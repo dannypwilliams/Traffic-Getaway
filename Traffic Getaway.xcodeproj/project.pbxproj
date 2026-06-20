@@ -1,0 +1,461 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2A6D06E12C21A00100A00001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D06E02C21A00100A00001 /* AppDelegate.swift */; };
+		2A6D06E32C21A00100A00001 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D06E22C21A00100A00001 /* GameViewController.swift */; };
+		2A6D06E52C21A00100A00001 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D06E42C21A00100A00001 /* GameScene.swift */; };
+		2A6D06EC2C21A00100A00001 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A6D06EB2C21A00100A00001 /* SpriteKit.framework */; };
+		2A6D07002C21A00100A00001 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D07032C21A00100A00001 /* AudioManager.swift */; };
+		2A6D07012C21A00100A00001 /* AtmosphereManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D07042C21A00100A00001 /* AtmosphereManager.swift */; };
+		2A6D07022C21A00100A00001 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2A6D07052C21A00100A00001 /* AVFoundation.framework */; };
+		2A6D08002C21A00100A00001 /* CarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08102C21A00100A00001 /* CarData.swift */; };
+		2A6D080A2C21A00100A00001 /* LaneManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D081A2C21A00100A00001 /* LaneManager.swift */; };
+		2A6D080B2C21A00100A00001 /* LevelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D081B2C21A00100A00001 /* LevelData.swift */; };
+		2A6D0B002C21A00100A00001 /* BuddyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B102C21A00100A00001 /* BuddyManager.swift */; };
+		2A6D0B012C21A00100A00001 /* VehicleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B112C21A00100A00001 /* VehicleRenderer.swift */; };
+		2A6D0B022C21A00100A00001 /* LevelDifficultyConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B122C21A00100A00001 /* LevelDifficultyConfig.swift */; };
+		2A6D0B032C21A00100A00001 /* TrafficPatternGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */; };
+		2A6D0B042C21A00100A00001 /* LevelSelectScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B142C21A00100A00001 /* LevelSelectScene.swift */; };
+		2A6D08012C21A00100A00001 /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08112C21A00100A00001 /* SaveManager.swift */; };
+		2A6D08022C21A00100A00001 /* MissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08122C21A00100A00001 /* MissionManager.swift */; };
+		2A6D08032C21A00100A00001 /* AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08132C21A00100A00001 /* AchievementManager.swift */; };
+		2A6D08042C21A00100A00001 /* DailyChallengeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08142C21A00100A00001 /* DailyChallengeManager.swift */; };
+		2A6D08052C21A00100A00001 /* ProgressionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08152C21A00100A00001 /* ProgressionManager.swift */; };
+		2A6D08062C21A00100A00001 /* UIHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08162C21A00100A00001 /* UIHelpers.swift */; };
+		2A6D08072C21A00100A00001 /* MainMenuScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08172C21A00100A00001 /* MainMenuScene.swift */; };
+		2A6D08082C21A00100A00001 /* GarageScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08182C21A00100A00001 /* GarageScene.swift */; };
+		2A6D08092C21A00100A00001 /* ResultsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08192C21A00100A00001 /* ResultsScene.swift */; };
+		2A6D09002C21A00100A00001 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09102C21A00100A00001 /* AppConfig.swift */; };
+		2A6D09012C21A00100A00001 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09112C21A00100A00001 /* AnalyticsManager.swift */; };
+		2A6D09022C21A00100A00001 /* MonetizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09122C21A00100A00001 /* MonetizationManager.swift */; };
+		2A6D09032C21A00100A00001 /* OnboardingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09132C21A00100A00001 /* OnboardingScene.swift */; };
+		2A6D09042C21A00100A00001 /* SettingsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09142C21A00100A00001 /* SettingsScene.swift */; };
+		2A6D09052C21A00100A00001 /* StoreScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09152C21A00100A00001 /* StoreScene.swift */; };
+		2A6D09062C21A00100A00001 /* DebugBalanceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */; };
+		2A6D0A002C21A00100A00001 /* UITheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0A102C21A00100A00001 /* UITheme.swift */; };
+		2A6D0A012C21A00100A00001 /* ReleaseReadinessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0A112C21A00100A00001 /* ReleaseReadinessManager.swift */; };
+		2A6D0A022C21A00100A00001 /* ScreenshotMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0A122C21A00100A00001 /* ScreenshotMode.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		2A6D06DD2C21A00100A00001 /* Traffic Getaway.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Traffic Getaway.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A6D06E02C21A00100A00001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		2A6D06E22C21A00100A00001 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		2A6D06E42C21A00100A00001 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
+		2A6D06EB2C21A00100A00001 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		2A6D07032C21A00100A00001 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		2A6D07042C21A00100A00001 /* AtmosphereManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtmosphereManager.swift; sourceTree = "<group>"; };
+		2A6D07052C21A00100A00001 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		2A6D08102C21A00100A00001 /* CarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarData.swift; sourceTree = "<group>"; };
+		2A6D081A2C21A00100A00001 /* LaneManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaneManager.swift; sourceTree = "<group>"; };
+		2A6D081B2C21A00100A00001 /* LevelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelData.swift; sourceTree = "<group>"; };
+		2A6D0B102C21A00100A00001 /* BuddyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyManager.swift; sourceTree = "<group>"; };
+		2A6D0B112C21A00100A00001 /* VehicleRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleRenderer.swift; sourceTree = "<group>"; };
+		2A6D0B122C21A00100A00001 /* LevelDifficultyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelDifficultyConfig.swift; sourceTree = "<group>"; };
+		2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficPatternGenerator.swift; sourceTree = "<group>"; };
+		2A6D0B142C21A00100A00001 /* LevelSelectScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectScene.swift; sourceTree = "<group>"; };
+		2A6D08112C21A00100A00001 /* SaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
+		2A6D08122C21A00100A00001 /* MissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionManager.swift; sourceTree = "<group>"; };
+		2A6D08132C21A00100A00001 /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementManager.swift; sourceTree = "<group>"; };
+		2A6D08142C21A00100A00001 /* DailyChallengeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyChallengeManager.swift; sourceTree = "<group>"; };
+		2A6D08152C21A00100A00001 /* ProgressionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressionManager.swift; sourceTree = "<group>"; };
+		2A6D08162C21A00100A00001 /* UIHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelpers.swift; sourceTree = "<group>"; };
+		2A6D08172C21A00100A00001 /* MainMenuScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenuScene.swift; sourceTree = "<group>"; };
+		2A6D08182C21A00100A00001 /* GarageScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GarageScene.swift; sourceTree = "<group>"; };
+		2A6D08192C21A00100A00001 /* ResultsScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsScene.swift; sourceTree = "<group>"; };
+		2A6D09102C21A00100A00001 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		2A6D09112C21A00100A00001 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
+		2A6D09122C21A00100A00001 /* MonetizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonetizationManager.swift; sourceTree = "<group>"; };
+		2A6D09132C21A00100A00001 /* OnboardingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingScene.swift; sourceTree = "<group>"; };
+		2A6D09142C21A00100A00001 /* SettingsScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScene.swift; sourceTree = "<group>"; };
+		2A6D09152C21A00100A00001 /* StoreScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreScene.swift; sourceTree = "<group>"; };
+		2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugBalanceScene.swift; sourceTree = "<group>"; };
+		2A6D0A102C21A00100A00001 /* UITheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITheme.swift; sourceTree = "<group>"; };
+		2A6D0A112C21A00100A00001 /* ReleaseReadinessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseReadinessManager.swift; sourceTree = "<group>"; };
+		2A6D0A122C21A00100A00001 /* ScreenshotMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotMode.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2A6D06DA2C21A00100A00001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A6D06EC2C21A00100A00001 /* SpriteKit.framework in Frameworks */,
+				2A6D07022C21A00100A00001 /* AVFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2A6D06D42C21A00100A00001 = {
+			isa = PBXGroup;
+			children = (
+				2A6D06DF2C21A00100A00001 /* Traffic Getaway */,
+				2A6D06EA2C21A00100A00001 /* Frameworks */,
+				2A6D06DE2C21A00100A00001 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		2A6D06DE2C21A00100A00001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				2A6D06DD2C21A00100A00001 /* Traffic Getaway.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		2A6D06DF2C21A00100A00001 /* Traffic Getaway */ = {
+			isa = PBXGroup;
+			children = (
+				2A6D06E02C21A00100A00001 /* AppDelegate.swift */,
+				2A6D06E22C21A00100A00001 /* GameViewController.swift */,
+				2A6D06E42C21A00100A00001 /* GameScene.swift */,
+				2A6D09102C21A00100A00001 /* AppConfig.swift */,
+				2A6D0A102C21A00100A00001 /* UITheme.swift */,
+				2A6D09112C21A00100A00001 /* AnalyticsManager.swift */,
+				2A6D09122C21A00100A00001 /* MonetizationManager.swift */,
+				2A6D0A112C21A00100A00001 /* ReleaseReadinessManager.swift */,
+				2A6D0A122C21A00100A00001 /* ScreenshotMode.swift */,
+				2A6D07032C21A00100A00001 /* AudioManager.swift */,
+				2A6D07042C21A00100A00001 /* AtmosphereManager.swift */,
+				2A6D08102C21A00100A00001 /* CarData.swift */,
+				2A6D081A2C21A00100A00001 /* LaneManager.swift */,
+				2A6D081B2C21A00100A00001 /* LevelData.swift */,
+				2A6D0B102C21A00100A00001 /* BuddyManager.swift */,
+				2A6D0B112C21A00100A00001 /* VehicleRenderer.swift */,
+				2A6D0B122C21A00100A00001 /* LevelDifficultyConfig.swift */,
+				2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */,
+				2A6D08112C21A00100A00001 /* SaveManager.swift */,
+				2A6D08122C21A00100A00001 /* MissionManager.swift */,
+				2A6D08132C21A00100A00001 /* AchievementManager.swift */,
+				2A6D08142C21A00100A00001 /* DailyChallengeManager.swift */,
+				2A6D08152C21A00100A00001 /* ProgressionManager.swift */,
+				2A6D08162C21A00100A00001 /* UIHelpers.swift */,
+				2A6D08172C21A00100A00001 /* MainMenuScene.swift */,
+				2A6D0B142C21A00100A00001 /* LevelSelectScene.swift */,
+				2A6D08182C21A00100A00001 /* GarageScene.swift */,
+				2A6D08192C21A00100A00001 /* ResultsScene.swift */,
+				2A6D09132C21A00100A00001 /* OnboardingScene.swift */,
+				2A6D09142C21A00100A00001 /* SettingsScene.swift */,
+				2A6D09152C21A00100A00001 /* StoreScene.swift */,
+				2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */,
+			);
+			path = "Traffic Getaway";
+			sourceTree = "<group>";
+		};
+		2A6D06EA2C21A00100A00001 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2A6D06EB2C21A00100A00001 /* SpriteKit.framework */,
+				2A6D07052C21A00100A00001 /* AVFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		2A6D06DC2C21A00100A00001 /* Traffic Getaway */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A6D06E92C21A00100A00001 /* Build configuration list for PBXNativeTarget "Traffic Getaway" */;
+			buildPhases = (
+				2A6D06D92C21A00100A00001 /* Sources */,
+				2A6D06DA2C21A00100A00001 /* Frameworks */,
+				2A6D06DB2C21A00100A00001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Traffic Getaway";
+			productName = "Traffic Getaway";
+			productReference = 2A6D06DD2C21A00100A00001 /* Traffic Getaway.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2A6D06D52C21A00100A00001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					2A6D06DC2C21A00100A00001 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+				};
+			};
+			buildConfigurationList = 2A6D06D82C21A00100A00001 /* Build configuration list for PBXProject "Traffic Getaway" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2A6D06D42C21A00100A00001;
+			productRefGroup = 2A6D06DE2C21A00100A00001 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				2A6D06DC2C21A00100A00001 /* Traffic Getaway */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2A6D06DB2C21A00100A00001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2A6D06D92C21A00100A00001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A6D06E12C21A00100A00001 /* AppDelegate.swift in Sources */,
+				2A6D06E32C21A00100A00001 /* GameViewController.swift in Sources */,
+				2A6D06E52C21A00100A00001 /* GameScene.swift in Sources */,
+				2A6D09002C21A00100A00001 /* AppConfig.swift in Sources */,
+				2A6D0A002C21A00100A00001 /* UITheme.swift in Sources */,
+				2A6D09012C21A00100A00001 /* AnalyticsManager.swift in Sources */,
+				2A6D09022C21A00100A00001 /* MonetizationManager.swift in Sources */,
+				2A6D0A012C21A00100A00001 /* ReleaseReadinessManager.swift in Sources */,
+				2A6D0A022C21A00100A00001 /* ScreenshotMode.swift in Sources */,
+				2A6D07002C21A00100A00001 /* AudioManager.swift in Sources */,
+				2A6D07012C21A00100A00001 /* AtmosphereManager.swift in Sources */,
+				2A6D08002C21A00100A00001 /* CarData.swift in Sources */,
+				2A6D080A2C21A00100A00001 /* LaneManager.swift in Sources */,
+				2A6D080B2C21A00100A00001 /* LevelData.swift in Sources */,
+				2A6D0B002C21A00100A00001 /* BuddyManager.swift in Sources */,
+				2A6D0B012C21A00100A00001 /* VehicleRenderer.swift in Sources */,
+				2A6D0B022C21A00100A00001 /* LevelDifficultyConfig.swift in Sources */,
+				2A6D0B032C21A00100A00001 /* TrafficPatternGenerator.swift in Sources */,
+				2A6D08012C21A00100A00001 /* SaveManager.swift in Sources */,
+				2A6D08022C21A00100A00001 /* MissionManager.swift in Sources */,
+				2A6D08032C21A00100A00001 /* AchievementManager.swift in Sources */,
+				2A6D08042C21A00100A00001 /* DailyChallengeManager.swift in Sources */,
+				2A6D08052C21A00100A00001 /* ProgressionManager.swift in Sources */,
+				2A6D08062C21A00100A00001 /* UIHelpers.swift in Sources */,
+				2A6D08072C21A00100A00001 /* MainMenuScene.swift in Sources */,
+				2A6D0B042C21A00100A00001 /* LevelSelectScene.swift in Sources */,
+				2A6D08082C21A00100A00001 /* GarageScene.swift in Sources */,
+				2A6D08092C21A00100A00001 /* ResultsScene.swift in Sources */,
+				2A6D09032C21A00100A00001 /* OnboardingScene.swift in Sources */,
+				2A6D09042C21A00100A00001 /* SettingsScene.swift in Sources */,
+				2A6D09052C21A00100A00001 /* StoreScene.swift in Sources */,
+				2A6D09062C21A00100A00001 /* DebugBalanceScene.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2A6D06E62C21A00100A00001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2A6D06E72C21A00100A00001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2A6D06ED2C21A00100A00001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 202606191007;
+				DEVELOPMENT_TEAM = ZESFN7D6AD;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Traffic Getaway";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.danielwilliams.TrafficGetaway;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		2A6D06EE2C21A00100A00001 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 202606191007;
+				DEVELOPMENT_TEAM = ZESFN7D6AD;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Traffic Getaway";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
+				INFOPLIST_KEY_LSRequiresIPhoneOS = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.danielwilliams.TrafficGetaway;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2A6D06D82C21A00100A00001 /* Build configuration list for PBXProject "Traffic Getaway" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A6D06E62C21A00100A00001 /* Debug */,
+				2A6D06E72C21A00100A00001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A6D06E92C21A00100A00001 /* Build configuration list for PBXNativeTarget "Traffic Getaway" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A6D06ED2C21A00100A00001 /* Debug */,
+				2A6D06EE2C21A00100A00001 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2A6D06D52C21A00100A00001 /* Project object */;
+}
