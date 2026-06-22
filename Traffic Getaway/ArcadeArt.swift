@@ -212,8 +212,16 @@ enum ArcadeArt {
         }
     }
 
+    static func roadPalette(for world: WorldThemeID) -> RoadPalette {
+        WorldThemeCatalog.theme(id: world).palette
+    }
+
     static func trafficSpec(for type: VehicleType, laneWidth: CGFloat, city: CityTheme) -> VehicleSpec {
-        let paint = civilianPaint(for: type, city: city)
+        trafficSpec(for: type, laneWidth: laneWidth, world: WorldThemeCatalog.legacyTheme(for: city))
+    }
+
+    static func trafficSpec(for type: VehicleType, laneWidth: CGFloat, world: WorldTheme) -> VehicleSpec {
+        let paint = civilianPaint(for: type, world: world)
 
         switch type {
         case .sedan:
@@ -334,7 +342,11 @@ enum ArcadeArt {
     }
 
     static func makeRoadSample(size: CGSize) -> SKNode {
-        let palette = roadPalette(for: .losAngeles)
+        makeRoadSample(size: size, theme: WorldThemeCatalog.defaultTheme)
+    }
+
+    static func makeRoadSample(size: CGSize, theme: WorldTheme) -> SKNode {
+        let palette = theme.palette
         let node = SKNode()
         let road = SKShapeNode(rectOf: size, cornerRadius: 8)
         road.fillColor = palette.road
@@ -360,6 +372,33 @@ enum ArcadeArt {
                 dash.position = CGPoint(x: x, y: -size.height * 0.38 + CGFloat(index) * size.height * 0.25)
                 node.addChild(dash)
             }
+        }
+
+        switch theme.roadStyle {
+        case .tunnel:
+            for x in [-size.width * 0.42, size.width * 0.42] {
+                let rail = SKShapeNode(rectOf: CGSize(width: 6, height: size.height * 0.88), cornerRadius: 3)
+                rail.fillColor = palette.accent.withAlphaComponent(0.36)
+                rail.strokeColor = .clear
+                rail.position = CGPoint(x: x, y: 0)
+                node.addChild(rail)
+            }
+        case .boardwalk:
+            let ocean = SKShapeNode(rectOf: CGSize(width: size.width * 0.22, height: size.height), cornerRadius: 4)
+            ocean.fillColor = palette.secondAccent.withAlphaComponent(0.28)
+            ocean.strokeColor = .clear
+            ocean.position = CGPoint(x: -size.width * 0.49, y: 0)
+            node.addChild(ocean)
+        case .desertRun, .canyonPass:
+            for x in [-size.width * 0.48, size.width * 0.48] {
+                let dust = SKShapeNode(rectOf: CGSize(width: size.width * 0.12, height: size.height), cornerRadius: 4)
+                dust.fillColor = palette.shoulder.withAlphaComponent(0.5)
+                dust.strokeColor = .clear
+                dust.position = CGPoint(x: x, y: 0)
+                node.addChild(dust)
+            }
+        case .openFreeway, .downtownGrid:
+            break
         }
 
         return node
@@ -512,37 +551,12 @@ enum ArcadeArt {
     }
 
     private static func civilianPaint(for type: VehicleType, city: CityTheme) -> (body: SKColor, stroke: SKColor, glow: SKColor) {
-        let compactColors = [
-            SKColor(red: 0.18, green: 0.52, blue: 0.82, alpha: 1),
-            SKColor(red: 0.96, green: 0.58, blue: 0.16, alpha: 1),
-            SKColor(red: 0.24, green: 0.66, blue: 0.42, alpha: 1)
-        ]
-        let mutedColors = [
-            SKColor(red: 0.36, green: 0.45, blue: 0.52, alpha: 1),
-            SKColor(red: 0.72, green: 0.68, blue: 0.58, alpha: 1),
-            SKColor(red: 0.54, green: 0.35, blue: 0.32, alpha: 1)
-        ]
+        civilianPaint(for: type, world: WorldThemeCatalog.legacyTheme(for: city))
+    }
 
-        let body: SKColor
-        switch type {
-        case .sedan:
-            body = mutedColors.randomElement() ?? mutedColors[0]
-        case .compact:
-            body = compactColors.randomElement() ?? compactColors[0]
-        case .suv:
-            body = SKColor(red: 0.23, green: 0.4, blue: 0.58, alpha: 1)
-        case .pickup:
-            body = SKColor(red: 0.78, green: 0.36, blue: 0.18, alpha: 1)
-        case .van:
-            body = SKColor(red: 0.82, green: 0.78, blue: 0.66, alpha: 1)
-        case .boxTruck:
-            body = SKColor(red: 0.58, green: 0.62, blue: 0.64, alpha: 1)
-        case .sportCoupe:
-            body = city == .miami ? SKColor(red: 0.92, green: 0.22, blue: 0.48, alpha: 1) : SKColor(red: 0.12, green: 0.55, blue: 0.86, alpha: 1)
-        case .policeMoto:
-            body = SKColor(white: 0.06, alpha: 1)
-        }
-        return (body, body.withAlphaComponent(0.95), roadPalette(for: city).accent)
+    private static func civilianPaint(for type: VehicleType, world: WorldTheme) -> (body: SKColor, stroke: SKColor, glow: SKColor) {
+        let body = world.paintColor(for: type)
+        return (body, body.withAlphaComponent(0.95), world.palette.accent)
     }
 
     private static func makeVehicleShell(spec: VehicleSpec) -> SKSpriteNode {

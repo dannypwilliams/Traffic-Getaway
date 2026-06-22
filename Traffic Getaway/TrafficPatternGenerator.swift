@@ -16,6 +16,7 @@ struct TrafficPatternContext {
     let density: CGFloat
     let wantedLevel: Int
     let city: CityTheme
+    let worldThemeID: WorldThemeID
     let protectedLanes: Set<Int>
     let protectedSlots: Set<Int>
     let recentBlockedLanes: Set<Int>
@@ -215,14 +216,7 @@ enum TrafficPatternGenerator {
     }
 
     private static func randomCivilian(_ context: TrafficPatternContext) -> VehicleType {
-        switch context.city {
-        case .newYork:
-            return [.compact, .compact, .sedan, .sedan, .suv, .pickup, .van, .boxTruck].randomElement() ?? .sedan
-        case .losAngeles:
-            return [.sportCoupe, .compact, .sedan, .sedan, .suv, .pickup, .van, .boxTruck].randomElement() ?? .sedan
-        case .miami:
-            return [.sportCoupe, .sportCoupe, .compact, .sedan, .suv, .pickup, .van, .boxTruck].randomElement() ?? .sportCoupe
-        }
+        WorldThemeCatalog.theme(id: context.worldThemeID).trafficPool(wantedLevel: context.wantedLevel).randomElement() ?? .sedan
     }
 
     private static func occupiedCount(_ requests: [TrafficSpawnRequest], _ context: TrafficPatternContext) -> Int {

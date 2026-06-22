@@ -2,39 +2,35 @@
 
 ## Last Session Summary
 
-Started the real art installation pass for Traffic Getaway. Added a centralized `SunlitCaliforniaArcade` art foundation, replaced the main gameplay road palette, moved gameplay traffic/police art specs into a shared registry, added a developer-only Art Gallery, and documented the current asset audit.
+Completed Traffic Getaway Art Pass 3 focused on world identity, level atmosphere, and production polish. Added a six-world theme catalog, routed gameplay/world-select/results/gallery surfaces through it, and documented the remaining art QA work.
 
 ## Files Changed
 
-- `Docs/ASSET_AUDIT.md`
+- `Docs/ART_PASS_STATUS.md`
 - `Docs/CODEX_HANDOFF.md`
 - `Traffic Getaway.xcodeproj/project.pbxproj`
 - `Traffic Getaway/ArcadeArt.swift`
 - `Traffic Getaway/ArtGalleryScene.swift`
-- `Traffic Getaway/CarData.swift`
-- `Traffic Getaway/DebugBalanceScene.swift`
 - `Traffic Getaway/GameScene.swift`
+- `Traffic Getaway/LevelSelectScene.swift`
 - `Traffic Getaway/MainMenuScene.swift`
+- `Traffic Getaway/ResultsScene.swift`
 - `Traffic Getaway/TrafficPatternGenerator.swift`
-- `Traffic Getaway/TrafficSafetyAnalyzer.swift`
-- `Traffic Getaway/UIHelpers.swift`
-- `Traffic Getaway/UITheme.swift`
-- `Traffic Getaway/VehicleRenderer.swift`
+- `Traffic Getaway/WorldTheme.swift`
 
 ## What Changed
 
-- Added `ArcadeArt.swift` as the central art registry, palette, code-drawn fallback policy, road samples, vehicle specs, prop samples, and effect samples.
-- Added named asset IDs for player cruiser, traffic vehicles, police vehicles, road pieces, UI pieces, and effects.
-- Reworked traffic categories from taxi/truck/bus/sports placeholders into sedan, compact, SUV, pickup, van, box truck, sport coupe, and police motorcycle.
-- Routed traffic, police cruiser, police SUV, roadblock, and construction visuals through `ArcadeArt`.
-- Retuned the gameplay road to a bright freeway look with cream lane dashes, warm shoulders, gold edge accents, subtle asphalt texture, and cleaner freeway chevrons.
-- Changed the default starter vehicle presentation to the fictional `Sunset Cruiser` while preserving the `starter_compact` ID for saves.
-- Tagged playable vehicle nodes with art asset IDs.
-- Retuned tire smoke, crash sparks, boost trails, and speed streaks toward the new palette and asset naming.
-- Updated shared UI defaults to navy panels, warm cream text, orange/gold accents, and blockier SpriteKit buttons.
-- Replaced main menu background car rectangles with scaled procedural traffic vehicles.
-- Added `ArtGalleryScene`, reachable from Debug Balance Tools via `ART GALLERY`.
-- Added `Docs/ASSET_AUDIT.md` with the requested placeholder/asset audit sections.
+- Added `WorldTheme.swift` with six worlds: Sunset Coast Freeway, Downtown Heat, Canyon Run, Desert Straightaway, Night Tunnel Chase, and Boardwalk Blitz.
+- Mapped all existing story levels to world themes without changing level IDs, save IDs, or campaign progression order.
+- Extended `ArcadeArt` with world-aware road palettes, road samples, traffic paint, and traffic specs while preserving old city-based wrappers.
+- Updated `GameScene` to use the active world for road width, backdrop color, road markings, roadside props, traffic vehicle flavor, traffic speed flavor, police pressure flavor, and exit signage.
+- Added themed pre-exit anticipation signs shortly before story exits activate.
+- Updated endless mode to rotate through all six worlds by score instead of only the three legacy city themes.
+- Reworked `LevelSelectScene` into a six-world picker with compact stage tabs, world header copy, themed level cards, and responsive card height.
+- Added world identity to `ResultsScene`.
+- Retinted the main menu road/traffic background from the next playable level's world.
+- Added a `WORLD THEMES` page to the developer Art Gallery.
+- Added `Docs/ART_PASS_STATUS.md` with installed work, production status, gaps, and the next art QA task.
 
 ## Tests Run
 
@@ -47,24 +43,29 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\windows\check_pc_han
 Result:
 
 - Required project files were present.
-- 51 Swift files were found.
-- Swift line endings looked PC-safe.
+- 52 Swift files were found.
+- Swift line endings look PC-safe.
 - Git was not found on PATH.
 - Swift was not found on PATH.
 - Swift checks were skipped.
 - Mac/Xcode build and simulator testing are still required.
 
-Also checked old traffic enum case references with `rg`; no `.taxi`, `.truck`, `.bus`, or `.sports` vehicle cases remain in the iOS target.
+Additional source scans:
 
-Recommended Mac validation:
-
-```bash
-Tools/mac/verify_on_mac.sh
-```
+- `rg -n "[^\x00-\x7F]" "Traffic Getaway" Docs` found no non-ASCII text.
+- Old traffic enum scan found no `.taxi`, `.truck`, `.bus`, or `.sports` cases.
+- Level select scan found no old city-tab wiring.
+- Merge-marker scan found no conflict markers.
+- Xcode project scan confirmed `WorldTheme.swift` is in the app target sources.
 
 ## Simulation Commands Run
 
-No `GameSim` command was run in this session. The changes are iOS presentation/art focused, not `GameCore` balance logic.
+No `GameSim` command was run in this session. The work changed iOS SpriteKit presentation and small iOS-side flavor values, not `GameCore` simulation rules.
+
+Attempted local tool checks:
+
+- `swift --version` failed because Swift is not on PATH.
+- `git --version` failed because Git is not on PATH.
 
 ## Simulation Results
 
@@ -72,17 +73,17 @@ No new simulation results.
 
 ## Known Issues
 
-- Windows still needs Swift on PATH before `swift test` and `swift run GameSim` can run locally.
-- Windows still needs Git on PATH before normal status/diff workflows are smooth.
 - iOS build and simulator visual validation still require Mac/Xcode.
-- Many menus still pass explicit older cyan/magenta/red colors even though shared button geometry and theme defaults were improved.
-- Onboarding, settings, store, results, and atmosphere visuals still need a second art cleanup pass.
-- Final production still needs custom/generated image assets or spritesheets; this pass intentionally uses cohesive code-drawn temporary art.
+- Windows still needs Swift on PATH before `swift test` or `swift run GameSim` can run locally.
+- Windows still needs Git on PATH before normal status/diff workflows are available.
+- World props are still procedural placeholder art, not final authored or generated bitmap assets.
+- Several menus outside gameplay, level select, results, and the main menu still need deeper art cleanup.
+- Police vehicles still share base art across worlds; this pass changes world pressure/flavor and surrounding presentation.
 
 ## Highest-Priority Next Task
 
-Run the app on Mac/iOS Simulator and inspect gameplay plus the new debug Art Gallery. Verify player readability, traffic/police readability, lane clarity, no missing assets, and acceptable performance.
+Run the app on Mac/iOS Simulator and inspect each world through the level picker, one story exit, and one endless transition. Capture screenshots for road readability, traffic/police contrast, exit callout clarity, short-screen layout, and frame-rate/node-count health.
 
 ## Suggested Next Prompt
 
-Read `Docs/CODEX_HANDOFF.md` and `Docs/ASSET_AUDIT.md`. On Mac, run `Tools/mac/verify_on_mac.sh`, launch the iOS app in Simulator, open the debug Art Gallery, then play the first minute and report any art/readability issues.
+Read `Docs/CODEX_HANDOFF.md` and `Docs/ART_PASS_STATUS.md`. On Mac, run `Tools/mac/verify_on_mac.sh`, launch Traffic Getaway in Simulator, test each world from the level picker plus one endless transition, and report any readability, layout, or performance issues.

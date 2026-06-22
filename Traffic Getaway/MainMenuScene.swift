@@ -56,13 +56,15 @@ final class MainMenuScene: SKScene {
     }
 
     private func buildBackground() {
-        buildSkyline()
-        buildMenuTraffic()
-        buildHelicopter()
+        let nextLevel = LevelCatalog.nextPlayableLevel(completedIDs: SaveManager.shared.data.completedLevelIDs)
+        let theme = nextLevel.worldTheme
+        buildSkyline(theme: theme)
+        buildMenuTraffic(theme: theme)
+        buildHelicopter(theme: theme)
 
         for index in 0..<18 {
             let line = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 1.5...3.5), height: CGFloat.random(in: 90...190)), cornerRadius: 1)
-            line.fillColor = (index.isMultiple(of: 2) ? UITheme.Color.cyan : UITheme.Color.magenta).withAlphaComponent(0.12)
+            line.fillColor = (index.isMultiple(of: 2) ? theme.palette.accent : theme.palette.secondAccent).withAlphaComponent(0.12)
             line.strokeColor = .clear
             line.glowWidth = 5
             line.position = CGPoint(x: CGFloat.random(in: 0...max(size.width, 1)), y: CGFloat.random(in: 0...max(size.height, 1)))
@@ -73,7 +75,7 @@ final class MainMenuScene: SKScene {
         }
     }
 
-    private func buildSkyline() {
+    private func buildSkyline(theme: WorldTheme) {
         let horizon = size.height * 0.67
         for layer in 0..<2 {
             let count = 10 + layer * 3
@@ -84,14 +86,14 @@ final class MainMenuScene: SKScene {
                 let height = CGFloat.random(in: 46...128) * (layer == 0 ? 1 : 0.72)
                 let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 2)
                 building.fillColor = SKColor(red: 0.025, green: 0.035, blue: 0.09, alpha: alpha)
-                building.strokeColor = (index.isMultiple(of: 2) ? UITheme.Color.cyan : UITheme.Color.magenta).withAlphaComponent(0.16)
+                building.strokeColor = (index.isMultiple(of: 2) ? theme.palette.accent : theme.palette.secondAccent).withAlphaComponent(0.16)
                 building.lineWidth = 1
                 building.position = CGPoint(x: CGFloat(index) / CGFloat(max(1, count - 1)) * size.width, y: yBase - height / 2)
                 backgroundNode.addChild(building)
 
                 if layer == 0 && index.isMultiple(of: 2) {
                     let antenna = SKShapeNode(rectOf: CGSize(width: 3, height: 24), cornerRadius: 1)
-                    antenna.fillColor = UITheme.Color.cyan.withAlphaComponent(0.4)
+                    antenna.fillColor = theme.palette.accent.withAlphaComponent(0.4)
                     antenna.strokeColor = .clear
                     antenna.position = CGPoint(x: building.position.x, y: building.position.y + height / 2 + 12)
                     backgroundNode.addChild(antenna)
@@ -100,9 +102,9 @@ final class MainMenuScene: SKScene {
         }
     }
 
-    private func buildMenuTraffic() {
+    private func buildMenuTraffic(theme: WorldTheme) {
         let roadSize = CGSize(width: min(size.width * 0.72, 290), height: size.height * 0.72)
-        let road = ArcadeArt.makeRoadSample(size: roadSize)
+        let road = ArcadeArt.makeRoadSample(size: roadSize, theme: theme)
         road.alpha = 0.72
         road.position = CGPoint(x: size.width / 2, y: size.height * 0.36)
         backgroundNode.addChild(road)
@@ -124,7 +126,7 @@ final class MainMenuScene: SKScene {
 
         for index in 0..<6 {
             let type: VehicleType = [.compact, .sedan, .suv, .pickup, .sportCoupe].randomElement() ?? .sedan
-            let spec = ArcadeArt.trafficSpec(for: type, laneWidth: 30, city: .losAngeles)
+            let spec = ArcadeArt.trafficSpec(for: type, laneWidth: 30, world: theme)
             let car = ArcadeArt.makeVehicleSprite(spec: spec)
             car.alpha = 0.48
             car.setScale(0.78)
@@ -140,7 +142,7 @@ final class MainMenuScene: SKScene {
         }
     }
 
-    private func buildHelicopter() {
+    private func buildHelicopter(theme: WorldTheme) {
         let helicopter = SKNode()
         helicopter.position = CGPoint(x: size.width * 0.78, y: size.height * 0.79)
         backgroundNode.addChild(helicopter)
@@ -159,7 +161,7 @@ final class MainMenuScene: SKScene {
 
         let body = SKShapeNode(ellipseOf: CGSize(width: 48, height: 24))
         body.fillColor = SKColor.black.withAlphaComponent(0.72)
-        body.strokeColor = UITheme.Color.cyan.withAlphaComponent(0.42)
+        body.strokeColor = theme.palette.accent.withAlphaComponent(0.42)
         body.lineWidth = 1
         helicopter.addChild(body)
 
@@ -260,7 +262,7 @@ final class MainMenuScene: SKScene {
         contentNode.addChild(rewards)
 
         let nextLevel = LevelCatalog.nextPlayableLevel(completedIDs: save.completedLevelIDs)
-        let chase = UIHelpers.bodyLabel("Story \(LevelCatalog.displayNumber(for: nextLevel.levelID)): \(nextLevel.name)", size: 11, color: UITheme.Color.green, width: 178)
+        let chase = UIHelpers.bodyLabel("\(nextLevel.worldTheme.stageCode) \(nextLevel.worldTheme.shortName): \(nextLevel.name)", size: 11, color: UITheme.Color.green, width: 178)
         chase.horizontalAlignmentMode = .left
         chase.position = CGPoint(x: panel.position.x - 22, y: panel.position.y - 68)
         contentNode.addChild(chase)

@@ -56,6 +56,8 @@ final class ResultsScene: SKScene {
         if let level = result.runStats.levelID.flatMap(LevelCatalog.level) {
             addStaticRow(title: "Level", value: level.name, y: rowY)
             rowY -= 34
+            addStaticRow(title: "World", value: level.worldTheme.shortName, y: rowY)
+            rowY -= 34
             if isLevelComplete {
                 addStaticRow(title: "Rating", value: starText(result.levelStarRating), y: rowY)
                 rowY -= 34

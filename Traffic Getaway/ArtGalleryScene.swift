@@ -12,7 +12,7 @@ final class ArtGalleryScene: SKScene {
     }
 
     private var totalPageCount: Int {
-        playablePageCount + 4
+        playablePageCount + 5
     }
 
     override func didMove(to view: SKView) {
@@ -66,12 +66,15 @@ final class ArtGalleryScene: SKScene {
 
         switch pageIndex - playablePageCount {
         case 0:
+            addSectionTitle("WORLD THEMES", y: topY)
+            addWorldGrid(topY: topY - 50)
+        case 1:
             addSectionTitle("TRAFFIC AND POLICE", y: topY)
             addTrafficGrid(topY: topY - 48)
-        case 1:
+        case 2:
             addSectionTitle("ROAD AND PROPS", y: topY)
             addRoadAndProps(topY: topY - 44)
-        case 2:
+        case 3:
             addSectionTitle("EFFECTS", y: topY)
             addEffectsGrid(topY: topY - 52)
         default:
@@ -124,7 +127,7 @@ final class ArtGalleryScene: SKScene {
             let y = topY - CGFloat(row) * rowHeight
             addGalleryCard(at: CGPoint(x: x, y: y), size: CGSize(width: cardWidth - 8, height: 112), stroke: UITheme.Color.gold.withAlphaComponent(0.58))
 
-            let spec = ArcadeArt.trafficSpec(for: type, laneWidth: 33, city: .losAngeles)
+            let spec = ArcadeArt.trafficSpec(for: type, laneWidth: 33, world: WorldThemeCatalog.defaultTheme)
             let vehicle = ArcadeArt.makeVehicleSprite(spec: spec)
             vehicle.position = CGPoint(x: x, y: y + 12)
             vehicle.setScale(type == .boxTruck ? 0.58 : 0.72)
@@ -133,6 +136,30 @@ final class ArtGalleryScene: SKScene {
             let label = UIHelpers.bodyLabel(ArcadeArt.assetID(for: type).displayName.uppercased(), size: 8.5, color: UITheme.Color.secondaryText, width: cardWidth - 12)
             label.position = CGPoint(x: x, y: y - 42)
             contentNode.addChild(label)
+        }
+    }
+
+    private func addWorldGrid(topY: CGFloat) {
+        let themes = WorldThemeCatalog.all
+        let columns = 2
+        let cardWidth = min((size.width - 46) / CGFloat(columns), 156)
+        let rowHeight: CGFloat = 112
+        let startX = size.width / 2 - cardWidth * CGFloat(columns - 1) / 2
+
+        for (index, theme) in themes.enumerated() {
+            let column = index % columns
+            let row = index / columns
+            let x = startX + CGFloat(column) * cardWidth
+            let y = topY - CGFloat(row) * rowHeight
+            addGalleryCard(at: CGPoint(x: x, y: y), size: CGSize(width: cardWidth - 10, height: 96), stroke: theme.palette.accent.withAlphaComponent(0.7))
+
+            let road = ArcadeArt.makeRoadSample(size: CGSize(width: cardWidth - 34, height: 60), theme: theme)
+            road.setScale(0.72)
+            road.position = CGPoint(x: x, y: y + 16)
+            contentNode.addChild(road)
+
+            addSmallLabel(theme.worldSelectTitle, at: CGPoint(x: x, y: y - 30), width: cardWidth - 16)
+            addSmallLabel(theme.shortName.uppercased(), at: CGPoint(x: x, y: y - 46), width: cardWidth - 16)
         }
     }
 
