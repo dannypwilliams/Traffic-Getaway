@@ -101,18 +101,17 @@ final class MainMenuScene: SKScene {
     }
 
     private func buildMenuTraffic() {
-        let road = SKShapeNode(rectOf: CGSize(width: min(size.width * 0.72, 290), height: size.height * 0.72), cornerRadius: 14)
-        road.fillColor = SKColor(red: 0.035, green: 0.04, blue: 0.085, alpha: 0.72)
-        road.strokeColor = UITheme.Color.cyan.withAlphaComponent(0.18)
-        road.lineWidth = 2
+        let roadSize = CGSize(width: min(size.width * 0.72, 290), height: size.height * 0.72)
+        let road = ArcadeArt.makeRoadSample(size: roadSize)
+        road.alpha = 0.72
         road.position = CGPoint(x: size.width / 2, y: size.height * 0.36)
         backgroundNode.addChild(road)
 
         for lane in -1...1 {
-            let x = size.width / 2 + CGFloat(lane) * road.frame.width * 0.22
+            let x = size.width / 2 + CGFloat(lane) * roadSize.width * 0.22
             for index in 0..<4 {
                 let dash = SKShapeNode(rectOf: CGSize(width: 4, height: 28), cornerRadius: 2)
-                dash.fillColor = SKColor.white.withAlphaComponent(0.18)
+                dash.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(0.24)
                 dash.strokeColor = .clear
                 dash.position = CGPoint(x: x, y: CGFloat(index) * 120 - 40)
                 backgroundNode.addChild(dash)
@@ -124,12 +123,13 @@ final class MainMenuScene: SKScene {
         }
 
         for index in 0..<6 {
-            let car = SKShapeNode(rectOf: CGSize(width: 22, height: 42), cornerRadius: 5)
-            car.fillColor = [UITheme.Color.cyan, UITheme.Color.magenta, UITheme.Color.orange, SKColor.yellow].randomElement()?.withAlphaComponent(0.36) ?? UITheme.Color.cyan
-            car.strokeColor = SKColor.white.withAlphaComponent(0.18)
-            car.glowWidth = 3
+            let type: VehicleType = [.compact, .sedan, .suv, .pickup, .sportCoupe].randomElement() ?? .sedan
+            let spec = ArcadeArt.trafficSpec(for: type, laneWidth: 30, city: .losAngeles)
+            let car = ArcadeArt.makeVehicleSprite(spec: spec)
+            car.alpha = 0.48
+            car.setScale(0.78)
             car.position = CGPoint(
-                x: size.width / 2 + CGFloat([-1, 0, 1].randomElement() ?? 0) * road.frame.width * 0.22,
+                x: size.width / 2 + CGFloat([-1, 0, 1].randomElement() ?? 0) * roadSize.width * 0.22,
                 y: CGFloat(index) * 135 - 60
             )
             backgroundNode.addChild(car)

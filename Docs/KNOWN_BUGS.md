@@ -1,0 +1,20 @@
+# Known Bugs And Setup Issues
+
+## Current Windows Machine
+
+- `swift` is not currently available in PowerShell on this Windows desktop, so `swift test` and `swift run GameSim` cannot run here yet.
+- `git` is not currently available in PowerShell on this Windows desktop, so local status checks and branch workflows need Git for Windows or a fixed PATH.
+- Direct PowerShell script execution is disabled on this Windows desktop. Use `powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\windows\check_pc_handoff.ps1` for one-time setup checks.
+
+## Architecture
+
+- The iOS app target still has app-local gameplay definitions in files such as `LevelData.swift`, `LaneManager.swift`, `LevelDifficultyConfig.swift`, `TrafficPatternGenerator.swift`, and `TrafficSafetyAnalyzer.swift`.
+- `GameCore` now mirrors the safest pure rules and includes collision, scoring, and progression helpers, but the iOS app has not yet been wired to import `GameCore`.
+- `GameSim` is a deterministic balance approximation. It does not reproduce SpriteKit physics, touch feel, visual occlusion, haptics, or audio.
+- Level 1 exit timing was moved from 48 seconds to 42 seconds to meet the Windows balance target. Mac should validate whether this feels better in real play.
+
+## Validation
+
+- iOS build validation still requires Mac/Xcode.
+- Simulator balance should be compared against real Mac/iPhone playtest notes before changing live level tuning.
+- Mac should validate the updated Brooklyn Warmup timing, HUD visibility around exit prompts, and whether first-time players can react naturally.

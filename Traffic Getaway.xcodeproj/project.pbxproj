@@ -24,6 +24,8 @@
 		2A6D0B032C21A00100A00001 /* TrafficPatternGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */; };
 		2A6D0B052C21A00100A00001 /* TrafficSafetyAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B152C21A00100A00001 /* TrafficSafetyAnalyzer.swift */; };
 		2A6D0B042C21A00100A00001 /* LevelSelectScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B142C21A00100A00001 /* LevelSelectScene.swift */; };
+		2A6D0E002C21A00100A00001 /* ArcadeArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0E102C21A00100A00001 /* ArcadeArt.swift */; };
+		2A6D0E012C21A00100A00001 /* ArtGalleryScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0E112C21A00100A00001 /* ArtGalleryScene.swift */; };
 		2A6D08012C21A00100A00001 /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08112C21A00100A00001 /* SaveManager.swift */; };
 		2A6D08022C21A00100A00001 /* MissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08122C21A00100A00001 /* MissionManager.swift */; };
 		2A6D08032C21A00100A00001 /* AchievementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D08132C21A00100A00001 /* AchievementManager.swift */; };
@@ -66,6 +68,8 @@
 		2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficPatternGenerator.swift; sourceTree = "<group>"; };
 		2A6D0B152C21A00100A00001 /* TrafficSafetyAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficSafetyAnalyzer.swift; sourceTree = "<group>"; };
 		2A6D0B142C21A00100A00001 /* LevelSelectScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelSelectScene.swift; sourceTree = "<group>"; };
+		2A6D0E102C21A00100A00001 /* ArcadeArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcadeArt.swift; sourceTree = "<group>"; };
+		2A6D0E112C21A00100A00001 /* ArtGalleryScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtGalleryScene.swift; sourceTree = "<group>"; };
 		2A6D08112C21A00100A00001 /* SaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
 		2A6D08122C21A00100A00001 /* MissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissionManager.swift; sourceTree = "<group>"; };
 		2A6D08132C21A00100A00001 /* AchievementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementManager.swift; sourceTree = "<group>"; };
@@ -129,6 +133,7 @@
 				2A6D06E42C21A00100A00001 /* GameScene.swift */,
 				2A6D09102C21A00100A00001 /* AppConfig.swift */,
 				2A6D0A102C21A00100A00001 /* UITheme.swift */,
+				2A6D0E102C21A00100A00001 /* ArcadeArt.swift */,
 				2A6D09112C21A00100A00001 /* AnalyticsManager.swift */,
 				2A6D09122C21A00100A00001 /* MonetizationManager.swift */,
 				2A6D0A112C21A00100A00001 /* ReleaseReadinessManager.swift */,
@@ -152,6 +157,7 @@
 				2A6D08172C21A00100A00001 /* MainMenuScene.swift */,
 				2A6D0B142C21A00100A00001 /* LevelSelectScene.swift */,
 				2A6D08182C21A00100A00001 /* GarageScene.swift */,
+				2A6D0E112C21A00100A00001 /* ArtGalleryScene.swift */,
 				2A6D08192C21A00100A00001 /* ResultsScene.swift */,
 				2A6D09132C21A00100A00001 /* OnboardingScene.swift */,
 				2A6D09142C21A00100A00001 /* SettingsScene.swift */,
@@ -259,6 +265,8 @@
 				2A6D0B022C21A00100A00001 /* LevelDifficultyConfig.swift in Sources */,
 				2A6D0B032C21A00100A00001 /* TrafficPatternGenerator.swift in Sources */,
 				2A6D0B052C21A00100A00001 /* TrafficSafetyAnalyzer.swift in Sources */,
+				2A6D0E002C21A00100A00001 /* ArcadeArt.swift in Sources */,
+				2A6D0E012C21A00100A00001 /* ArtGalleryScene.swift in Sources */,
 				2A6D08012C21A00100A00001 /* SaveManager.swift in Sources */,
 				2A6D08022C21A00100A00001 /* MissionManager.swift in Sources */,
 				2A6D08032C21A00100A00001 /* AchievementManager.swift in Sources */,

@@ -41,7 +41,7 @@ struct LevelDefinition {
 
 enum LevelCatalog {
     static let all: [LevelDefinition] = [
-        LevelDefinition(levelID: "ny_01", name: "Brooklyn Warmup", city: .newYork, durationBeforeExit: 48, exitSide: .right, exitWindowSeconds: 14, startingTrafficDensity: 0.2, maxTrafficDensity: 0.42, policeAggression: 0.72, rewardCash: 210, rewardXP: 90, allowsEmergencyExit: true),
+        LevelDefinition(levelID: "ny_01", name: "Brooklyn Warmup", city: .newYork, durationBeforeExit: 42, exitSide: .right, exitWindowSeconds: 14, startingTrafficDensity: 0.2, maxTrafficDensity: 0.42, policeAggression: 0.72, rewardCash: 210, rewardXP: 90, allowsEmergencyExit: true),
         LevelDefinition(levelID: "ny_02", name: "FDR Squeeze", city: .newYork, durationBeforeExit: 58, exitSide: .left, exitWindowSeconds: 13, startingTrafficDensity: 0.26, maxTrafficDensity: 0.5, policeAggression: 0.86, rewardCash: 240, rewardXP: 105, allowsEmergencyExit: true),
         LevelDefinition(levelID: "ny_03", name: "Midtown Split", city: .newYork, durationBeforeExit: 68, exitSide: .right, exitWindowSeconds: 11, startingTrafficDensity: 0.34, maxTrafficDensity: 0.6, policeAggression: 1.0, rewardCash: 280, rewardXP: 115, allowsEmergencyExit: true),
         LevelDefinition(levelID: "ny_04", name: "Queensboro Heat", city: .newYork, durationBeforeExit: 76, exitSide: .left, exitWindowSeconds: 10, startingTrafficDensity: 0.38, maxTrafficDensity: 0.66, policeAggression: 1.08, rewardCash: 340, rewardXP: 135, allowsEmergencyExit: false),

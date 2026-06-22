@@ -60,6 +60,7 @@ enum VehicleRenderer {
         let style = car.vehicleShapeStyle
         let accent = colors.accent
         let bodyColor = colors.body
+        node.userData = ["assetID": playableAssetID(for: car)]
 
         let shadow = SKShapeNode(path: bodyPath(size: size, style: style))
         shadow.position = CGPoint(x: 2.5, y: -3.5)
@@ -102,6 +103,7 @@ enum VehicleRenderer {
         let node = SKSpriteNode(color: .clear, size: size)
         let bodyColor = colors.body
         let accent = colors.accent
+        node.userData = ["assetID": playableAssetID(for: car)]
 
         let shadow = SKShapeNode(ellipseOf: CGSize(width: size.width * 1.25, height: size.height * 1.02))
         shadow.fillColor = SKColor.black.withAlphaComponent(0.32)
@@ -431,5 +433,12 @@ enum VehicleRenderer {
         default:
             return 0.12
         }
+    }
+
+    private static func playableAssetID(for car: CarDefinition) -> String {
+        if car.id == CarCatalog.starterCarID {
+            return ArcadeArt.VehicleAsset.playerCruiser.rawValue
+        }
+        return "vehicle.playable.\(car.id)"
     }
 }

@@ -2,18 +2,18 @@ import SpriteKit
 
 enum UITheme {
     enum Color {
-        static let background = SKColor(red: 0.012, green: 0.014, blue: 0.045, alpha: 1)
-        static let panel = SKColor(red: 0.024, green: 0.026, blue: 0.075, alpha: 0.94)
-        static let panelDeep = SKColor(red: 0.012, green: 0.014, blue: 0.04, alpha: 0.96)
-        static let text = SKColor.white
-        static let secondaryText = SKColor(white: 0.78, alpha: 1)
-        static let mutedText = SKColor(white: 0.58, alpha: 1)
-        static let gold = SKColor(red: 1, green: 0.82, blue: 0.08, alpha: 1)
-        static let cyan = SKColor(red: 0, green: 0.86, blue: 1, alpha: 1)
-        static let magenta = SKColor(red: 1, green: 0.12, blue: 0.66, alpha: 1)
-        static let red = SKColor(red: 1, green: 0.18, blue: 0.2, alpha: 1)
-        static let green = SKColor(red: 0.35, green: 1, blue: 0.42, alpha: 1)
-        static let orange = SKColor(red: 1, green: 0.45, blue: 0.16, alpha: 1)
+        static let background = ArcadeArt.Palette.navy
+        static let panel = ArcadeArt.Palette.navyPanel
+        static let panelDeep = ArcadeArt.Palette.navyPanelDeep
+        static let text = ArcadeArt.Palette.cream
+        static let secondaryText = ArcadeArt.Palette.mutedCream
+        static let mutedText = SKColor(red: 0.55, green: 0.52, blue: 0.43, alpha: 1)
+        static let gold = ArcadeArt.Palette.gold
+        static let cyan = SKColor(red: 0.2, green: 0.72, blue: 0.9, alpha: 1)
+        static let magenta = SKColor(red: 0.88, green: 0.28, blue: 0.38, alpha: 1)
+        static let red = ArcadeArt.Palette.red
+        static let green = ArcadeArt.Palette.green
+        static let orange = ArcadeArt.Palette.orange
     }
 
     enum Font {
@@ -35,8 +35,8 @@ enum UITheme {
     }
 
     enum Radius {
-        static let button: CGFloat = 8
-        static let panel: CGFloat = 10
+        static let button: CGFloat = 6
+        static let panel: CGFloat = 8
         static let card: CGFloat = 8
     }
 
@@ -58,9 +58,9 @@ enum UITheme {
         var fill: SKColor {
             switch self {
             case .primary:
-                return UITheme.Color.red.withAlphaComponent(0.3)
+                return UITheme.Color.orange.withAlphaComponent(0.34)
             case .secondary:
-                return UITheme.Color.cyan.withAlphaComponent(0.18)
+                return UITheme.Color.panelDeep.withAlphaComponent(0.92)
             case .danger:
                 return UITheme.Color.red.withAlphaComponent(0.2)
             case .gold:
@@ -72,10 +72,12 @@ enum UITheme {
 
         var stroke: SKColor {
             switch self {
-            case .primary, .danger:
+            case .primary:
+                return UITheme.Color.orange
+            case .danger:
                 return UITheme.Color.red
             case .secondary:
-                return UITheme.Color.cyan
+                return UITheme.Color.gold.withAlphaComponent(0.82)
             case .gold:
                 return UITheme.Color.gold
             case .ghost:

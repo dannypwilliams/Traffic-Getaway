@@ -198,18 +198,18 @@ enum CarCatalog {
     static let cars: [CarDefinition] = [
         CarDefinition(
             id: "starter_compact",
-            displayName: "Starter Compact",
-            description: "Small, honest, and easy to thread through traffic.",
+            displayName: "Sunset Cruiser",
+            description: "Chunky freeway muscle with bright first-run readability.",
             rarity: .common,
             unlockCost: 0,
-            bodyColor: SKColor(red: 1.0, green: 0.04, blue: 0.08, alpha: 1),
-            accentColor: SKColor(red: 1, green: 0.42, blue: 0.36, alpha: 1),
+            bodyColor: SKColor(red: 1.0, green: 0.36, blue: 0.12, alpha: 1),
+            accentColor: SKColor(red: 1.0, green: 0.82, blue: 0.22, alpha: 1),
             handling: 1.00,
             dodgeBoost: 1.00,
             cashMultiplier: 1.00,
             scoreMultiplier: 1.00,
             policeResistance: 1.00,
-            vehicleShapeStyle: .compact
+            vehicleShapeStyle: .muscle
         ),
         CarDefinition(id: "yellow_cab", displayName: "Yellow Cab", description: "Knows every shortcut and every dirty merge.", rarity: .common, unlockCost: 450, bodyColor: SKColor(red: 1, green: 0.82, blue: 0.02, alpha: 1), accentColor: SKColor.black, handling: 1.02, dodgeBoost: 0.98, cashMultiplier: 1.08, scoreMultiplier: 1.00, policeResistance: 1.00, vehicleShapeStyle: .cab),
         CarDefinition(id: "sunset_coupe", displayName: "Sunset Coupe", description: "Smooth freeway lines with a warm LA glow.", rarity: .common, unlockCost: 700, bodyColor: SKColor(red: 1, green: 0.42, blue: 0.14, alpha: 1), accentColor: SKColor(red: 0.62, green: 0.18, blue: 0.95, alpha: 1), handling: 1.04, dodgeBoost: 1.03, cashMultiplier: 1.02, scoreMultiplier: 1.03, policeResistance: 1.00, vehicleShapeStyle: .coupe),

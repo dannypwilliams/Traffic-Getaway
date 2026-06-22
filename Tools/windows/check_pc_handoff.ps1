@@ -1,5 +1,6 @@
 param(
-    [switch]$OpenVSCode
+    [switch]$OpenVSCode,
+    [switch]$RunSwiftChecks
 )
 
 $ErrorActionPreference = "Stop"
@@ -9,6 +10,21 @@ Write-Host "Traffic Getaway PC handoff check" -ForegroundColor Cyan
 Write-Host "Project root: $root"
 
 $required = @(
+    "AGENTS.md",
+    "Docs\DESIGN.md",
+    "Docs\BALANCE_TARGETS.md",
+    "Docs\KNOWN_BUGS.md",
+    "Docs\CODEX_HANDOFF.md",
+    "GameCore\Package.swift",
+    "GameCore\Sources\GameCore\CollisionModel.swift",
+    "GameCore\Sources\GameCore\ProgressionModel.swift",
+    "GameCore\Sources\GameCore\ScoringModel.swift",
+    "GameCore\Sources\GameCore\GameModels.swift",
+    "GameCore\Tests\GameCoreTests\GameCoreTests.swift",
+    "GameSim\Package.swift",
+    "GameSim\Sources\GameSim\main.swift",
+    "Assets\Source",
+    "Assets\Processed",
     "Traffic Getaway.xcodeproj\project.pbxproj",
     "Traffic Getaway\GameScene.swift",
     "Traffic Getaway\Info.plist",
@@ -36,7 +52,21 @@ if ($git) {
     Write-Host "Git was not found. Install Git for Windows for the cleanest workflow." -ForegroundColor Yellow
 }
 
-$swiftFiles = Get-ChildItem -Path (Join-Path $root "Traffic Getaway") -Filter "*.swift" -Recurse
+$swift = Get-Command swift -ErrorAction SilentlyContinue
+if ($swift) {
+    Write-Host "Swift found: $($swift.Source)" -ForegroundColor Green
+} else {
+    Write-Host "Swift was not found. Install Swift or add it to PATH before running GameCore tests or GameSim." -ForegroundColor Yellow
+}
+
+$swiftRoots = @("Traffic Getaway", "GameCore", "GameSim", "Tools")
+$swiftFiles = @()
+foreach ($swiftRoot in $swiftRoots) {
+    $fullSwiftRoot = Join-Path $root $swiftRoot
+    if (Test-Path $fullSwiftRoot) {
+        $swiftFiles += Get-ChildItem -Path $fullSwiftRoot -Filter "*.swift" -Recurse
+    }
+}
 Write-Host "Swift files found: $($swiftFiles.Count)" -ForegroundColor Green
 
 $badLineEndings = @()
@@ -55,6 +85,24 @@ if ($badLineEndings.Count -gt 0) {
     $badLineEndings | ForEach-Object { Write-Host "  $_" }
 } else {
     Write-Host "Swift line endings look PC-safe." -ForegroundColor Green
+}
+
+if ($RunSwiftChecks) {
+    if (-not $swift) {
+        throw "Cannot run Swift checks because swift was not found on PATH."
+    }
+
+    Write-Host "Running GameCore tests..." -ForegroundColor Cyan
+    Push-Location (Join-Path $root "GameCore")
+    swift test
+    Pop-Location
+
+    Write-Host "Running a quick GameSim smoke test..." -ForegroundColor Cyan
+    Push-Location (Join-Path $root "GameSim")
+    swift run GameSim --level ny_01 --vehicle starter_compact --runs 100 --seed 12345
+    Pop-Location
+} else {
+    Write-Host "Swift checks skipped. Use -RunSwiftChecks after Swift is installed." -ForegroundColor Yellow
 }
 
 if ($OpenVSCode) {
