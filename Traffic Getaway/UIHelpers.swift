@@ -107,6 +107,11 @@ enum UIHelpers {
         current.view?.presentScene(scene, transition: transition)
     }
 
+    static func topSafeY(in scene: SKScene, padding: CGFloat) -> CGFloat {
+        let safeTop = scene.view?.safeAreaInsets.top ?? 0
+        return scene.size.height - max(padding, safeTop + 30)
+    }
+
     static func animatePress(_ node: SKNode?) {
         guard let node else { return }
         node.removeAction(forKey: "uiPress")

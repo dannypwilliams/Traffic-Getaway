@@ -93,11 +93,11 @@ final class TutorialScene: SKScene {
         roadNode.addChild(car)
 
         let title = UIHelpers.label("QUICK CHASE SCHOOL", size: 28, color: UITheme.Color.gold, width: size.width - 28)
-        title.position = CGPoint(x: size.width / 2, y: size.height - 62)
+        title.position = CGPoint(x: size.width / 2, y: UIHelpers.topSafeY(in: self, padding: 92))
         uiNode.addChild(title)
 
         let skip = UIHelpers.button(text: "SKIP", name: "tutorial.skip", size: CGSize(width: 82, height: 32), style: .ghost)
-        skip.position = CGPoint(x: size.width - 54, y: size.height - 104)
+        skip.position = CGPoint(x: size.width - 54, y: UIHelpers.topSafeY(in: self, padding: 76))
         uiNode.addChild(skip)
     }
 
@@ -128,7 +128,7 @@ final class TutorialScene: SKScene {
         }
 
         let label = UIHelpers.label(text, size: 18, color: .white, width: size.width - 52)
-        label.position = CGPoint(x: size.width / 2, y: size.height - 122)
+        label.position = CGPoint(x: size.width / 2, y: UIHelpers.topSafeY(in: self, padding: 132))
         prompt = label
         uiNode.addChild(label)
         UIHelpers.pulse(label, scale: 1.04, duration: 0.55)

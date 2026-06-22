@@ -113,7 +113,7 @@ final class BuddyManager {
         let root = SKNode()
         root.zPosition = 132
         let importantExit = category == .exitWarningLeft || category == .exitWarningRight || category == .exitCountdown
-        root.position = CGPoint(x: 12, y: importantExit ? max(154, sceneSize.height - 132) : 82)
+        root.position = CGPoint(x: 12, y: importantExit ? max(104, min(136, sceneSize.height * 0.16)) : 82)
         root.alpha = 0
 
         let accent = color(for: category)
