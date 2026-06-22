@@ -2,6 +2,52 @@
 
 ## Current Session Summary
 
+Mac loop validation pulled commit `efe870f` (`Chase`) from `origin/main`, ran the required Mac-side checks, captured compact-simulator evidence, and identified the next MoneyMaker task. The iOS app builds, launches, records, and reaches gameplay, but `GameCore` validation is red and Sunset Merge balance is outside target.
+
+## Files Changed This Session
+
+- `Docs/CODEX_HANDOFF.md`
+- `PlaytestArtifacts/mac-loop-2026-06-22-report.md`
+
+## What Changed This Session
+
+- Fast-forwarded this Mac checkout from `e9d1543` to `efe870f`.
+- Ran `GameCore` tests, `GameSim`, and the Mac iOS build script.
+- Fresh-installed the app on compact simulator `RiggedShoe-SE-Layout-Test` and recorded launch, tutorial, gameplay HUD, and early failure evidence.
+- Wrote the next MoneyMaker prompt into `PlaytestArtifacts/mac-loop-2026-06-22-report.md`.
+
+## Tests And Checks Run This Session
+
+- `cd GameCore && swift test`
+  - Failed: `testSimulationIsDeterministic` returned different `ChaseRunResult` values for two `la_01` / `starter_compact` / seed `12345` runs.
+  - Failed: `testSunsetMergeTrafficStressCommitsReachableWaves` reported `136` impossible committed waves and `136` exit reachability failures.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345`
+  - Passed, but reported `99.0%` completion, far above the documented `40-60%` Level 1 target.
+- `bash Tools/mac/verify_on_mac.sh`
+  - Passed; iOS Simulator build succeeded.
+
+## Simulation Results This Session
+
+`la_01`, `starter_compact`, 10,000 runs, seed `12345`: average survival `43.3s`, median `43.0s`, exit appeared `99.3%`, exit reached `99.0%`, completed `99.0%`, near misses `34.4`, average max combo `32.1`, average cash `970`, average XP `381`, unfair collision estimate `0.1%`. GameSim recommendation: Level 1 may be too easy.
+
+## Simulator Notes This Session
+
+Local captures: `PlaytestArtifacts/mac-loop-2026-06-22/`. Fresh install shows the tutorial immediately and gameplay launches. Compact-layout issues observed: pressed tutorial button labels smear/clip, `ONE REVIVE` / `FREE REVIVE` appears as a first-minute mechanic, and the revive modal body overflows horizontally after a traffic collision.
+
+## Known Issues After This Session
+
+- `GameCore` determinism is broken.
+- Sunset Merge traffic stress can commit unreachable exit-side waves.
+- GameSim says Level 1 is too easy at `99.0%` completion, but the compact simulator passive run still crashed early, so sim/app feel need reconciliation after the core bug is fixed.
+- Compact tutorial/result modal text needs layout cleanup.
+- Confirm whether first-minute revive is intended; if not, remove or hide that copy/mechanic before expanding the first minute.
+
+## Highest-Priority Next Task
+
+MoneyMaker should fix `GameCore` determinism and Sunset Merge traffic reachability first, then retune Level 1 toward the `40-60%` completion target, and only then clean the compact tutorial/result copy. Use the full prompt in `PlaytestArtifacts/mac-loop-2026-06-22-report.md`.
+
+## Previous Session Summary
+
 Continued the Core Gameplay Lock / First Minute Fix milestone from the pasted production brief. Completed a source-level Phase 0 audit/checkpoint pass, added a PBX duplicate-ID regression gate, documented the first-minute architecture/plan, made scoped Phase 1 presentation fixes, added deterministic `GameCore` replay/Flow/lane-stale/pursuit primitives with broader terminal-state tests, added a pure traffic stress command, wired the first Sunset Merge escape to unlock/select the Starter Bike for 405 Afterburn, and moved the SpriteKit traffic/hazard path onto run-owned seeded RNG streams. This Windows environment still cannot run Git, Swift, Python scripts, Xcode, or iOS Simulator, so Mac/Swift validation remains required before claiming the milestone complete.
 
 ## Files Changed This Session
