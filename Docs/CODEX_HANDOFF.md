@@ -1,5 +1,74 @@
 # CODEX_HANDOFF.md
 
+## Current Session Summary
+
+Performed a focused first-run onboarding and police-pressure source pass for Traffic Getaway. The Windows environment still cannot run Git, Swift, Xcode, or iOS Simulator tools, so this session implemented the source fixes and saved validation artifacts, but did not complete the required iPhone SE screenshot/video proof.
+
+## Files Changed This Session
+
+- `Traffic Getaway/OnboardingScene.swift`
+- `Traffic Getaway/GameScene.swift`
+- `PlaytestArtifacts/onboarding-police-validation-log.md`
+- `PlaytestArtifacts/onboarding-police-validation-report.md`
+- `Docs/CODEX_HANDOFF.md`
+
+## What Changed This Session
+
+- Reworked first-run onboarding into 6 quick arcade beats, starting with `QUICK CHASE SCHOOL` and `Traffic is slower. Read the gaps.`
+- Made the first onboarding frame build visible road, lane markers, player car, two traffic cars, and a highlighted gap immediately from existing procedural SpriteKit assets.
+- Added compact/safe-area-aware onboarding layout so `SKIP`, progress, title, subtitle, tutorial art, pager dots, and bottom controls are separated on iPhone SE-sized screens.
+- Added a post-first-update/read-time guard to onboarding. The first step cannot advance during the same update cycle that first builds the visible tutorial frame, and then waits 3.1 seconds; later steps have shorter minimum read times.
+- Added static iPhone SE layout numbers to the validation log/report. On 320x568, `SKIP` bounds are approximately `512...544` while the title bounds are approximately `469...495`; simulator proof is still required.
+- Added passive police pressure in `GameScene`: time since last lane change now ramps police closing pressure after a short grace period.
+- Passive driving now produces earlier red warning pulse pressure, floating police-pressure copy, and wanted-level escalation.
+- Source-constant estimate for a fully passive starter run has visible passive warning around 4 seconds and minimum police gap around 13.8 seconds, before traffic/frame/world details.
+- Real delayed lane changes can relieve a small amount of police pressure, while rapid lane changes do not repeatedly farm large police pushback.
+- Existing distinct failure copy for traffic collision and police catch was preserved.
+
+## Tests And Checks Run This Session
+
+- `powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\windows\check_pc_handoff.ps1`
+  - Passed required project file and line-ending checks.
+  - Reported Git not found on PATH.
+  - Reported Swift not found on PATH.
+  - Swift checks skipped.
+  - Mac/Xcode build and simulator testing still required.
+- Merge-marker scan: no conflict markers found.
+- Non-ASCII scan for `Traffic Getaway/OnboardingScene.swift` and `Traffic Getaway/GameScene.swift`: no non-ASCII found.
+- `swift --version`: failed because Swift is not on PATH.
+- `cd GameCore && swift test`: failed because Swift is not on PATH.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345`: failed because Swift is not on PATH.
+- `xcodebuild -list`: failed because Xcode tools are not available on this Windows machine.
+- `xcrun simctl shutdown all`: failed because Xcode tools are not available on this Windows machine.
+- `xcrun simctl list devices`: failed because Xcode tools are not available on this Windows machine.
+
+## Simulation Results This Session
+
+No simulation results are available. `GameSim` could not run because Swift is unavailable in this Windows environment.
+
+## Validation Artifacts This Session
+
+- `PlaytestArtifacts/onboarding-police-validation-log.md`
+- `PlaytestArtifacts/onboarding-police-validation-report.md`
+
+Required iPhone SE screenshots and videos were not captured because no iOS Simulator tooling is available here.
+
+## Git Notes This Session
+
+Git is not available on PATH, so normal `git status`, `git log -1 --oneline`, and `git diff --stat` commands could not run. Direct `.git` inspection initially showed `main` at `5b77c129685abfae083ca39acb14be15ca0259ed`. During the session, `.git/logs/HEAD` showed an external commit `y1` moved `main` to `176fd573003085e3189b87069993dec313abc9f9`. Codex did not make a commit.
+
+## Known Issues After This Session
+
+- The requested fresh-install iPhone SE screenshots and videos are still missing.
+- Normal, passive, and rapid lane-changing playtests still need real simulator validation.
+- Swift compile/tests and `GameSim` still require Swift to be installed or added to PATH.
+- Mac/Xcode build validation still requires a Mac with Xcode.
+- Results screen bottom buttons received only a static source-position check; simulator tapability still needs confirmation.
+
+## Highest-Priority Next Task
+
+On a Mac with Xcode installed, run `Tools/mac/verify_on_mac.sh`, fresh-install Traffic Getaway on the smallest available iPhone SE simulator, and capture the required after-fix onboarding and police-pressure screenshots/video. Verify that the tutorial is visible immediately, `QUICK CHASE SCHOOL` and `SKIP` do not crowd, passive driving visibly raises police pressure or causes a police catch, normal lane changing remains playable, rapid lane changing does not break controls, and results buttons are tappable.
+
 ## Last Session Summary
 
 Implemented Traffic Getaway Art Pass 3B: Three-City World Identity Correction. The previous six-world theme catalog was replaced with exactly three city identities, story progression was corrected to Los Angeles -> New York -> Miami, and city select was upgraded from compact tabs to three identity cards.

@@ -291,6 +291,9 @@ final class GameScene: SKScene {
     private var activeHoldDirection = 0
     private var holdTimer: TimeInterval = 0
     private var holdActivated = false
+    private var timeSinceLastLaneChange: TimeInterval = 0
+    private var passivePressureWarningCooldown: TimeInterval = 0
+    private var passivePressureAlertShown = false
 
     init(size: CGSize, mode: GameMode = .storyChase, level: LevelDefinition? = nil) {
         self.gameMode = mode
@@ -1091,6 +1094,9 @@ final class GameScene: SKScene {
         activeHoldDirection = 0
         holdTimer = 0
         holdActivated = false
+        timeSinceLastLaneChange = 0
+        passivePressureWarningCooldown = 0
+        passivePressureAlertShown = false
         policeClosingSpeed = 3.4
         policeGap = maxPoliceGap
         currentWorld = currentLevel?.worldTheme ?? WorldThemeCatalog.endlessTheme(score: score)
@@ -1963,7 +1969,10 @@ final class GameScene: SKScene {
         let previousSlot = playerSlot
         let nextLane = laneManager.nearestLaneForSlot(nextSlot)
         let clutchRisk = clutchRiskForLaneChange(from: previousLane, to: nextLane)
+        let idleBeforeMove = timeSinceLastLaneChange
         setPlayerSlot(nextSlot)
+        timeSinceLastLaneChange = 0
+        passivePressureAlertShown = false
         AudioManager.shared.play(.laneChange, volume: 0.62, cooldown: 0.05)
         if AudioManager.shared.isHapticsEnabled {
             let baseIntensity: CGFloat = activeCar.vehicleClass == .motorcycle ? 0.34 : 0.48
@@ -1975,6 +1984,7 @@ final class GameScene: SKScene {
         if clutchRisk > 0.55 {
             triggerClutchSave(risk: clutchRisk, at: CGPoint(x: laneManager.xPositionForSlot(playerSlot), y: playerY + 58))
         }
+        easePassivePolicePressureAfterLaneChange(idleTime: idleBeforeMove, laneDelta: readableDelta)
         if activeCar.vehicleClass == .motorcycle, laneManager.isSplitSlot(previousSlot) != laneManager.isSplitSlot(playerSlot) {
             emitBikeSlotStreak(direction: readableDelta > 0 ? 1 : -1)
         }
@@ -2293,6 +2303,8 @@ final class GameScene: SKScene {
 
         let deltaTime = rawDeltaTime
         runTime += TimeInterval(rawDeltaTime)
+        timeSinceLastLaneChange += TimeInterval(rawDeltaTime)
+        passivePressureWarningCooldown = max(0, passivePressureWarningCooldown - TimeInterval(rawDeltaTime))
         warningHapticCooldown = max(0, warningHapticCooldown - TimeInterval(rawDeltaTime))
         dodgeBoostTimer = max(0, dodgeBoostTimer - TimeInterval(rawDeltaTime))
         clutchSaveCooldown = max(0, clutchSaveCooldown - TimeInterval(rawDeltaTime))
@@ -2322,6 +2334,7 @@ final class GameScene: SKScene {
         updatePoliceSupport(deltaTime: deltaTime)
         updateHelicopter(deltaTime: TimeInterval(rawDeltaTime))
         updatePoliceWarning()
+        updatePassivePolicePressureCues()
         updateDynamicAudioAndAtmosphere()
         updateCameraJuice(deltaTime: deltaTime)
         applyScreenshotMode()
@@ -3048,7 +3061,8 @@ final class GameScene: SKScene {
 
         let resistance = max(0.92, min(1.18, activeCar.policeResistance))
         let worldPressure = max(0.92, min(1.12, currentWorld.policePressureMultiplier))
-        policeGap = max(minPoliceGap, policeGap - (policeClosingSpeed * worldPressure / resistance) * deltaTime)
+        let passiveMultiplier = 1 + passivePolicePressure * 1.42
+        policeGap = max(minPoliceGap, policeGap - (policeClosingSpeed * worldPressure * passiveMultiplier / resistance) * deltaTime)
 
         let targetX = slotCenters.indices.contains(playerSlot) ? slotCenters[playerSlot] : playerCar.position.x
         let followAmount = min(1, deltaTime * 5.4)
@@ -3064,9 +3078,24 @@ final class GameScene: SKScene {
         policeGap = min(maxPoliceGap, policeGap + 18)
     }
 
+    private var passivePolicePressure: CGFloat {
+        guard runTime >= 2 else { return 0 }
+        let passiveSeconds = max(0, timeSinceLastLaneChange - 2.0)
+        return max(0, min(1, CGFloat(passiveSeconds / 4.0)))
+    }
+
+    private func easePassivePolicePressureAfterLaneChange(idleTime: TimeInterval, laneDelta: Int) {
+        guard idleTime >= 1.6 else { return }
+        let laneDistance = CGFloat(max(1, abs(laneDelta)))
+        let relief = min(10, 3 + laneDistance * 1.4)
+        policeGap = min(maxPoliceGap, policeGap + relief)
+    }
+
     private func updatePoliceWarning() {
         let warningGap = minPoliceGap + 48
-        let shouldPulse = policeGap <= warningGap && gameState == .playing
+        let gapPressure = max(0, min(1, (warningGap - policeGap) / max(1, warningGap - minPoliceGap)))
+        let pressure = max(gapPressure, passivePolicePressure * 0.78)
+        let shouldPulse = (policeGap <= warningGap || passivePolicePressure >= 0.72) && gameState == .playing
 
         if shouldPulse && !warningPulseActive {
             warningPulseActive = true
@@ -3081,10 +3110,51 @@ final class GameScene: SKScene {
         }
 
         guard shouldPulse, warningHapticCooldown == 0, AudioManager.shared.isHapticsEnabled else { return }
-        let pressure = max(0, min(1, (warningGap - policeGap) / max(1, warningGap - minPoliceGap)))
         warningHaptic.impactOccurred(intensity: 0.35 + pressure * 0.45)
         warningHaptic.prepare()
         warningHapticCooldown = 1.1
+    }
+
+    private func updatePassivePolicePressureCues() {
+        let pressure = passivePolicePressure
+        guard pressure >= 0.45 else {
+            if timeSinceLastLaneChange < 1.2 {
+                passivePressureAlertShown = false
+            }
+            return
+        }
+
+        guard !passivePressureAlertShown || passivePressureWarningCooldown == 0 else { return }
+        showPassivePoliceAlert(urgent: pressure >= 0.82)
+        passivePressureAlertShown = true
+        passivePressureWarningCooldown = pressure >= 0.82 ? 2.1 : 3.2
+    }
+
+    private func showPassivePoliceAlert(urgent: Bool) {
+        let palette = palette(for: currentCity)
+        let width = min(size.width - 40, urgent ? 292 : 268)
+        let banner = SKShapeNode(rectOf: CGSize(width: width, height: 34), cornerRadius: 8)
+        banner.position = CGPoint(x: size.width / 2, y: size.height * 0.68)
+        banner.fillColor = SKColor.black.withAlphaComponent(0.72)
+        banner.strokeColor = SKColor.red.withAlphaComponent(urgent ? 0.92 : 0.68)
+        banner.lineWidth = urgent ? 2.2 : 1.6
+        banner.glowWidth = urgent ? 8 : 4
+        banner.zPosition = 150
+        floatingTextNode.addChild(banner)
+
+        let label = SKLabelNode(fontNamed: "AvenirNext-Heavy")
+        label.text = urgent ? "CHANGE LANES NOW" : "MOVE - POLICE CLOSING"
+        label.fontSize = urgent ? 19 : 17
+        label.fontColor = urgent ? UITheme.Color.gold : palette.accent
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode = .center
+        label.position = .zero
+        fitLabel(label, maxWidth: width - 20)
+        banner.addChild(label)
+
+        let pop = SKAction.sequence([.scale(to: 1.06, duration: 0.08), .scale(to: 1, duration: 0.1)])
+        let hold = SKAction.wait(forDuration: urgent ? 0.72 : 0.56)
+        banner.run(.sequence([pop, hold, .fadeOut(withDuration: 0.18), .removeFromParent()]))
     }
 
     private func updateDynamicAudioAndAtmosphere() {
@@ -3096,7 +3166,7 @@ final class GameScene: SKScene {
 
         let pressureRange = max(1, maxPoliceGap - minPoliceGap)
         let pressure = max(0, min(1, (maxPoliceGap - policeGap) / pressureRange))
-        let wantedPressure = min(1, pressure + CGFloat(wantedLevel - 1) * 0.08)
+        let wantedPressure = min(1, max(pressure, passivePolicePressure * 0.65) + CGFloat(wantedLevel - 1) * 0.08)
         AudioManager.shared.setPoliceIntensity(wantedPressure)
         AudioManager.shared.setDangerIntensity(wantedPressure)
         AtmosphereManager.shared.setDangerPulse(wantedPressure)
@@ -3114,7 +3184,15 @@ final class GameScene: SKScene {
         } else {
             computedLevel = min(6, 1 + Int(runTime / 24))
         }
-        let newLevel = max(wantedLevel, computedLevel)
+        let passiveWantedLevel: Int
+        if timeSinceLastLaneChange >= 5.5 {
+            passiveWantedLevel = 3
+        } else if timeSinceLastLaneChange >= 3.5 {
+            passiveWantedLevel = 2
+        } else {
+            passiveWantedLevel = 1
+        }
+        let newLevel = max(wantedLevel, computedLevel, passiveWantedLevel)
         guard newLevel != wantedLevel else { return }
 
         wantedLevel = newLevel

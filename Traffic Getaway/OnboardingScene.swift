@@ -30,6 +30,7 @@ final class OnboardingScene: SKScene {
     private weak var promptLabel: SKLabelNode?
     private var safeAreaInsets = UIEdgeInsets.zero
     private var didRenderVisibleFrame = false
+    private var hasObservedFirstUpdate = false
     private var stepPresentedAt: TimeInterval?
     private var currentSceneTime: TimeInterval = 0
     private var lastCanAdvance = false
@@ -114,7 +115,9 @@ final class OnboardingScene: SKScene {
 
     override func update(_ currentTime: TimeInterval) {
         currentSceneTime = currentTime
-        if !didRenderVisibleFrame {
+        if !hasObservedFirstUpdate {
+            hasObservedFirstUpdate = true
+        } else if !didRenderVisibleFrame {
             didRenderVisibleFrame = true
             stepPresentedAt = currentTime
         }
@@ -132,6 +135,7 @@ final class OnboardingScene: SKScene {
         actionComplete = steps[stepIndex].interaction == .none
         trainingLane = 5
         trainingCombo = 0
+        hasObservedFirstUpdate = false
         didRenderVisibleFrame = false
         stepPresentedAt = nil
         lastCanAdvance = false
@@ -454,6 +458,7 @@ final class OnboardingScene: SKScene {
             stepIndex = max(0, stepIndex - 1)
             buildStep()
         case "onboarding.start":
+            guard canAdvanceCurrentStep else { return }
             completeOnboarding()
         case "onboarding.skip":
             completeOnboarding()
@@ -524,6 +529,7 @@ final class OnboardingScene: SKScene {
 
     private func showPop(_ text: String, color: SKColor) {
         let label = UIHelpers.label(text, size: 22, color: color, width: size.width - 44)
+        label.zPosition = 26
         label.position = CGPoint(x: size.width / 2, y: size.height * 0.45 + 92)
         contentNode.addChild(label)
         label.run(.sequence([
