@@ -42,43 +42,43 @@ final class SettingsScene: SKScene {
         contentNode.addChild(title)
 
         let panelWidth = min(size.width - 30, 370)
-        let panel = UIHelpers.panel(size: CGSize(width: panelWidth, height: min(size.height - 150, 620)), stroke: SKColor.cyan.withAlphaComponent(0.75))
+        let panel = UIHelpers.panel(size: CGSize(width: panelWidth, height: min(size.height - 116, 690)), stroke: SKColor.cyan.withAlphaComponent(0.75))
         panel.position = CGPoint(x: size.width / 2, y: size.height / 2 + 12)
         contentNode.addChild(panel)
 
         let topY = panel.position.y + panel.frame.height / 2 - 54
         addSlider(title: "MUSIC VOLUME", value: AudioManager.shared.musicVolume, y: topY, isMusic: true, width: panelWidth - 70)
-        addSlider(title: "SFX VOLUME", value: AudioManager.shared.sfxVolume, y: topY - 62, isMusic: false, width: panelWidth - 70)
+        addSlider(title: "SFX VOLUME", value: AudioManager.shared.sfxVolume, y: topY - 58, isMusic: false, width: panelWidth - 70)
 
-        var y = topY - 124
+        var y = topY - 112
         addToggle(title: "MUSIC", value: AudioManager.shared.isMusicEnabled, name: "settings.music.toggle", y: y)
-        y -= 42
+        y -= 37
         addToggle(title: "SFX", value: AudioManager.shared.isSFXEnabled, name: "settings.sfx.toggle", y: y)
-        y -= 42
+        y -= 37
         addToggle(title: "HAPTICS", value: AudioManager.shared.isHapticsEnabled, name: "settings.haptics.toggle", y: y)
-        y -= 42
+        y -= 37
         addToggle(title: "SCREEN SHAKE", value: SaveManager.shared.data.screenShakeEnabled, name: "settings.shake.toggle", y: y)
-        y -= 42
+        y -= 37
         addToggle(title: "REDUCED FLASHING", value: SaveManager.shared.data.reducedFlashingEnabled, name: "settings.flash.toggle", y: y)
-        y -= 42
+        y -= 37
         addToggle(title: "LARGER HUD", value: SaveManager.shared.data.largerHUDTextEnabled, name: "settings.hudsize.toggle", y: y)
-        y -= 42
+        y -= 37
         addToggle(title: "HIGH CONTRAST HUD", value: SaveManager.shared.data.highContrastHUDEnabled, name: "settings.contrast.toggle", y: y)
-        y -= 48
+        y -= 42
         addControlPreference(y: y, width: panelWidth - 70)
 
-        let bottomY = max(62, panel.position.y - panel.frame.height / 2 + 36)
-        let replay = UIHelpers.button(text: "REPLAY ONBOARDING", name: "settings.onboarding", size: CGSize(width: panelWidth - 70, height: 34), fill: SKColor.magenta.withAlphaComponent(0.16), stroke: .magenta)
-        replay.position = CGPoint(x: size.width / 2, y: bottomY + 126)
+        let bottomY = max(70, panel.position.y - panel.frame.height / 2 + 34)
+        let replay = UIHelpers.button(text: "REPLAY TUTORIAL", name: "settings.onboarding", size: CGSize(width: panelWidth - 70, height: 32), fill: SKColor.magenta.withAlphaComponent(0.16), stroke: .magenta)
+        replay.position = CGPoint(x: size.width / 2, y: bottomY + 112)
         contentNode.addChild(replay)
 
         let infoWidth = (panelWidth - 82) / 3
-        addSmallButton(text: "CREDITS", name: "settings.credits", x: size.width / 2 - infoWidth - 8, y: bottomY + 82, width: infoWidth)
-        addSmallButton(text: "PRIVACY", name: "settings.privacy", x: size.width / 2, y: bottomY + 82, width: infoWidth)
-        addSmallButton(text: "SUPPORT", name: "settings.support", x: size.width / 2 + infoWidth + 8, y: bottomY + 82, width: infoWidth)
+        addSmallButton(text: "CREDITS", name: "settings.credits", x: size.width / 2 - infoWidth - 8, y: bottomY + 74, width: infoWidth)
+        addSmallButton(text: "PRIVACY", name: "settings.privacy", x: size.width / 2, y: bottomY + 74, width: infoWidth)
+        addSmallButton(text: "SUPPORT", name: "settings.support", x: size.width / 2 + infoWidth + 8, y: bottomY + 74, width: infoWidth)
 
         let reset = UIHelpers.button(text: "RESET SAVE DATA", name: "settings.reset", size: CGSize(width: panelWidth - 70, height: 34), fill: SKColor.red.withAlphaComponent(0.18), stroke: .red)
-        reset.position = CGPoint(x: size.width / 2, y: bottomY + 38)
+        reset.position = CGPoint(x: size.width / 2, y: bottomY + 34)
         contentNode.addChild(reset)
 
         let back = UIHelpers.button(text: "BACK", name: "settings.back", size: CGSize(width: 124, height: 38), fill: SKColor.white.withAlphaComponent(0.12), stroke: .white)
@@ -237,7 +237,7 @@ final class SettingsScene: SKScene {
             buildSettings()
         case "settings.onboarding":
             isTransitioning = true
-            UIHelpers.present(OnboardingScene(size: size), from: self)
+            UIHelpers.present(TutorialScene(size: size), from: self)
         case "settings.reset":
             showResetConfirmation()
         case "settings.credits":

@@ -7,6 +7,8 @@ final class ResultsScene: SKScene {
     private var doubleCashClaimed = false
     private var isDoublingCash = false
     private var isTransitioning = false
+    private var inputEnabledAt: TimeInterval = 0
+    private var resultTouchIDs = Set<ObjectIdentifier>()
 
     init(size: CGSize, result: ProgressionResult) {
         self.result = result
@@ -31,6 +33,8 @@ final class ResultsScene: SKScene {
         removeAllChildren()
         contentNode.removeAllChildren()
         overlayNode.removeAllChildren()
+        resultTouchIDs.removeAll()
+        inputEnabledAt = CACurrentMediaTime() + 0.45
         addChild(contentNode)
         addChild(overlayNode)
         overlayNode.zPosition = 100
@@ -91,8 +95,8 @@ final class ResultsScene: SKScene {
         addStaticRow(title: "Wanted Level", value: bikeRun ? "MOTO \(result.runStats.wantedLevelReached)" : "\(result.runStats.wantedLevelReached)", y: rowY - 238 - offset)
 
         addProgressionSummary(y: rowY - 282 - offset, width: panelSize.width - 40)
-        addUpdateSummary(y: rowY - 376 - offset, width: panelSize.width - 40)
-        addNextUnlockPreview(y: max(186, rowY - 448 - offset), width: panelSize.width - 40)
+        addUpdateSummary(y: rowY - 360 - offset, width: panelSize.width - 40)
+        addNextUnlockPreview(y: max(204, rowY - 430 - offset), width: panelSize.width - 40)
 
         let doubleCash = UIHelpers.button(
             text: doubleCashClaimed ? "CASH DOUBLED" : "DOUBLE CASH",
@@ -237,9 +241,9 @@ final class ResultsScene: SKScene {
             lines.append("Missions and daily challenge ready on Main Menu")
         }
 
-        for (index, line) in lines.prefix(3).enumerated() {
-            let label = UIHelpers.bodyLabel(line, size: 12, color: SKColor(white: 0.82, alpha: 1), width: width)
-            label.position = CGPoint(x: size.width / 2, y: y - CGFloat(index) * 20)
+        for (index, line) in lines.prefix(2).enumerated() {
+            let label = UIHelpers.bodyLabel(line, size: 11, color: SKColor(white: 0.82, alpha: 1), width: width)
+            label.position = CGPoint(x: size.width / 2, y: y - CGFloat(index) * 18)
             contentNode.addChild(label)
         }
     }
@@ -304,8 +308,23 @@ final class ResultsScene: SKScene {
         }
     }
 
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard CACurrentMediaTime() >= inputEnabledAt, !isTransitioning, !isDoublingCash else { return }
+        for touch in touches {
+            resultTouchIDs.insert(ObjectIdentifier(touch))
+        }
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        for touch in touches {
+            resultTouchIDs.remove(ObjectIdentifier(touch))
+        }
+    }
+
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard !isTransitioning, !isDoublingCash,
+        guard CACurrentMediaTime() >= inputEnabledAt, !isTransitioning, !isDoublingCash,
+              let touch = touches.first,
+              resultTouchIDs.remove(ObjectIdentifier(touch)) != nil,
               let location = touches.first?.location(in: self),
               let name = UIHelpers.nodeName(at: location, in: self) else { return }
 

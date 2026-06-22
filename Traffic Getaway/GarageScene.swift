@@ -298,7 +298,7 @@ final class GarageScene: SKScene {
                 ("Handling", car.handling),
                 ("Fragility", 1.35 - car.collisionWidthMultiplier),
                 ("Combo", car.scoreMultiplier),
-                ("Police", car.policeResistance)
+                ("Heat", car.policeResistance)
             ]
         } else {
             stats = [
@@ -306,7 +306,7 @@ final class GarageScene: SKScene {
                 ("Dodge", car.dodgeBoost),
                 ("Cash", car.cashMultiplier),
                 ("Score", car.scoreMultiplier),
-                ("Police", car.policeResistance)
+                ("Heat", car.policeResistance)
             ]
         }
 

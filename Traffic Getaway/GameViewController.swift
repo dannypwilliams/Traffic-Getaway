@@ -37,7 +37,7 @@ final class GameViewController: UIViewController {
         hasPresentedInitialScene = true
         let shouldShowOnboarding = AppConfig.forceOnboarding || !SaveManager.shared.data.hasCompletedOnboarding
         let sceneSize = skView.bounds.size
-        let scene: SKScene = shouldShowOnboarding ? OnboardingScene(size: sceneSize) : MainMenuScene(size: sceneSize)
+        let scene: SKScene = shouldShowOnboarding ? TutorialScene(size: sceneSize) : MainMenuScene(size: sceneSize)
         scene.scaleMode = .resizeFill
         skView.presentScene(scene)
     }

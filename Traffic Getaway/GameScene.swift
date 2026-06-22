@@ -176,7 +176,6 @@ final class GameScene: SKScene {
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let wantedLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let distanceLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
-    private let cashLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
     private let performanceDebugLabel = SKLabelNode(fontNamed: "Menlo-Bold")
     private let scorePanel = SKShapeNode()
     private let comboMeterBack = SKShapeNode()
@@ -291,9 +290,6 @@ final class GameScene: SKScene {
     private var activeHoldDirection = 0
     private var holdTimer: TimeInterval = 0
     private var holdActivated = false
-    private var timeSinceLastLaneChange: TimeInterval = 0
-    private var passivePressureWarningCooldown: TimeInterval = 0
-    private var passivePressureAlertShown = false
 
     init(size: CGSize, mode: GameMode = .storyChase, level: LevelDefinition? = nil) {
         self.gameMode = mode
@@ -873,7 +869,7 @@ final class GameScene: SKScene {
             addChild(scorePanel)
         }
 
-        let labels: [SKLabelNode] = [scoreLabel, comboLabel, wantedLabel, distanceLabel, cashLabel]
+        let labels: [SKLabelNode] = [scoreLabel, comboLabel, wantedLabel, distanceLabel]
         for label in labels {
             label.horizontalAlignmentMode = .center
             label.verticalAlignmentMode = .center
@@ -888,16 +884,14 @@ final class GameScene: SKScene {
         let largerHUD = SaveManager.shared.data.largerHUDTextEnabled
         let highContrastHUD = SaveManager.shared.data.highContrastHUDEnabled
         let scale: CGFloat = largerHUD ? 1.16 : 1
-        scoreLabel.fontSize = 21 * scale
+        scoreLabel.fontSize = 17 * scale
         scoreLabel.fontColor = highContrastHUD ? .white : .white
-        comboLabel.fontSize = 15 * scale
+        comboLabel.fontSize = 13 * scale
         comboLabel.fontColor = highContrastHUD ? SKColor(red: 0.55, green: 1, blue: 0.55, alpha: 1) : SKColor(red: 0.35, green: 1, blue: 0.42, alpha: 1)
-        wantedLabel.fontSize = 16 * scale
+        wantedLabel.fontSize = 13 * scale
         wantedLabel.fontColor = highContrastHUD ? SKColor(red: 1, green: 0.95, blue: 0.15, alpha: 1) : SKColor(red: 1, green: 0.24, blue: 0.2, alpha: 1)
-        distanceLabel.fontSize = 12 * scale
+        distanceLabel.fontSize = 11 * scale
         distanceLabel.fontColor = highContrastHUD ? .white : SKColor(white: 0.86, alpha: 1)
-        cashLabel.fontSize = 12 * scale
-        cashLabel.fontColor = highContrastHUD ? SKColor(red: 1, green: 1, blue: 0.25, alpha: 1) : SKColor(red: 1, green: 0.86, blue: 0.25, alpha: 1)
 
         comboMeterBack.zPosition = 90
         comboMeterBack.fillColor = SKColor.black.withAlphaComponent(0.45)
@@ -920,21 +914,20 @@ final class GameScene: SKScene {
     }
 
     private func layoutScoreLabel() {
-        let panelWidth = min(size.width - 20, 356)
-        let topY = size.height - 58
+        let panelWidth = min(size.width - 38, 318)
+        let topY = size.height - 44
         scorePanel.position = CGPoint(x: size.width / 2, y: topY)
         scorePanel.path = CGPath(
-            roundedRect: CGRect(x: -panelWidth / 2, y: -42, width: panelWidth, height: 84),
+            roundedRect: CGRect(x: -panelWidth / 2, y: -30, width: panelWidth, height: 60),
             cornerWidth: 8,
             cornerHeight: 8,
             transform: nil
         )
 
-        scoreLabel.position = CGPoint(x: size.width / 2, y: topY + 20)
-        wantedLabel.position = CGPoint(x: size.width / 2, y: topY - 3)
-        comboLabel.position = CGPoint(x: size.width / 2, y: topY - 24)
-        distanceLabel.position = CGPoint(x: size.width / 2 - panelWidth * 0.32, y: topY - 24)
-        cashLabel.position = CGPoint(x: size.width / 2 + panelWidth * 0.32, y: topY - 24)
+        scoreLabel.position = CGPoint(x: size.width / 2, y: topY + 15)
+        wantedLabel.position = CGPoint(x: size.width / 2 - panelWidth * 0.3, y: topY - 13)
+        distanceLabel.position = CGPoint(x: size.width / 2 + panelWidth * 0.3, y: topY - 13)
+        comboLabel.position = CGPoint(x: size.width / 2, y: topY - 13)
         updateComboMeterPath()
     }
 
@@ -944,7 +937,6 @@ final class GameScene: SKScene {
         comboLabel.isHidden = !visible
         wantedLabel.isHidden = !visible
         distanceLabel.isHidden = !visible
-        cashLabel.isHidden = !visible
         comboMeterBack.isHidden = !visible || comboCount == 0
         comboMeterFill.isHidden = !visible || comboCount == 0
     }
@@ -953,15 +945,23 @@ final class GameScene: SKScene {
         let palette = palette(for: currentCity)
         scoreLabel.text = "SCORE \(score)"
         wantedLabel.text = wantedLevel >= 6 ? "ELITE PURSUIT \(wantedStars)" : "WANTED \(wantedStars)"
-        distanceLabel.text = "\(currentWorld.stageCode)  DIST \(Int(runDistance))"
-        cashLabel.text = "$\(runCash)"
+        if exitPhase == .active, let activeExitSide {
+            distanceLabel.text = "\(currentWorld.stageCode)  EXIT \(activeExitSide.displayName)"
+        } else if let currentLevel, gameMode == .storyChase {
+            let remaining = max(0, currentLevel.durationBeforeExit - runTime)
+            distanceLabel.text = "\(currentWorld.stageCode)  EXIT \(Int(ceil(remaining)))s"
+        } else {
+            distanceLabel.text = "\(currentWorld.stageCode)  DIST \(Int(runDistance))"
+        }
 
         if comboCount > 0 {
             comboLabel.text = "NEAR MISS x\(comboCount)  \(String(format: "%.1fx", scoreMultiplier))"
+            comboLabel.isHidden = false
             comboMeterBack.isHidden = false
             comboMeterFill.isHidden = false
         } else {
-            comboLabel.text = "COMBO READY"
+            comboLabel.text = ""
+            comboLabel.isHidden = true
             comboMeterBack.isHidden = true
             comboMeterFill.isHidden = true
         }
@@ -975,10 +975,10 @@ final class GameScene: SKScene {
     private func updateComboMeterPath() {
         guard comboMeterBack.parent != nil else { return }
 
-        let panelWidth = min(size.width - 20, 356)
-        let meterWidth = min(170, panelWidth * 0.44)
+        let panelWidth = min(size.width - 38, 318)
+        let meterWidth = min(132, panelWidth * 0.42)
         let progress = comboCount > 0 ? CGFloat(comboTimer / comboDuration) : 0
-        let y = scorePanel.position.y - 38
+        let y = scorePanel.position.y - 29
         let x = size.width / 2 - meterWidth / 2
 
         comboMeterBack.path = CGPath(
@@ -1047,7 +1047,7 @@ final class GameScene: SKScene {
         roadSpeed = 330
         trafficSpeed = 275
         spawnInterval = 1.08
-        spawnTimer = 0.45
+        spawnTimer = currentLevel?.levelID == "la_01" ? -0.72 : 0.45
         difficultyTimer = 0
         lastUpdateTime = 0
         smokeTimer = 0
@@ -1094,9 +1094,6 @@ final class GameScene: SKScene {
         activeHoldDirection = 0
         holdTimer = 0
         holdActivated = false
-        timeSinceLastLaneChange = 0
-        passivePressureWarningCooldown = 0
-        passivePressureAlertShown = false
         policeClosingSpeed = 3.4
         policeGap = maxPoliceGap
         currentWorld = currentLevel?.worldTheme ?? WorldThemeCatalog.endlessTheme(score: score)
@@ -1132,7 +1129,7 @@ final class GameScene: SKScene {
         guard gameState == .playing else { return }
         guard invulnerabilityTimer <= 0 else { return }
 
-        AnalyticsManager.shared.crash(reason: reason, score: score, distance: Int(runDistance))
+        AnalyticsManager.shared.crash(reason: reason, score: score, distance: Int(runDistance), timeSurvived: runTime)
 
         if reason != "missed_exit", !reviveUsed {
             showReviveOffer(crashPoint: crashPoint, reason: reason)
@@ -1969,10 +1966,7 @@ final class GameScene: SKScene {
         let previousSlot = playerSlot
         let nextLane = laneManager.nearestLaneForSlot(nextSlot)
         let clutchRisk = clutchRiskForLaneChange(from: previousLane, to: nextLane)
-        let idleBeforeMove = timeSinceLastLaneChange
         setPlayerSlot(nextSlot)
-        timeSinceLastLaneChange = 0
-        passivePressureAlertShown = false
         AudioManager.shared.play(.laneChange, volume: 0.62, cooldown: 0.05)
         if AudioManager.shared.isHapticsEnabled {
             let baseIntensity: CGFloat = activeCar.vehicleClass == .motorcycle ? 0.34 : 0.48
@@ -1984,7 +1978,6 @@ final class GameScene: SKScene {
         if clutchRisk > 0.55 {
             triggerClutchSave(risk: clutchRisk, at: CGPoint(x: laneManager.xPositionForSlot(playerSlot), y: playerY + 58))
         }
-        easePassivePolicePressureAfterLaneChange(idleTime: idleBeforeMove, laneDelta: readableDelta)
         if activeCar.vehicleClass == .motorcycle, laneManager.isSplitSlot(previousSlot) != laneManager.isSplitSlot(playerSlot) {
             emitBikeSlotStreak(direction: readableDelta > 0 ? 1 : -1)
         }
@@ -2303,8 +2296,6 @@ final class GameScene: SKScene {
 
         let deltaTime = rawDeltaTime
         runTime += TimeInterval(rawDeltaTime)
-        timeSinceLastLaneChange += TimeInterval(rawDeltaTime)
-        passivePressureWarningCooldown = max(0, passivePressureWarningCooldown - TimeInterval(rawDeltaTime))
         warningHapticCooldown = max(0, warningHapticCooldown - TimeInterval(rawDeltaTime))
         dodgeBoostTimer = max(0, dodgeBoostTimer - TimeInterval(rawDeltaTime))
         clutchSaveCooldown = max(0, clutchSaveCooldown - TimeInterval(rawDeltaTime))
@@ -2334,7 +2325,6 @@ final class GameScene: SKScene {
         updatePoliceSupport(deltaTime: deltaTime)
         updateHelicopter(deltaTime: TimeInterval(rawDeltaTime))
         updatePoliceWarning()
-        updatePassivePolicePressureCues()
         updateDynamicAudioAndAtmosphere()
         updateCameraJuice(deltaTime: deltaTime)
         applyScreenshotMode()
@@ -2532,6 +2522,7 @@ final class GameScene: SKScene {
         )
 
         AudioManager.shared.play(.cityTransition, volume: 0.86, cooldown: 0.4)
+        AnalyticsManager.shared.exitAppeared(levelID: currentLevel?.levelID, side: side, emergency: isEmergency)
         if AudioManager.shared.isHapticsEnabled {
             warningHaptic.impactOccurred(intensity: isEmergency ? 0.9 : 0.68)
             warningHaptic.prepare()
@@ -2709,7 +2700,8 @@ final class GameScene: SKScene {
     }
 
     private func clearExitApproach(side: ExitSide) {
-        let protectedLanes = laneManager.exitGuardLanes(for: side)
+        var protectedLanes = laneManager.exitGuardLanes(for: side)
+        protectedLanes.formUnion(starterExitLearningLanes(for: side))
         let safetyGap = currentLevel.map { LevelDifficultyConfig.snapshot(for: $0, elapsed: runTime, exitActive: true).exitSafetyGap } ?? 360
         for node in trafficNode.children {
             guard let vehicle = node as? SKSpriteNode,
@@ -2732,6 +2724,7 @@ final class GameScene: SKScene {
         exitPhase = .missed
         exitNode.removeAllChildren()
         buddy.say(.missedExit, force: true)
+        AnalyticsManager.shared.exitMissed(levelID: currentLevel?.levelID, time: runTime)
         wantedLevel = min(6, wantedLevel + 1)
         highestWantedLevel = max(highestWantedLevel, wantedLevel)
         policeGap = max(minPoliceGap, policeGap - 42)
@@ -2761,6 +2754,7 @@ final class GameScene: SKScene {
         warningPulseActive = false
         AudioManager.shared.quietDangerLayers()
         AudioManager.shared.play(.powerUp, volume: 0.95, cooldown: 0.1)
+        AnalyticsManager.shared.exitReached(levelID: currentLevel?.levelID, time: runTime)
         buddy.say(.levelComplete, force: true)
         if AudioManager.shared.isHapticsEnabled {
             crashHaptic.notificationOccurred(.success)
@@ -2846,6 +2840,7 @@ final class GameScene: SKScene {
         var protectedLanes = reservedEscapeLanes()
         if exitPhase == .active, let side = activeExitSide {
             protectedLanes.formUnion(laneManager.exitGuardLanes(for: side))
+            protectedLanes.formUnion(starterExitLearningLanes(for: side))
         }
         var protectedSlots = Set(protectedLanes.map { $0 * 2 })
         if exitPhase == .active, let side = activeExitSide {
@@ -2857,6 +2852,8 @@ final class GameScene: SKScene {
             playerLane: playerLane,
             playerSlot: playerSlot,
             vehicleClass: activeCar.vehicleClass,
+            levelID: currentLevel?.levelID,
+            runTime: runTime,
             density: currentTrafficDensity(),
             wantedLevel: wantedLevel,
             city: currentCity,
@@ -2878,7 +2875,7 @@ final class GameScene: SKScene {
         }
 
         latestTrafficPlan = plan
-        if plan.occupiedLanes.count >= 7 {
+        if runTime < 11 && plan.occupiedLanes.count >= 7 {
             buddy.say(.trafficWarning, force: false)
         }
 
@@ -2890,6 +2887,14 @@ final class GameScene: SKScene {
     }
 
     private func reservedEscapeLanes() -> Set<Int> {
+        if currentLevel?.levelID == "la_01" {
+            var lanes = Set((playerLane - 2...playerLane + 2).map(laneManager.clampedLane))
+            if exitPhase == .active, let activeExitSide {
+                lanes.formUnion(starterExitLearningLanes(for: activeExitSide))
+            }
+            return lanes
+        }
+
         var candidates: [Int] = []
         let nearPlayer = [playerLane - 1, playerLane, playerLane + 1].map(laneManager.clampedLane)
         candidates.append(contentsOf: nearPlayer)
@@ -2899,6 +2904,14 @@ final class GameScene: SKScene {
         candidates.append(randomStart + 1)
 
         return Set(candidates.prefix(currentTrafficDensity() < 0.82 ? 3 : 2))
+    }
+
+    private func starterExitLearningLanes(for side: ExitSide) -> Set<Int> {
+        guard currentLevel?.levelID == "la_01" else { return [] }
+        let edgeLane = side == .left ? 0 : laneCount - 1
+        let lower = min(playerLane, edgeLane)
+        let upper = max(playerLane, edgeLane)
+        return Set(lower...upper)
     }
 
     private func recentBlockedLanes() -> Set<Int> {
@@ -3041,7 +3054,11 @@ final class GameScene: SKScene {
     }
 
     private func randomVehicleType() -> VehicleType {
-        currentWorld.trafficPool(wantedLevel: wantedLevel).randomElement() ?? .sedan
+        if currentLevel?.levelID == "la_01" && runTime < 32 {
+            return [.compact, .sedan, .sedan, .sportCoupe].randomElement() ?? .sedan
+        }
+
+        return currentWorld.trafficPool(wantedLevel: wantedLevel).randomElement() ?? .sedan
     }
 
     private func randomTrafficSpeed(for type: VehicleType) -> CGFloat {
@@ -3061,8 +3078,7 @@ final class GameScene: SKScene {
 
         let resistance = max(0.92, min(1.18, activeCar.policeResistance))
         let worldPressure = max(0.92, min(1.12, currentWorld.policePressureMultiplier))
-        let passiveMultiplier = 1 + passivePolicePressure * 1.42
-        policeGap = max(minPoliceGap, policeGap - (policeClosingSpeed * worldPressure * passiveMultiplier / resistance) * deltaTime)
+        policeGap = max(minPoliceGap, policeGap - (policeClosingSpeed * worldPressure / resistance) * deltaTime)
 
         let targetX = slotCenters.indices.contains(playerSlot) ? slotCenters[playerSlot] : playerCar.position.x
         let followAmount = min(1, deltaTime * 5.4)
@@ -3078,24 +3094,9 @@ final class GameScene: SKScene {
         policeGap = min(maxPoliceGap, policeGap + 18)
     }
 
-    private var passivePolicePressure: CGFloat {
-        guard runTime >= 2 else { return 0 }
-        let passiveSeconds = max(0, timeSinceLastLaneChange - 2.0)
-        return max(0, min(1, CGFloat(passiveSeconds / 4.0)))
-    }
-
-    private func easePassivePolicePressureAfterLaneChange(idleTime: TimeInterval, laneDelta: Int) {
-        guard idleTime >= 1.6 else { return }
-        let laneDistance = CGFloat(max(1, abs(laneDelta)))
-        let relief = min(10, 3 + laneDistance * 1.4)
-        policeGap = min(maxPoliceGap, policeGap + relief)
-    }
-
     private func updatePoliceWarning() {
         let warningGap = minPoliceGap + 48
-        let gapPressure = max(0, min(1, (warningGap - policeGap) / max(1, warningGap - minPoliceGap)))
-        let pressure = max(gapPressure, passivePolicePressure * 0.78)
-        let shouldPulse = (policeGap <= warningGap || passivePolicePressure >= 0.72) && gameState == .playing
+        let shouldPulse = policeGap <= warningGap && gameState == .playing
 
         if shouldPulse && !warningPulseActive {
             warningPulseActive = true
@@ -3110,51 +3111,10 @@ final class GameScene: SKScene {
         }
 
         guard shouldPulse, warningHapticCooldown == 0, AudioManager.shared.isHapticsEnabled else { return }
+        let pressure = max(0, min(1, (warningGap - policeGap) / max(1, warningGap - minPoliceGap)))
         warningHaptic.impactOccurred(intensity: 0.35 + pressure * 0.45)
         warningHaptic.prepare()
         warningHapticCooldown = 1.1
-    }
-
-    private func updatePassivePolicePressureCues() {
-        let pressure = passivePolicePressure
-        guard pressure >= 0.45 else {
-            if timeSinceLastLaneChange < 1.2 {
-                passivePressureAlertShown = false
-            }
-            return
-        }
-
-        guard !passivePressureAlertShown || passivePressureWarningCooldown == 0 else { return }
-        showPassivePoliceAlert(urgent: pressure >= 0.82)
-        passivePressureAlertShown = true
-        passivePressureWarningCooldown = pressure >= 0.82 ? 2.1 : 3.2
-    }
-
-    private func showPassivePoliceAlert(urgent: Bool) {
-        let palette = palette(for: currentCity)
-        let width = min(size.width - 40, urgent ? 292 : 268)
-        let banner = SKShapeNode(rectOf: CGSize(width: width, height: 34), cornerRadius: 8)
-        banner.position = CGPoint(x: size.width / 2, y: size.height * 0.68)
-        banner.fillColor = SKColor.black.withAlphaComponent(0.72)
-        banner.strokeColor = SKColor.red.withAlphaComponent(urgent ? 0.92 : 0.68)
-        banner.lineWidth = urgent ? 2.2 : 1.6
-        banner.glowWidth = urgent ? 8 : 4
-        banner.zPosition = 150
-        floatingTextNode.addChild(banner)
-
-        let label = SKLabelNode(fontNamed: "AvenirNext-Heavy")
-        label.text = urgent ? "CHANGE LANES NOW" : "MOVE - POLICE CLOSING"
-        label.fontSize = urgent ? 19 : 17
-        label.fontColor = urgent ? UITheme.Color.gold : palette.accent
-        label.horizontalAlignmentMode = .center
-        label.verticalAlignmentMode = .center
-        label.position = .zero
-        fitLabel(label, maxWidth: width - 20)
-        banner.addChild(label)
-
-        let pop = SKAction.sequence([.scale(to: 1.06, duration: 0.08), .scale(to: 1, duration: 0.1)])
-        let hold = SKAction.wait(forDuration: urgent ? 0.72 : 0.56)
-        banner.run(.sequence([pop, hold, .fadeOut(withDuration: 0.18), .removeFromParent()]))
     }
 
     private func updateDynamicAudioAndAtmosphere() {
@@ -3166,7 +3126,7 @@ final class GameScene: SKScene {
 
         let pressureRange = max(1, maxPoliceGap - minPoliceGap)
         let pressure = max(0, min(1, (maxPoliceGap - policeGap) / pressureRange))
-        let wantedPressure = min(1, max(pressure, passivePolicePressure * 0.65) + CGFloat(wantedLevel - 1) * 0.08)
+        let wantedPressure = min(1, pressure + CGFloat(wantedLevel - 1) * 0.08)
         AudioManager.shared.setPoliceIntensity(wantedPressure)
         AudioManager.shared.setDangerIntensity(wantedPressure)
         AtmosphereManager.shared.setDangerPulse(wantedPressure)
@@ -3184,15 +3144,7 @@ final class GameScene: SKScene {
         } else {
             computedLevel = min(6, 1 + Int(runTime / 24))
         }
-        let passiveWantedLevel: Int
-        if timeSinceLastLaneChange >= 5.5 {
-            passiveWantedLevel = 3
-        } else if timeSinceLastLaneChange >= 3.5 {
-            passiveWantedLevel = 2
-        } else {
-            passiveWantedLevel = 1
-        }
-        let newLevel = max(wantedLevel, computedLevel, passiveWantedLevel)
+        let newLevel = max(wantedLevel, computedLevel)
         guard newLevel != wantedLevel else { return }
 
         wantedLevel = newLevel
@@ -3539,9 +3491,16 @@ final class GameScene: SKScene {
         }
 
         eventCooldown -= deltaTime
+        guard !shouldSuppressRoadEventsForLearning() else { return }
         guard runTime > 18, eventCooldown <= 0 else { return }
         let event = RoadEventType.allCases.randomElement() ?? .trafficJam
         startRoadEvent(event)
+    }
+
+    private func shouldSuppressRoadEventsForLearning() -> Bool {
+        guard currentLevel?.levelID == "la_01" else { return false }
+        guard exitPhase != .completed else { return false }
+        return true
     }
 
     private func startRoadEvent(_ event: RoadEventType) {

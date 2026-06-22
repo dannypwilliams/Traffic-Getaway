@@ -20,6 +20,7 @@
 		2A6D080B2C21A00100A00001 /* LevelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D081B2C21A00100A00001 /* LevelData.swift */; };
 		2A6D0B002C21A00100A00001 /* BuddyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B102C21A00100A00001 /* BuddyManager.swift */; };
 		2A6D0B012C21A00100A00001 /* VehicleRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B112C21A00100A00001 /* VehicleRenderer.swift */; };
+		2A6D0F002C21A00100A00001 /* VehicleArtCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0F102C21A00100A00001 /* VehicleArtCatalog.swift */; };
 		2A6D0B022C21A00100A00001 /* LevelDifficultyConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B122C21A00100A00001 /* LevelDifficultyConfig.swift */; };
 		2A6D0B032C21A00100A00001 /* TrafficPatternGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */; };
 		2A6D0B052C21A00100A00001 /* TrafficSafetyAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0B152C21A00100A00001 /* TrafficSafetyAnalyzer.swift */; };
@@ -40,6 +41,7 @@
 		2A6D09012C21A00100A00001 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09112C21A00100A00001 /* AnalyticsManager.swift */; };
 		2A6D09022C21A00100A00001 /* MonetizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09122C21A00100A00001 /* MonetizationManager.swift */; };
 		2A6D09032C21A00100A00001 /* OnboardingScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09132C21A00100A00001 /* OnboardingScene.swift */; };
+		2A6D09072C21A00100A00001 /* TutorialScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09172C21A00100A00001 /* TutorialScene.swift */; };
 		2A6D09042C21A00100A00001 /* SettingsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09142C21A00100A00001 /* SettingsScene.swift */; };
 		2A6D09052C21A00100A00001 /* StoreScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09152C21A00100A00001 /* StoreScene.swift */; };
 		2A6D09062C21A00100A00001 /* DebugBalanceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */; };
@@ -65,6 +67,7 @@
 		2A6D081B2C21A00100A00001 /* LevelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelData.swift; sourceTree = "<group>"; };
 		2A6D0B102C21A00100A00001 /* BuddyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuddyManager.swift; sourceTree = "<group>"; };
 		2A6D0B112C21A00100A00001 /* VehicleRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleRenderer.swift; sourceTree = "<group>"; };
+		2A6D0F102C21A00100A00001 /* VehicleArtCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleArtCatalog.swift; sourceTree = "<group>"; };
 		2A6D0B122C21A00100A00001 /* LevelDifficultyConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelDifficultyConfig.swift; sourceTree = "<group>"; };
 		2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficPatternGenerator.swift; sourceTree = "<group>"; };
 		2A6D0B152C21A00100A00001 /* TrafficSafetyAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrafficSafetyAnalyzer.swift; sourceTree = "<group>"; };
@@ -85,6 +88,7 @@
 		2A6D09112C21A00100A00001 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		2A6D09122C21A00100A00001 /* MonetizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonetizationManager.swift; sourceTree = "<group>"; };
 		2A6D09132C21A00100A00001 /* OnboardingScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingScene.swift; sourceTree = "<group>"; };
+		2A6D09172C21A00100A00001 /* TutorialScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialScene.swift; sourceTree = "<group>"; };
 		2A6D09142C21A00100A00001 /* SettingsScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScene.swift; sourceTree = "<group>"; };
 		2A6D09152C21A00100A00001 /* StoreScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreScene.swift; sourceTree = "<group>"; };
 		2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugBalanceScene.swift; sourceTree = "<group>"; };
@@ -148,6 +152,7 @@
 				2A6D081B2C21A00100A00001 /* LevelData.swift */,
 				2A6D0B102C21A00100A00001 /* BuddyManager.swift */,
 				2A6D0B112C21A00100A00001 /* VehicleRenderer.swift */,
+				2A6D0F102C21A00100A00001 /* VehicleArtCatalog.swift */,
 				2A6D0B122C21A00100A00001 /* LevelDifficultyConfig.swift */,
 				2A6D0B132C21A00100A00001 /* TrafficPatternGenerator.swift */,
 				2A6D0B152C21A00100A00001 /* TrafficSafetyAnalyzer.swift */,
@@ -163,6 +168,7 @@
 				2A6D0E112C21A00100A00001 /* ArtGalleryScene.swift */,
 				2A6D08192C21A00100A00001 /* ResultsScene.swift */,
 				2A6D09132C21A00100A00001 /* OnboardingScene.swift */,
+				2A6D09172C21A00100A00001 /* TutorialScene.swift */,
 				2A6D09142C21A00100A00001 /* SettingsScene.swift */,
 				2A6D09152C21A00100A00001 /* StoreScene.swift */,
 				2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */,
@@ -189,6 +195,7 @@
 				2A6D06D92C21A00100A00001 /* Sources */,
 				2A6D06DA2C21A00100A00001 /* Frameworks */,
 				2A6D06DB2C21A00100A00001 /* Resources */,
+				2A6D9E002C21A00100A00001 /* Strip Signing Metadata */,
 			);
 			buildRules = (
 			);
@@ -243,6 +250,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2A6D9E002C21A00100A00001 /* Strip Signing Metadata */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Strip Signing Metadata";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ -n \"$CODESIGNING_FOLDER_PATH\" ] && [ -d \"$CODESIGNING_FOLDER_PATH\" ]; then\n  /usr/bin/xattr -cr \"$CODESIGNING_FOLDER_PATH\" || true\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		2A6D06D92C21A00100A00001 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -265,6 +294,7 @@
 				2A6D080B2C21A00100A00001 /* LevelData.swift in Sources */,
 				2A6D0B002C21A00100A00001 /* BuddyManager.swift in Sources */,
 				2A6D0B012C21A00100A00001 /* VehicleRenderer.swift in Sources */,
+				2A6D0F002C21A00100A00001 /* VehicleArtCatalog.swift in Sources */,
 				2A6D0B022C21A00100A00001 /* LevelDifficultyConfig.swift in Sources */,
 				2A6D0B032C21A00100A00001 /* TrafficPatternGenerator.swift in Sources */,
 				2A6D0B052C21A00100A00001 /* TrafficSafetyAnalyzer.swift in Sources */,
@@ -282,6 +312,7 @@
 				2A6D08082C21A00100A00001 /* GarageScene.swift in Sources */,
 				2A6D08092C21A00100A00001 /* ResultsScene.swift in Sources */,
 				2A6D09032C21A00100A00001 /* OnboardingScene.swift in Sources */,
+				2A6D09072C21A00100A00001 /* TutorialScene.swift in Sources */,
 				2A6D09042C21A00100A00001 /* SettingsScene.swift in Sources */,
 				2A6D09052C21A00100A00001 /* StoreScene.swift in Sources */,
 				2A6D09062C21A00100A00001 /* DebugBalanceScene.swift in Sources */,

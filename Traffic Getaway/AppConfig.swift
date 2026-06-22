@@ -77,7 +77,8 @@ enum AppConfig {
     #endif
 
     static let adsEnabled = false
-    static let simulatedPurchasesEnabled = true
+    static let simulatedPurchasesEnabled = debugMode
+    static let showStoreButton = false
     static let analyticsEnabled = true
     static let showDebugMenu = debugMode
     static let startingCashForTesting = 0
