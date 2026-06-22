@@ -2,6 +2,91 @@
 
 ## Current Session Summary
 
+Continued the Core Gameplay Lock / First Minute Fix milestone from the pasted production brief. Completed a source-level Phase 0 audit/checkpoint pass, added a PBX duplicate-ID regression gate, documented the first-minute architecture/plan, made scoped Phase 1 presentation fixes, and added initial deterministic `GameCore` replay/Flow/lane-stale/pursuit primitives with tests. This Windows environment still cannot run Git, Swift, Python scripts, Xcode, or iOS Simulator, so Mac/Swift validation remains required before claiming the milestone complete.
+
+## Files Changed This Session
+
+- `Docs/FIRST_MINUTE_LOCK.md`
+- `Docs/TRAFFIC_DIRECTOR.md`
+- `Docs/PLAYTEST_FIRST_MINUTE.md`
+- `Docs/REPLAY_FORMAT.md`
+- `Docs/KNOWN_BUGS.md`
+- `Docs/CODEX_HANDOFF.md`
+- `Tools/windows/check_pc_handoff.ps1`
+- `scripts/validate_pbxproj_ids.py`
+- `Traffic Getaway/GameViewController.swift`
+- `Traffic Getaway/UIHelpers.swift`
+- `Traffic Getaway/OnboardingScene.swift`
+- `Traffic Getaway/GameScene.swift`
+- `Traffic Getaway/ResultsScene.swift`
+- `GameCore/Sources/GameCore/SeededRNG.swift`
+- `GameCore/Sources/GameCore/RunSimulation.swift`
+- `GameCore/Tests/GameCoreTests/GameCoreTests.swift`
+
+## What Changed This Session
+
+- Read the pasted Core Gameplay Lock brief and audited the current repo, docs, project file, scene flow, app-local gameplay systems, `GameCore`, and `GameSim`.
+- Verified the previously reported duplicate Xcode object ID is not present in the current project file. `ArcadeArt.swift in Sources` keeps `2A6D0E002C21A00100A00001`; the old Strip Signing Metadata duplicate is absent.
+- Added `scripts/validate_pbxproj_ids.py` to detect duplicate PBX object definitions, with a built-in self-test fixture.
+- Added a native PBX duplicate-ID check to `Tools/windows/check_pc_handoff.ps1`, so the check works here even while Python cannot run.
+- Created `Docs/FIRST_MINUTE_LOCK.md` with the required architecture map, existing flow, defect list, module boundaries, file-level plan, risks, test plan, acceptance criteria, non-goals, and assumptions.
+- Created `Docs/TRAFFIC_DIRECTOR.md`, `Docs/PLAYTEST_FIRST_MINUTE.md`, and `Docs/REPLAY_FORMAT.md`.
+- Replaced the unexplained black initial `SKView` frame with a lightweight branded SpriteKit launch scene.
+- Added `GameLayoutMetrics` for safe-content, top-HUD, playfield, and bottom-control frames.
+- Updated onboarding's final exit lesson to teach the actual repeated lane movement: "Move right until you reach the ramp."
+- Split gameplay HUD source layout into persistent left/center/right zones, with WANTED on the left and exit status on the right; combo feedback is now positioned below the persistent row.
+- Clamped the pursuing police sprite presentation above the bottom unsafe region while keeping logical capture based on pursuit distance.
+- Rebuilt results layout into fixed header, fixed actions, and a compressed central stats panel; result titles now distinguish ESCAPED, CAPTURED, CRASHED, and MISSED EXIT.
+- Added `GameCore` fixed-step/replay primitives: `PlayerCommand`, `RunOutcome`, `RunConfigurationRecord`, `RunReplay`, `LaneStaleState`, `FlowState`, `PursuitPressureState`, `RunStateSnapshot`, and `FixedStepRunSimulation`.
+- Added `SeededRNG.derivedStream(named:)` so cosmetic streams can be separated from gameplay streams.
+- Added tests for derived RNG streams, lane-stale/Flow/pursuit behavior, and fixed-step replay hash matching.
+
+## Tests And Checks Run This Session
+
+- `powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\windows\check_pc_handoff.ps1`
+  - Passed.
+  - PBX object identifiers are unique: 97 definitions checked.
+  - Git not found on PATH.
+  - Swift not found on PATH.
+  - Swift files found: 53.
+  - Swift line endings look PC-safe.
+  - Mac/Xcode build and simulator testing still required.
+- Merge-marker scan:
+  - No conflict markers found.
+- Random-use scan:
+  - Confirmed `GameCore` traffic generation uses seeded RNG.
+  - Confirmed the SpriteKit app still has many `random`/`randomElement`/`shuffle` uses, including app-local traffic spawning paths that remain to be migrated.
+- `swift --version`
+  - Failed because Swift is not on PATH.
+- `cd GameCore && swift test`
+  - Failed because Swift is not on PATH.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345`
+  - Failed because Swift is not on PATH.
+- `python --version`
+  - Failed because `python.exe` cannot be accessed by this system.
+- `git status --short --branch`
+  - Failed because Git is not on PATH.
+
+## Simulation Results This Session
+
+No `GameSim` simulation results are available. The command was attempted and failed because Swift is unavailable in this Windows environment.
+
+## Known Issues After This Session
+
+- Core Gameplay Lock is partially complete, not done.
+- No Swift compile/test proof is available for the new `GameCore` files until Swift is installed or a Mac runs the tests.
+- No Xcode build, Simulator launch, screenshots, or video proof are available from this Windows environment.
+- App-local SpriteKit gameplay still uses unseeded randomness in traffic and road-event paths; `GameCore` deterministic primitives are not yet wired into `GameScene`.
+- The results/HUD/tutorial fixes need real compact and Dynamic Island simulator screenshots.
+- Phase 5 auto-unlocking/auto-selecting the starter motorcycle after first Sunset Merge escape is not wired yet.
+- `git` remains unavailable, so no commit was created and no normal diff/status check was possible here.
+
+## Highest-Priority Next Task
+
+On a machine with Swift and Xcode, run `swift test` in `GameCore`, run the Sunset Merge `GameSim` command, then run `Tools/mac/verify_on_mac.sh` and capture clean-launch/tutorial/HUD/results screenshots. After compile proof, wire the seeded `GameCore` traffic/replay primitives into `GameScene` and complete the first-escape starter-bike payoff.
+
+## Previous Session Summary
+
 Performed a focused first-run onboarding and police-pressure source pass for Traffic Getaway. The Windows environment still cannot run Git, Swift, Xcode, or iOS Simulator tools, so this session implemented the source fixes and saved validation artifacts, but did not complete the required iPhone SE screenshot/video proof.
 
 ## Files Changed This Session

@@ -42,6 +42,10 @@ public struct SeededRNG {
         return result
     }
 
+    public func derivedStream(named name: String) -> SeededRNG {
+        SeededRNG(seed: Self.stableSeed(for: name, runIndex: 0, baseSeed: state))
+    }
+
     public static func stableSeed(for key: String, runIndex: Int, baseSeed: UInt64 = 0) -> UInt64 {
         var hash: UInt64 = 1469598103934665603
         for byte in key.utf8 {

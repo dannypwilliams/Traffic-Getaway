@@ -35,6 +35,7 @@ final class ResultsScene: SKScene {
         addChild(overlayNode)
         overlayNode.zPosition = 100
         let theme = resultWorldTheme
+        let metrics = GameLayoutMetrics(sceneSize: size, safeAreaInsets: view?.safeAreaInsets ?? .zero)
         backgroundColor = theme.palette.panel
 
         buildBackground(theme: theme)
@@ -42,57 +43,64 @@ final class ResultsScene: SKScene {
         let isStoryRun = result.runStats.gameMode == .storyChase
         let isLevelComplete = result.runStats.levelCompleted && result.completedLevel != nil
         let failedLevel = isStoryRun && !result.runStats.levelCompleted
-        let titleText = isLevelComplete ? "ESCAPED" : (failedLevel ? "BUSTED" : "RUN COMPLETE")
-        let titleColor = failedLevel ? SKColor(red: 1, green: 0.18, blue: 0.16, alpha: 1) : theme.palette.accent
+        let titleText = outcomeTitle(isLevelComplete: isLevelComplete, failedLevel: failedLevel)
+        let titleColor = outcomeColor(isLevelComplete: isLevelComplete, failedLevel: failedLevel, theme: theme)
         let title = UIHelpers.label(titleText, size: 34, color: titleColor, width: size.width - 32)
-        title.position = CGPoint(x: size.width / 2, y: size.height - 70)
+        title.position = CGPoint(x: size.width / 2, y: metrics.safeContentFrame.maxY - 28)
         contentNode.addChild(title)
 
-        let panelSize = CGSize(width: min(size.width - 30, 370), height: min(size.height - 184, 610))
+        let levelLine: String
+        if let level = result.runStats.levelID.flatMap(LevelCatalog.level) {
+            let rating = isLevelComplete ? "  \(starText(result.levelStarRating))" : ""
+            levelLine = "\(level.name)  \(level.worldTheme.displayName)\(rating)"
+        } else {
+            levelLine = result.runStats.cityReached.displayName
+        }
+        let levelLabel = UIHelpers.bodyLabel(levelLine, size: 14, color: UITheme.Color.secondaryText, width: size.width - 34)
+        levelLabel.position = CGPoint(x: size.width / 2, y: title.position.y - 34)
+        contentNode.addChild(levelLabel)
+
+        let actionBaseY = metrics.safeContentFrame.minY + 24
+        let primaryY = actionBaseY + 52
+        let doubleCashY = actionBaseY + 96
+        let panelBottom = doubleCashY + 34
+        let panelTop = levelLabel.position.y - 34
+        let panelHeight = max(238, min(470, panelTop - panelBottom))
+        let panelSize = CGSize(width: min(metrics.safeContentFrame.width, 370), height: panelHeight)
         let panel = UIHelpers.panel(size: panelSize, fill: UITheme.Color.panelDeep.withAlphaComponent(0.94), stroke: theme.palette.accent.withAlphaComponent(0.75))
-        panel.position = CGPoint(x: size.width / 2, y: size.height / 2 + 18)
+        panel.position = CGPoint(x: size.width / 2, y: panelBottom + panelHeight / 2)
         contentNode.addChild(panel)
 
-        var rowY = panel.position.y + panelSize.height / 2 - 44
-        if let level = result.runStats.levelID.flatMap(LevelCatalog.level) {
-            addStaticRow(title: "Level", value: level.name, y: rowY)
-            rowY -= 34
-            addStaticRow(title: "City", value: level.worldTheme.displayName, y: rowY)
-            rowY -= 34
-            if isLevelComplete {
-                addStaticRow(title: "Rating", value: starText(result.levelStarRating), y: rowY)
-                rowY -= 34
-            } else if failedLevel {
-                addStaticRow(title: "Reason", value: failureText(result.runStats.failureReason), y: rowY)
-                rowY -= 34
-                addStaticRow(title: "Survived", value: "\(Int(result.runStats.survivalTime))s", y: rowY)
-                rowY -= 34
-            }
-        } else {
-            addStaticRow(title: "City", value: result.runStats.cityReached.displayName, y: rowY)
-            rowY -= 34
-        }
-
-        addStaticRow(title: "Vehicle", value: CarCatalog.car(id: result.runStats.selectedCarID).displayName, y: rowY)
-        rowY -= 34
-
-        addCountingRow(title: "Score", value: result.runStats.score, y: rowY)
-        addCountingRow(title: "Distance", value: result.runStats.distance, y: rowY - 34)
-        addCountingRow(title: "Cash Earned", value: result.finalCashEarned, prefix: "$", y: rowY - 68)
-        addCountingRow(title: "XP Earned", value: result.finalXPEarned, suffix: " XP", y: rowY - 102)
-        addStaticRow(title: "Near Misses", value: "\(result.runStats.nearMisses)", y: rowY - 136)
         let bikeRun = result.runStats.selectedVehicleClass == .motorcycle
+        var rows: [(String, String, Bool)] = [
+            ("Vehicle", CarCatalog.car(id: result.runStats.selectedCarID).displayName, false),
+            ("Score", "\(result.runStats.score)", true),
+            ("Distance", "\(result.runStats.distance)", true),
+            ("Cash", "$\(result.finalCashEarned)", true),
+            ("XP", "\(result.finalXPEarned) XP", true),
+            ("Near Misses", "\(result.runStats.nearMisses)", false),
+            ("Best Combo", "x\(result.runStats.highestCombo)", false),
+            ("Wanted", bikeRun ? "MOTO \(result.runStats.wantedLevelReached)" : "LEVEL \(result.runStats.wantedLevelReached)", false)
+        ]
         if bikeRun {
-            addStaticRow(title: "Lane Splits", value: "\(result.runStats.laneSplits)", y: rowY - 170)
+            rows.insert(("Lane Splits", "\(result.runStats.laneSplits)", false), at: 6)
         }
-        let offset: CGFloat = bikeRun ? 34 : 0
-        addStaticRow(title: "Clutch Saves", value: "\(result.runStats.clutchSaves)", y: rowY - 170 - offset)
-        addStaticRow(title: "Highest Combo", value: "x\(result.runStats.highestCombo)", y: rowY - 204 - offset)
-        addStaticRow(title: "Wanted Level", value: bikeRun ? "MOTO \(result.runStats.wantedLevelReached)" : "\(result.runStats.wantedLevelReached)", y: rowY - 238 - offset)
+        if failedLevel {
+            rows.insert(("Reason", failureText(result.runStats.failureReason), false), at: 1)
+        }
 
-        addProgressionSummary(y: rowY - 282 - offset, width: panelSize.width - 40)
-        addUpdateSummary(y: rowY - 376 - offset, width: panelSize.width - 40)
-        addNextUnlockPreview(y: max(186, rowY - 448 - offset), width: panelSize.width - 40)
+        let progressLine = progressionLine()
+        let unlockLine = unlockPreviewLine()
+        rows.append(("Progress", progressLine, false))
+        rows.append(("Next", unlockLine, false))
+
+        let topRowY = panel.position.y + panelSize.height / 2 - 30
+        let available = max(1, panelSize.height - 62)
+        let spacing = min(28, max(18, available / CGFloat(max(1, rows.count - 1))))
+        let rowWidth = panelSize.width - 38
+        for (index, row) in rows.enumerated() {
+            addMetricRow(title: row.0, value: row.1, y: topRowY - CGFloat(index) * spacing, width: rowWidth, counting: row.2)
+        }
 
         let doubleCash = UIHelpers.button(
             text: doubleCashClaimed ? "CASH DOUBLED" : "DOUBLE CASH",
@@ -101,7 +109,7 @@ final class ResultsScene: SKScene {
             fill: doubleCashClaimed ? SKColor.green.withAlphaComponent(0.18) : SKColor(red: 1, green: 0.84, blue: 0.16, alpha: 0.2),
             stroke: doubleCashClaimed ? .green : SKColor(red: 1, green: 0.84, blue: 0.16, alpha: 1)
         )
-        doubleCash.position = CGPoint(x: size.width / 2, y: 150)
+        doubleCash.position = CGPoint(x: size.width / 2, y: doubleCashY)
         contentNode.addChild(doubleCash)
 
         let primaryText: String
@@ -118,20 +126,100 @@ final class ResultsScene: SKScene {
         }
         let primaryStroke = failedLevel ? SKColor.red : theme.palette.accent
         let playAgain = UIHelpers.button(text: primaryText, name: primaryName, size: CGSize(width: 158, height: 42), fill: primaryStroke.withAlphaComponent(0.28), stroke: primaryStroke)
-        playAgain.position = CGPoint(x: size.width / 2, y: 102)
+        playAgain.position = CGPoint(x: size.width / 2, y: primaryY)
         contentNode.addChild(playAgain)
 
         let garage = UIHelpers.button(text: "GARAGE", name: "results.garage", size: CGSize(width: 98, height: 36), fill: theme.palette.secondAccent.withAlphaComponent(0.18), stroke: theme.palette.secondAccent)
-        garage.position = CGPoint(x: size.width / 2 - 116, y: 54)
+        garage.position = CGPoint(x: size.width / 2 - 116, y: actionBaseY)
         contentNode.addChild(garage)
 
         let levelSelect = UIHelpers.button(text: "LEVEL SELECT", name: "results.levelSelect", size: CGSize(width: 126, height: 36), fill: theme.palette.accent.withAlphaComponent(0.16), stroke: theme.palette.accent)
-        levelSelect.position = CGPoint(x: size.width / 2, y: 54)
+        levelSelect.position = CGPoint(x: size.width / 2, y: actionBaseY)
         contentNode.addChild(levelSelect)
 
         let menu = UIHelpers.button(text: "MENU", name: "results.menu", size: CGSize(width: 98, height: 36), fill: SKColor.white.withAlphaComponent(0.12), stroke: .white)
-        menu.position = CGPoint(x: size.width / 2 + 116, y: 54)
+        menu.position = CGPoint(x: size.width / 2 + 116, y: actionBaseY)
         contentNode.addChild(menu)
+    }
+
+    private func outcomeTitle(isLevelComplete: Bool, failedLevel: Bool) -> String {
+        if isLevelComplete {
+            return "ESCAPED"
+        }
+
+        guard failedLevel else {
+            return "RUN COMPLETE"
+        }
+
+        switch result.runStats.failureReason {
+        case "police", "police_caught":
+            return "CAPTURED"
+        case "missed_exit":
+            return "MISSED EXIT"
+        case "traffic", "collision", "roadblock":
+            return "CRASHED"
+        default:
+            return "BUSTED"
+        }
+    }
+
+    private func outcomeColor(isLevelComplete: Bool, failedLevel: Bool, theme: WorldTheme) -> SKColor {
+        if isLevelComplete {
+            return theme.palette.accent
+        }
+        if failedLevel {
+            return SKColor(red: 1, green: 0.18, blue: 0.16, alpha: 1)
+        }
+        return UITheme.Color.gold
+    }
+
+    private func addMetricRow(title: String, value: String, y: CGFloat, width: CGFloat, counting: Bool) {
+        let compact = size.height < 650
+        let titleLabel = UIHelpers.bodyLabel(title.uppercased(), size: compact ? 11 : 12, color: SKColor(white: 0.72, alpha: 1))
+        titleLabel.horizontalAlignmentMode = .left
+        titleLabel.position = CGPoint(x: size.width / 2 - width / 2, y: y)
+        contentNode.addChild(titleLabel)
+
+        let valueLabel = UIHelpers.label(counting ? "0" : value, size: compact ? 14 : 16, color: .white, width: width * 0.58)
+        valueLabel.horizontalAlignmentMode = .right
+        valueLabel.position = CGPoint(x: size.width / 2 + width / 2, y: y)
+        contentNode.addChild(valueLabel)
+
+        guard counting else { return }
+        let numeric = Int(String(value.filter { $0.isNumber })) ?? 0
+        let prefix = value.hasPrefix("$") ? "$" : ""
+        let suffix = value.hasSuffix(" XP") ? " XP" : ""
+        runCountUp(label: valueLabel, value: numeric, prefix: prefix, suffix: suffix)
+    }
+
+    private func progressionLine() -> String {
+        let save = SaveManager.shared.data
+        if result.levelAfter > result.levelBefore {
+            return "Level \(result.levelBefore) -> \(result.levelAfter)"
+        }
+
+        let xp = SaveManager.xpProgress(totalXP: save.totalXP, level: save.playerLevel)
+        return "Level \(save.playerLevel)  \(xp.current)/\(xp.required) XP"
+    }
+
+    private func unlockPreviewLine() -> String {
+        if let completedLevel = result.completedLevel, let nextLevel = result.nextLevel {
+            if nextLevel.city != completedLevel.city {
+                return "\(nextLevel.worldTheme.displayName) unlocked"
+            }
+            return "\(nextLevel.name) unlocked"
+        }
+
+        let save = SaveManager.shared.data
+        guard let nextCar = CarCatalog.cars
+            .filter({ !save.unlockedCarIDs.contains($0.id) })
+            .sorted(by: { $0.unlockCost < $1.unlockCost })
+            .first else {
+            return "Garage complete"
+        }
+
+        let remaining = max(0, nextCar.unlockCost - save.totalCash)
+        return remaining == 0 ? "\(nextCar.displayName) ready" : "\(nextCar.displayName) $\(remaining) left"
     }
 
     private var resultWorldTheme: WorldTheme {

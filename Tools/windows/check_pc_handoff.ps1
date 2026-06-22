@@ -42,6 +42,51 @@ foreach ($path in $required) {
     }
 }
 
+$pbxprojPath = Join-Path $root "Traffic Getaway.xcodeproj\project.pbxproj"
+$pbxDefinitionPattern = '^\s*([A-Fa-f0-9]{24})\s*(/\*.*?\*/)?\s*=\s*\{'
+$pbxDefinitions = @{}
+$pbxLines = [System.IO.File]::ReadAllLines($pbxprojPath)
+for ($index = 0; $index -lt $pbxLines.Count; $index += 1) {
+    $line = $pbxLines[$index]
+    if ($line -match $pbxDefinitionPattern) {
+        $declaresIsa = $line.Contains("isa =")
+        if (-not $declaresIsa) {
+            for ($lookahead = $index + 1; $lookahead -lt [Math]::Min($pbxLines.Count, $index + 12); $lookahead += 1) {
+                if ($pbxLines[$lookahead].Contains("isa =")) {
+                    $declaresIsa = $true
+                    break
+                }
+                if ($pbxLines[$lookahead].Trim().StartsWith("};")) {
+                    break
+                }
+            }
+        }
+
+        if (-not $declaresIsa) {
+            continue
+        }
+
+        $objectID = $Matches[1].ToUpperInvariant()
+        if (-not $pbxDefinitions.ContainsKey($objectID)) {
+            $pbxDefinitions[$objectID] = @()
+        }
+        $lineNumber = $index + 1
+        $pbxDefinitions[$objectID] += "line ${lineNumber}: $line"
+    }
+}
+
+$duplicatePBXDefinitions = $pbxDefinitions.GetEnumerator() | Where-Object { $_.Value.Count -gt 1 }
+if ($duplicatePBXDefinitions.Count -gt 0) {
+    Write-Host "Duplicate PBX object identifiers found:" -ForegroundColor Red
+    foreach ($duplicate in $duplicatePBXDefinitions) {
+        Write-Host "  $($duplicate.Key)" -ForegroundColor Red
+        $duplicate.Value | ForEach-Object { Write-Host "    $_" -ForegroundColor Red }
+    }
+    throw "Xcode project contains duplicate PBX object identifiers."
+} else {
+    Write-Host "PBX object identifiers are unique: $($pbxDefinitions.Count) definitions checked." -ForegroundColor Green
+}
+
 $git = Get-Command git -ErrorAction SilentlyContinue
 if ($git) {
     Write-Host "Git found: $($git.Source)" -ForegroundColor Green

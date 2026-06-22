@@ -129,4 +129,101 @@ final class GameCoreTests: XCTestCase {
         XCTAssertFalse(ProgressionModel.isLevelUnlocked(levelTwo, state: ProgressionState()))
         XCTAssertTrue(ProgressionModel.isLevelUnlocked(levelTwo, state: ProgressionState(completedLevelIDs: ["la_01"])))
     }
+
+    func testSeededRNGDerivedStreamsDoNotConsumeGameplayStream() {
+        var gameplayA = SeededRNG(seed: 24680)
+        let cosmetic = gameplayA.derivedStream(named: "cosmetic")
+        var gameplayB = SeededRNG(seed: 24680)
+        _ = cosmetic
+
+        XCTAssertEqual(gameplayA.next(), gameplayB.next())
+        XCTAssertEqual(gameplayA.next(), gameplayB.next())
+
+        var traffic = gameplayA.derivedStream(named: "traffic")
+        var audio = gameplayA.derivedStream(named: "audio")
+        XCTAssertNotEqual(traffic.next(), audio.next())
+    }
+
+    func testLaneStaleFlowAndPursuitPressure() {
+        let staleConfig = LaneStaleConfiguration(warningThreshold: 1, penaltyThreshold: 2, recoveryRate: 1, maximumEffect: 1, meaningfulMovementSlots: 2)
+        var stale = LaneStaleState(currentSlot: LaneModel.startSlot)
+        for _ in 0..<4 {
+            stale.step(slot: LaneModel.startSlot, previousSlot: LaneModel.startSlot, deltaTime: 1, configuration: staleConfig)
+        }
+        XCTAssertGreaterThan(stale.effect, 0)
+
+        let movedSlot = LaneModel.targetSlot(from: LaneModel.startSlot, delta: 2, vehicleClass: .car)
+        stale.step(slot: movedSlot, previousSlot: LaneModel.startSlot, deltaTime: 1, configuration: staleConfig)
+        XCTAssertLessThan(stale.effect, 1)
+
+        var flow = FlowState()
+        flow.recordCleanShift(fast: false)
+        flow.recordNearMiss()
+        XCTAssertGreaterThan(flow.value, 0.2)
+        flow.step(deltaTime: 1, laneStaleEffect: stale.effect)
+        XCTAssertGreaterThan(flow.value, 0)
+
+        var pursuit = PursuitPressureState(value: 0.4)
+        pursuit.step(flow: 0, laneStaleEffect: 1, deltaTime: 2)
+        XCTAssertGreaterThan(pursuit.value, 0.4)
+        let pressured = pursuit.value
+        pursuit.recordNearMiss()
+        XCTAssertLessThan(pursuit.value, pressured)
+    }
+
+    func testFixedStepReplayMatchesCleanExit() throws {
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
+        let configuration = RunConfigurationRecord(
+            levelID: level.levelID,
+            cityID: level.city,
+            vehicleID: vehicle.id,
+            seed: 99,
+            fixedStep: 1.0 / 60.0,
+            exitSide: .right,
+            exitWarningFrame: 10,
+            exitDeadlineFrame: 40,
+            capturePressureThreshold: 99
+        )
+        let commands = [
+            RecordedCommand(frameIndex: 0, command: .fastMoveRight),
+            RecordedCommand(frameIndex: 1, command: .fastMoveRight),
+            RecordedCommand(frameIndex: 2, command: .fastMoveRight)
+        ]
+
+        let simulation = FixedStepRunSimulation(configuration: configuration, vehicle: vehicle)
+        for command in commands {
+            simulation.enqueue(command.command, forFrame: command.frameIndex)
+        }
+
+        var hashes: [RecordedStateHash] = []
+        let hashFrames: Set<UInt64> = [0, 5, 11]
+        while simulation.frameIndex <= 40 {
+            if hashFrames.contains(simulation.frameIndex) {
+                let snapshot = simulation.makeSnapshot()
+                hashes.append(RecordedStateHash(frameIndex: snapshot.frameIndex, hash: snapshot.stableHash))
+            }
+            simulation.step()
+            if simulation.outcome != .running, hashFrames.contains(simulation.frameIndex) {
+                let snapshot = simulation.makeSnapshot()
+                hashes.append(RecordedStateHash(frameIndex: snapshot.frameIndex, hash: snapshot.stableHash))
+                break
+            }
+        }
+
+        XCTAssertEqual(simulation.outcome, .escaped)
+        let replay = RunReplay(
+            simulationVersion: configuration.simulationVersion,
+            configuration: configuration,
+            seed: configuration.seed,
+            commands: commands,
+            expectedOutcome: simulation.outcome,
+            expectedScore: simulation.score,
+            stateHashes: hashes
+        )
+
+        let result = RunReplayVerifier.replay(replay, vehicle: vehicle)
+        XCTAssertTrue(result.matches)
+        XCTAssertEqual(result.snapshot.outcome, .escaped)
+    }
 }

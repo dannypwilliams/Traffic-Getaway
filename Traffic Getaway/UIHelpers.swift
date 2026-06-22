@@ -1,4 +1,57 @@
 import SpriteKit
+import UIKit
+
+struct GameLayoutMetrics {
+    let sceneBounds: CGRect
+    let safeAreaInsets: UIEdgeInsets
+    let safeContentFrame: CGRect
+    let topHUDFrame: CGRect
+    let playfieldFrame: CGRect
+    let bottomControlsFrame: CGRect
+    let horizontalMargin: CGFloat
+    let minimumTouchTarget: CGFloat
+
+    init(sceneSize: CGSize, safeAreaInsets: UIEdgeInsets) {
+        let bounds = CGRect(origin: .zero, size: sceneSize)
+        let topInset = max(safeAreaInsets.top, 16)
+        let bottomInset = max(safeAreaInsets.bottom, 12)
+        let leftInset = max(safeAreaInsets.left, 0)
+        let rightInset = max(safeAreaInsets.right, 0)
+        let margin = max(16, min(24, sceneSize.width * 0.05))
+        let safeFrame = bounds.inset(by: UIEdgeInsets(
+            top: topInset,
+            left: leftInset + margin,
+            bottom: bottomInset,
+            right: rightInset + margin
+        ))
+        let topHeight = min(76, max(58, sceneSize.height * 0.09))
+        let bottomHeight = min(142, max(108, sceneSize.height * 0.16))
+
+        self.sceneBounds = bounds
+        self.safeAreaInsets = safeAreaInsets
+        self.safeContentFrame = safeFrame
+        self.topHUDFrame = CGRect(
+            x: safeFrame.minX,
+            y: safeFrame.maxY - topHeight,
+            width: safeFrame.width,
+            height: topHeight
+        )
+        self.bottomControlsFrame = CGRect(
+            x: safeFrame.minX,
+            y: safeFrame.minY,
+            width: safeFrame.width,
+            height: bottomHeight
+        )
+        self.playfieldFrame = CGRect(
+            x: safeFrame.minX,
+            y: bottomControlsFrame.maxY,
+            width: safeFrame.width,
+            height: max(1, topHUDFrame.minY - bottomControlsFrame.maxY)
+        )
+        self.horizontalMargin = margin
+        self.minimumTouchTarget = 44
+    }
+}
 
 enum UIHelpers {
     static let titleFont = UITheme.Font.title

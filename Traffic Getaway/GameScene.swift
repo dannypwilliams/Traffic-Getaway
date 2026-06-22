@@ -175,6 +175,7 @@ final class GameScene: SKScene {
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let wantedLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
+    private let exitHUDLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let distanceLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
     private let cashLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
     private let performanceDebugLabel = SKLabelNode(fontNamed: "Menlo-Bold")
@@ -873,7 +874,7 @@ final class GameScene: SKScene {
             addChild(scorePanel)
         }
 
-        let labels: [SKLabelNode] = [scoreLabel, comboLabel, wantedLabel, distanceLabel, cashLabel]
+        let labels: [SKLabelNode] = [scoreLabel, comboLabel, wantedLabel, exitHUDLabel, distanceLabel, cashLabel]
         for label in labels {
             label.horizontalAlignmentMode = .center
             label.verticalAlignmentMode = .center
@@ -894,6 +895,8 @@ final class GameScene: SKScene {
         comboLabel.fontColor = highContrastHUD ? SKColor(red: 0.55, green: 1, blue: 0.55, alpha: 1) : SKColor(red: 0.35, green: 1, blue: 0.42, alpha: 1)
         wantedLabel.fontSize = 16 * scale
         wantedLabel.fontColor = highContrastHUD ? SKColor(red: 1, green: 0.95, blue: 0.15, alpha: 1) : SKColor(red: 1, green: 0.24, blue: 0.2, alpha: 1)
+        exitHUDLabel.fontSize = 16 * scale
+        exitHUDLabel.fontColor = highContrastHUD ? SKColor(red: 0.65, green: 1, blue: 0.65, alpha: 1) : UITheme.Color.green
         distanceLabel.fontSize = 12 * scale
         distanceLabel.fontColor = highContrastHUD ? .white : SKColor(white: 0.86, alpha: 1)
         cashLabel.fontSize = 12 * scale
@@ -920,21 +923,32 @@ final class GameScene: SKScene {
     }
 
     private func layoutScoreLabel() {
-        let panelWidth = min(size.width - 20, 356)
-        let topY = size.height - 58
+        let metrics = GameLayoutMetrics(sceneSize: size, safeAreaInsets: view?.safeAreaInsets ?? .zero)
+        let panelWidth = min(metrics.safeContentFrame.width, 382)
+        let topY = metrics.topHUDFrame.midY + 2
         scorePanel.position = CGPoint(x: size.width / 2, y: topY)
         scorePanel.path = CGPath(
-            roundedRect: CGRect(x: -panelWidth / 2, y: -42, width: panelWidth, height: 84),
+            roundedRect: CGRect(x: -panelWidth / 2, y: -30, width: panelWidth, height: 60),
             cornerWidth: 8,
             cornerHeight: 8,
             transform: nil
         )
 
-        scoreLabel.position = CGPoint(x: size.width / 2, y: topY + 20)
-        wantedLabel.position = CGPoint(x: size.width / 2, y: topY - 3)
-        comboLabel.position = CGPoint(x: size.width / 2, y: topY - 24)
-        distanceLabel.position = CGPoint(x: size.width / 2 - panelWidth * 0.32, y: topY - 24)
-        cashLabel.position = CGPoint(x: size.width / 2 + panelWidth * 0.32, y: topY - 24)
+        let leftX = size.width / 2 - panelWidth / 2 + 14
+        let rightX = size.width / 2 + panelWidth / 2 - 14
+        wantedLabel.horizontalAlignmentMode = .left
+        exitHUDLabel.horizontalAlignmentMode = .right
+        scoreLabel.horizontalAlignmentMode = .center
+        comboLabel.horizontalAlignmentMode = .center
+        distanceLabel.horizontalAlignmentMode = .left
+        cashLabel.horizontalAlignmentMode = .right
+
+        wantedLabel.position = CGPoint(x: leftX, y: topY + 11)
+        scoreLabel.position = CGPoint(x: size.width / 2, y: topY + 11)
+        exitHUDLabel.position = CGPoint(x: rightX, y: topY + 11)
+        distanceLabel.position = CGPoint(x: leftX, y: topY - 15)
+        cashLabel.position = CGPoint(x: rightX, y: topY - 15)
+        comboLabel.position = CGPoint(x: size.width / 2, y: topY - 48)
         updateComboMeterPath()
     }
 
@@ -943,6 +957,7 @@ final class GameScene: SKScene {
         scoreLabel.isHidden = !visible
         comboLabel.isHidden = !visible
         wantedLabel.isHidden = !visible
+        exitHUDLabel.isHidden = !visible
         distanceLabel.isHidden = !visible
         cashLabel.isHidden = !visible
         comboMeterBack.isHidden = !visible || comboCount == 0
@@ -952,9 +967,10 @@ final class GameScene: SKScene {
     private func updateHUD() {
         let palette = palette(for: currentCity)
         scoreLabel.text = "SCORE \(score)"
-        wantedLabel.text = wantedLevel >= 6 ? "ELITE PURSUIT \(wantedStars)" : "WANTED \(wantedStars)"
+        wantedLabel.text = wantedLevel >= 6 ? "ELITE \(wantedStars)" : "WANTED \(wantedStars)"
         distanceLabel.text = "\(currentWorld.stageCode)  DIST \(Int(runDistance))"
         cashLabel.text = "$\(runCash)"
+        updateExitHUDLabel()
 
         if comboCount > 0 {
             comboLabel.text = "NEAR MISS x\(comboCount)  \(String(format: "%.1fx", scoreMultiplier))"
@@ -975,10 +991,11 @@ final class GameScene: SKScene {
     private func updateComboMeterPath() {
         guard comboMeterBack.parent != nil else { return }
 
-        let panelWidth = min(size.width - 20, 356)
-        let meterWidth = min(170, panelWidth * 0.44)
+        let metrics = GameLayoutMetrics(sceneSize: size, safeAreaInsets: view?.safeAreaInsets ?? .zero)
+        let panelWidth = min(metrics.safeContentFrame.width, 382)
+        let meterWidth = min(188, panelWidth * 0.5)
         let progress = comboCount > 0 ? CGFloat(comboTimer / comboDuration) : 0
-        let y = scorePanel.position.y - 38
+        let y = comboLabel.position.y - 14
         let x = size.width / 2 - meterWidth / 2
 
         comboMeterBack.path = CGPath(
@@ -997,6 +1014,17 @@ final class GameScene: SKScene {
 
     private var wantedStars: String {
         String(repeating: "*", count: wantedLevel)
+    }
+
+    private func updateExitHUDLabel() {
+        guard exitPhase == .active, let activeExitSide else {
+            exitHUDLabel.text = "EXIT --"
+            exitHUDLabel.alpha = 0.58
+            return
+        }
+
+        exitHUDLabel.text = "EXIT \(activeExitSide.displayName) \(Int(ceil(exitCountdown)))"
+        exitHUDLabel.alpha = 1
     }
 
     private var scoreMultiplier: CGFloat {
@@ -2642,6 +2670,7 @@ final class GameScene: SKScene {
     private func updateExitCountdownLabel() {
         guard let activeExitSide, let exitCountdownLabel else { return }
         exitCountdownLabel.text = "EXIT \(activeExitSide.displayName)  \(String(format: "%.1f", exitCountdown))"
+        updateExitHUDLabel()
     }
 
     private func updateExitGuidance(deltaTime: TimeInterval) {
@@ -3067,9 +3096,19 @@ final class GameScene: SKScene {
         let targetX = slotCenters.indices.contains(playerSlot) ? slotCenters[playerSlot] : playerCar.position.x
         let followAmount = min(1, deltaTime * 5.4)
         policeCar.position.x += (targetX - policeCar.position.x) * followAmount
-        policeCar.position.y = playerY - policeGap
+        let logicalY = playerY - policeGap
+        let bottomInset = max(view?.safeAreaInsets.bottom ?? 0, 12)
+        let minimumVisibleY = bottomInset + policeCar.size.height * 0.55 + 12
+        let displayY = max(logicalY, minimumVisibleY)
+        let pressureRange = max(1, maxPoliceGap - minPoliceGap)
+        let pressure = max(0, min(1, (maxPoliceGap - policeGap) / pressureRange))
+        let isBottomClamped = displayY > logicalY + 1
+        policeCar.position.y = displayY
+        policeCar.alpha = isBottomClamped ? 0.46 + pressure * 0.34 : 1
+        policeCar.setScale(isBottomClamped ? 0.78 + pressure * 0.14 : 1)
 
-        if policeCar.frame.maxY >= playerCar.frame.minY {
+        let logicalPoliceMaxY = logicalY + policeCar.size.height * policeCar.xScale / 2
+        if logicalPoliceMaxY >= playerCar.frame.minY {
             endGame(crashPoint: playerCar.position, reason: "police_caught")
         }
     }

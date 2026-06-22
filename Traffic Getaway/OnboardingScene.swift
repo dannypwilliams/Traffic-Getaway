@@ -9,6 +9,7 @@ final class OnboardingScene: SKScene {
         case nearMiss
         case combo
         case policePressure
+        case exitRamp
     }
 
     private struct Step {
@@ -88,12 +89,12 @@ final class OnboardingScene: SKScene {
         ),
         Step(
             title: "SURVIVE THE CHASE",
-            subtitle: "Keep moving, read ahead, and hit the ramp.",
+            subtitle: "Move right until you reach the ramp.",
             bullets: [
-                "Traffic crashes and police catches are different",
-                "Changing lanes keeps the chase alive"
+                "Repeated taps or swipes move lane by lane",
+                "Start crossing as soon as the exit appears"
             ],
-            interaction: .none,
+            interaction: .exitRamp,
             minimumReadTime: 1.5
         )
     ]
@@ -350,6 +351,8 @@ final class OnboardingScene: SKScene {
             text = "Tap twice to chain a combo"
         case .policePressure:
             text = "Tap a gap to break the pressure"
+        case .exitRamp:
+            text = "Try it: move right until you reach EXIT RIGHT"
         }
 
         let label = UIHelpers.label(text, size: isCompactLayout ? 14 : 16, color: UITheme.Color.cyan, width: size.width - 46)
@@ -512,6 +515,25 @@ final class OnboardingScene: SKScene {
             trainingCar?.run(.moveTo(x: xForTrainingLane(trainingLane), duration: 0.18))
             showPop("PRESSURE DROPPED", color: UITheme.Color.gold)
             completeAction(text: "KEEP MOVING")
+            return true
+        case .exitRamp:
+            let start = touchStart ?? location
+            let dx = location.x - start.x
+            let wantsRight = abs(dx) > 24 ? dx > 0 : location.x > size.width / 2
+            guard wantsRight else {
+                showPop("RAMP IS RIGHT", color: UITheme.Color.gold)
+                return true
+            }
+
+            let lanesMoved = abs(dx) > 86 ? 2 : 1
+            trainingLane = max(0, min(LaneManager.laneCount - 1, trainingLane + lanesMoved))
+            trainingCar?.run(.moveTo(x: xForTrainingLane(trainingLane), duration: 0.16))
+            if trainingLane >= LaneManager.laneCount - 2 {
+                showPop("RAMP LINE", color: UITheme.Color.green)
+                completeAction(text: "EXIT READY")
+            } else {
+                showPop("KEEP MOVING RIGHT", color: UITheme.Color.cyan)
+            }
             return true
         case .none:
             return false
