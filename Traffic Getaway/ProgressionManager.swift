@@ -18,6 +18,7 @@ struct ProgressionResult {
     let levelCompletionRewarded: Bool
     let levelStarRating: Int
     let previousBestStarRating: Int
+    let primaryUnlockVehicleID: String?
 }
 
 final class ProgressionManager {
@@ -40,6 +41,11 @@ final class ProgressionManager {
         let levelRewardXP = alreadyCompletedLevel ? 0 : (completedLevel?.rewardXP ?? 0)
         let levelStarRating = completedLevel.map { LevelDifficultyConfig.starRating(for: run, level: $0) } ?? 0
         let previousBestStars = completedLevel.map { saveBefore.levelStarRatings[$0.levelID] ?? 0 } ?? 0
+        let primaryUnlockVehicleID = Self.firstEscapeVehicleUnlock(
+            completedLevel: completedLevel,
+            alreadyCompletedLevel: alreadyCompletedLevel,
+            saveBefore: saveBefore
+        )
         let baseCash = calculateBaseCash(run)
         let economyScale: CGFloat = run.selectedVehicleClass == .motorcycle ? 0.96 : 1.02
         let finalCash = max(20, Int(CGFloat(baseCash) * car.cashMultiplier * economyScale) + levelRewardCash)
@@ -66,6 +72,10 @@ final class ProgressionManager {
             }
             if let completedLevel, !save.completedLevelIDs.contains(completedLevel.levelID) {
                 save.completedLevelIDs.append(completedLevel.levelID)
+            }
+            if let primaryUnlockVehicleID, !save.unlockedCarIDs.contains(primaryUnlockVehicleID) {
+                save.unlockedCarIDs.append(primaryUnlockVehicleID)
+                save.selectedCarID = primaryUnlockVehicleID
             }
             if let completedLevel {
                 save.levelBestScores[completedLevel.levelID] = max(save.levelBestScores[completedLevel.levelID] ?? 0, run.score)
@@ -104,8 +114,19 @@ final class ProgressionManager {
             nextLevel: completedLevel.flatMap { LevelCatalog.nextLevel(after: $0.levelID, completedIDs: SaveManager.shared.data.completedLevelIDs) },
             levelCompletionRewarded: completedLevel != nil && !alreadyCompletedLevel,
             levelStarRating: levelStarRating,
-            previousBestStarRating: previousBestStars
+            previousBestStarRating: previousBestStars,
+            primaryUnlockVehicleID: primaryUnlockVehicleID
         )
+    }
+
+    private static func firstEscapeVehicleUnlock(completedLevel: LevelDefinition?, alreadyCompletedLevel: Bool, saveBefore: SaveData) -> String? {
+        guard completedLevel?.levelID == "la_01",
+              !alreadyCompletedLevel,
+              !saveBefore.unlockedCarIDs.contains(CarCatalog.starterBikeID) else {
+            return nil
+        }
+
+        return CarCatalog.starterBikeID
     }
 
     private func calculateBaseCash(_ run: RunStats) -> Int {

@@ -89,9 +89,9 @@ Expected:
 Expected:
 
 - Rewards are readable.
-- First completion persists.
-- Next Level launches 405 Afterburn.
-- Starter Bike payoff is verified once Phase 5 auto-unlock is wired.
+- First Sunset Merge completion unlocks the Starter Bike once.
+- The Starter Bike becomes the selected vehicle.
+- Next Level launches 405 Afterburn with motorcycle lane-splitting available.
 
 ## Scenario H: Replay
 

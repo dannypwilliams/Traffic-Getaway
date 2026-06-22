@@ -59,10 +59,16 @@ public enum ProgressionModel {
 
     public static func applyRunReward(_ reward: FinalRunReward, completedLevelID: String?, state: ProgressionState) -> ProgressionState {
         var next = state
+        let firstCompletion = completedLevelID.map { !next.completedLevelIDs.contains($0) } ?? false
         next.totalCash += reward.cash
         next.totalXP += reward.xp
         if let completedLevelID, !next.completedLevelIDs.contains(completedLevelID) {
             next.completedLevelIDs.append(completedLevelID)
+        }
+        if completedLevelID == "la_01",
+           firstCompletion,
+           !next.unlockedVehicleIDs.contains(VehicleCatalog.starterBikeID) {
+            next.unlockedVehicleIDs.append(VehicleCatalog.starterBikeID)
         }
         return next
     }

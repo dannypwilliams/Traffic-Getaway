@@ -115,7 +115,7 @@ final class ResultsScene: SKScene {
         let primaryText: String
         let primaryName: String
         if isLevelComplete, result.nextLevel != nil {
-            primaryText = "NEXT LEVEL"
+            primaryText = result.primaryUnlockVehicleID == CarCatalog.starterBikeID ? "USE BIKE" : "NEXT LEVEL"
             primaryName = "results.nextLevel"
         } else if isStoryRun {
             primaryText = result.runStats.levelCompleted ? "RETRY RATING" : "RETRY LEVEL"
@@ -203,6 +203,14 @@ final class ResultsScene: SKScene {
     }
 
     private func unlockPreviewLine() -> String {
+        if let unlockID = result.primaryUnlockVehicleID {
+            let car = CarCatalog.car(id: unlockID)
+            if car.vehicleClass == .motorcycle {
+                return "\(car.displayName) unlocked: split lanes"
+            }
+            return "\(car.displayName) unlocked"
+        }
+
         if let completedLevel = result.completedLevel, let nextLevel = result.nextLevel {
             if nextLevel.city != completedLevel.city {
                 return "\(nextLevel.worldTheme.displayName) unlocked"

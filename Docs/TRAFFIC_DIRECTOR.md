@@ -4,14 +4,20 @@
 
 Traffic Getaway currently has two traffic-planning implementations:
 
-- App-local SpriteKit integration in `Traffic Getaway/TrafficPatternGenerator.swift` and `Traffic Getaway/TrafficSafetyAnalyzer.swift`.
-- Pure Swift equivalents in `GameCore/Sources/GameCore/TrafficPatternGenerator.swift` and `GameCore/Sources/GameCore/TrafficSafety.swift`.
+- App-local SpriteKit integration in `Traffic Getaway/TrafficPatternGenerator.swift` and `Traffic Getaway/TrafficSafetyAnalyzer.swift`. This path now accepts an `AppSeededRNG` supplied by `GameScene` for committed traffic waves.
+- Pure Swift equivalents in `GameCore/Sources/GameCore/TrafficPatternGenerator.swift` and `GameCore/Sources/GameCore/TrafficSafety.swift`. This path accepts `SeededRNG` and is covered by `GameCore` tests and `GameSim --traffic-stress`.
 
 The production direction is for `GameCore` to own deterministic planning and validation, with the SpriteKit scene rendering committed wave plans.
 
 ## Deterministic Generation
 
-The pure traffic path accepts a `SeededRNG` owned by the run. The same level, vehicle, seed, and ordered command stream must produce the same traffic plan sequence.
+Both traffic paths now use a seeded generator owned by the run. The same level, vehicle, seed, and ordered command stream must produce the same traffic plan sequence.
+
+In the app, `GameScene.configureRunSeed()` derives a run seed from level ID, selected vehicle ID, game mode, and save run count. It then derives named streams:
+
+- `traffic-plan`: reserved escape lanes, pattern selection, lane ordering, open gaps, vehicle type choices, wave offsets, and plan speed multipliers.
+- `traffic-spawn`: final spawn jitter, random fallback vehicle type selection, and traffic speed jitter.
+- `traffic-events`: roadblock safe lanes, event selection, event durations/cooldowns, and event-created traffic lane ordering.
 
 Do not use these as authoritative gameplay inputs:
 
@@ -29,6 +35,8 @@ Cosmetic randomness should use a derived stream, for example:
 let trafficRNG = runRNG.derivedStream(named: "traffic")
 let cosmeticRNG = runRNG.derivedStream(named: "cosmetic")
 ```
+
+Current presentation-only `CGFloat.random` and `randomElement` calls remain in scenery, speed-line recycling, camera shake, smoke, debris, sparks, and feedback text. They must not influence committed traffic, collision authority, exit reachability, rewards, or replay state.
 
 ## Pattern Families
 
@@ -106,3 +114,24 @@ Record:
 - Exit side and target slots.
 
 If a committed wave has no route, reduce it to the smallest failing pattern and add a regression test before tuning around it.
+
+## Stress Command
+
+When Swift is available, run:
+
+```bash
+cd GameSim
+swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress
+```
+
+The report includes:
+
+- Generated wave count.
+- Recovery fallback wave count.
+- Impossible committed wave count.
+- Exit reachability failure count.
+- Missing plan count.
+- Top rejection reason.
+- Top committed pattern.
+
+Current limitation: the generator does not yet expose every rejected candidate attempt, so the stress report counts fallback reasons and invalid committed waves rather than full per-candidate rejection telemetry.

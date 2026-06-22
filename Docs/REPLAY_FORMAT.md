@@ -8,6 +8,7 @@ Replays are developer-facing proof that authoritative run logic can be reproduce
 - Run configuration.
 - Seed.
 - Ordered input commands.
+- Ordered non-input run events.
 
 They are not a user-facing replay viewer in this milestone.
 
@@ -21,6 +22,7 @@ Fields:
 - `configuration`: `RunConfigurationRecord`.
 - `seed`: stable run seed.
 - `commands`: ordered `RecordedCommand` values.
+- `events`: ordered `RecordedRunEvent` values for deterministic non-input gameplay events.
 - `expectedOutcome`: terminal `RunOutcome`.
 - `expectedScore`: terminal score.
 - `stateHashes`: optional checkpoints as `RecordedStateHash`.
@@ -55,6 +57,16 @@ Commands are frame-indexed, not wall-clock timed:
 
 If multiple commands are recorded on the same frame, preserve their order.
 
+## Events
+
+Events are frame-indexed gameplay facts that are not direct player input but still affect authoritative state:
+
+- `nearMiss`
+- `trafficCollision`
+- `roadblockCollision`
+
+Events let replay fixtures prove that collision terminals, near-miss Flow, pursuit recovery, and combo state reproduce exactly. Older encoded replays without an `events` field decode with an empty event list.
+
 ## Outcomes
 
 `RunOutcome` currently supports:
@@ -76,6 +88,8 @@ Only terminal outcomes should be stored as replay expectations.
 - Flow.
 - Lane-stale effect.
 - Pursuit pressure.
+- Near-miss count.
+- Highest combo.
 - Score.
 - Outcome code.
 
@@ -96,4 +110,18 @@ cd GameCore
 swift test
 ```
 
-The first fixed-step replay fixture is `testFixedStepReplayMatchesCleanExit` in `GameCore/Tests/GameCoreTests/GameCoreTests.swift`.
+Fixed-step replay fixtures live in `GameCore/Tests/GameCoreTests/GameCoreTests.swift` and currently cover:
+
+- Clean escape.
+- Passive capture.
+- Missed exit.
+- Traffic collision event.
+- Multi-near-miss combo.
+- Motorcycle interstitial-slot escape.
+
+For traffic fairness stress:
+
+```bash
+cd GameSim
+swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress
+```

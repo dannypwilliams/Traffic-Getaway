@@ -23,6 +23,12 @@ public enum RunOutcome: Codable, Equatable {
     case missedExit
 }
 
+public enum RunEvent: String, Codable, Equatable {
+    case nearMiss
+    case trafficCollision
+    case roadblockCollision
+}
+
 public struct RecordedCommand: Codable, Equatable {
     public let frameIndex: UInt64
     public let command: PlayerCommand
@@ -43,11 +49,22 @@ public struct RecordedStateHash: Codable, Equatable {
     }
 }
 
+public struct RecordedRunEvent: Codable, Equatable {
+    public let frameIndex: UInt64
+    public let event: RunEvent
+
+    public init(frameIndex: UInt64, event: RunEvent) {
+        self.frameIndex = frameIndex
+        self.event = event
+    }
+}
+
 public struct RunConfigurationRecord: Codable, Equatable {
     public let levelID: String
     public let cityID: RunCity
     public let vehicleID: String
     public let seed: UInt64
+    public let startingSlot: Int
     public let simulationVersion: Int
     public let trafficPatternLibraryVersion: Int
     public let fixedStep: Double
@@ -61,6 +78,7 @@ public struct RunConfigurationRecord: Codable, Equatable {
         cityID: RunCity,
         vehicleID: String,
         seed: UInt64,
+        startingSlot: Int = LaneModel.startSlot,
         simulationVersion: Int = 1,
         trafficPatternLibraryVersion: Int = 1,
         fixedStep: Double = 1.0 / 60.0,
@@ -73,6 +91,7 @@ public struct RunConfigurationRecord: Codable, Equatable {
         self.cityID = cityID
         self.vehicleID = vehicleID
         self.seed = seed
+        self.startingSlot = startingSlot
         self.simulationVersion = simulationVersion
         self.trafficPatternLibraryVersion = trafficPatternLibraryVersion
         self.fixedStep = fixedStep
@@ -94,6 +113,53 @@ public struct RunConfigurationRecord: Codable, Equatable {
             exitDeadlineFrame: UInt64(((level.durationBeforeExit + level.exitWindowSeconds) / fixedStep).rounded())
         )
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case levelID
+        case cityID
+        case vehicleID
+        case seed
+        case startingSlot
+        case simulationVersion
+        case trafficPatternLibraryVersion
+        case fixedStep
+        case exitSide
+        case exitWarningFrame
+        case exitDeadlineFrame
+        case capturePressureThreshold
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        levelID = try container.decode(String.self, forKey: .levelID)
+        cityID = try container.decode(RunCity.self, forKey: .cityID)
+        vehicleID = try container.decode(String.self, forKey: .vehicleID)
+        seed = try container.decode(UInt64.self, forKey: .seed)
+        startingSlot = try container.decodeIfPresent(Int.self, forKey: .startingSlot) ?? LaneModel.startSlot
+        simulationVersion = try container.decodeIfPresent(Int.self, forKey: .simulationVersion) ?? 1
+        trafficPatternLibraryVersion = try container.decodeIfPresent(Int.self, forKey: .trafficPatternLibraryVersion) ?? 1
+        fixedStep = try container.decode(Double.self, forKey: .fixedStep)
+        exitSide = try container.decode(ExitSide.self, forKey: .exitSide)
+        exitWarningFrame = try container.decode(UInt64.self, forKey: .exitWarningFrame)
+        exitDeadlineFrame = try container.decode(UInt64.self, forKey: .exitDeadlineFrame)
+        capturePressureThreshold = try container.decodeIfPresent(Double.self, forKey: .capturePressureThreshold) ?? 1.0
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(levelID, forKey: .levelID)
+        try container.encode(cityID, forKey: .cityID)
+        try container.encode(vehicleID, forKey: .vehicleID)
+        try container.encode(seed, forKey: .seed)
+        try container.encode(startingSlot, forKey: .startingSlot)
+        try container.encode(simulationVersion, forKey: .simulationVersion)
+        try container.encode(trafficPatternLibraryVersion, forKey: .trafficPatternLibraryVersion)
+        try container.encode(fixedStep, forKey: .fixedStep)
+        try container.encode(exitSide, forKey: .exitSide)
+        try container.encode(exitWarningFrame, forKey: .exitWarningFrame)
+        try container.encode(exitDeadlineFrame, forKey: .exitDeadlineFrame)
+        try container.encode(capturePressureThreshold, forKey: .capturePressureThreshold)
+    }
 }
 
 public struct RunReplay: Codable, Equatable {
@@ -101,6 +167,7 @@ public struct RunReplay: Codable, Equatable {
     public let configuration: RunConfigurationRecord
     public let seed: UInt64
     public let commands: [RecordedCommand]
+    public let events: [RecordedRunEvent]
     public let expectedOutcome: RunOutcome
     public let expectedScore: Int
     public let stateHashes: [RecordedStateHash]
@@ -110,6 +177,7 @@ public struct RunReplay: Codable, Equatable {
         configuration: RunConfigurationRecord,
         seed: UInt64,
         commands: [RecordedCommand],
+        events: [RecordedRunEvent] = [],
         expectedOutcome: RunOutcome,
         expectedScore: Int,
         stateHashes: [RecordedStateHash]
@@ -118,9 +186,45 @@ public struct RunReplay: Codable, Equatable {
         self.configuration = configuration
         self.seed = seed
         self.commands = commands
+        self.events = events
         self.expectedOutcome = expectedOutcome
         self.expectedScore = expectedScore
         self.stateHashes = stateHashes
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case simulationVersion
+        case configuration
+        case seed
+        case commands
+        case events
+        case expectedOutcome
+        case expectedScore
+        case stateHashes
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        simulationVersion = try container.decode(Int.self, forKey: .simulationVersion)
+        configuration = try container.decode(RunConfigurationRecord.self, forKey: .configuration)
+        seed = try container.decode(UInt64.self, forKey: .seed)
+        commands = try container.decode([RecordedCommand].self, forKey: .commands)
+        events = try container.decodeIfPresent([RecordedRunEvent].self, forKey: .events) ?? []
+        expectedOutcome = try container.decode(RunOutcome.self, forKey: .expectedOutcome)
+        expectedScore = try container.decode(Int.self, forKey: .expectedScore)
+        stateHashes = try container.decode([RecordedStateHash].self, forKey: .stateHashes)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(simulationVersion, forKey: .simulationVersion)
+        try container.encode(configuration, forKey: .configuration)
+        try container.encode(seed, forKey: .seed)
+        try container.encode(commands, forKey: .commands)
+        try container.encode(events, forKey: .events)
+        try container.encode(expectedOutcome, forKey: .expectedOutcome)
+        try container.encode(expectedScore, forKey: .expectedScore)
+        try container.encode(stateHashes, forKey: .stateHashes)
     }
 }
 
@@ -288,6 +392,8 @@ public struct RunStateSnapshot: Codable, Equatable {
     public let flow: Double
     public let laneStaleEffect: Double
     public let pursuitPressure: Double
+    public let nearMissCount: Int
+    public let highestCombo: Int
     public let score: Int
     public let outcome: RunOutcome
 
@@ -298,6 +404,8 @@ public struct RunStateSnapshot: Codable, Equatable {
         mix(UInt64((flow * 10_000).rounded()), into: &hash)
         mix(UInt64((laneStaleEffect * 10_000).rounded()), into: &hash)
         mix(UInt64((pursuitPressure * 10_000).rounded()), into: &hash)
+        mix(UInt64(max(0, nearMissCount)), into: &hash)
+        mix(UInt64(max(0, highestCombo)), into: &hash)
         mix(UInt64(max(0, score)), into: &hash)
         mix(outcomeCode, into: &hash)
         return hash
@@ -332,22 +440,31 @@ public final class FixedStepRunSimulation {
     public private(set) var laneStale: LaneStaleState
     public private(set) var flow = FlowState()
     public private(set) var pursuit = PursuitPressureState()
+    public private(set) var nearMissCount = 0
+    public private(set) var comboCount = 0
+    public private(set) var highestCombo = 0
 
     private let configuration: RunConfigurationRecord
     private let vehicle: VehicleDefinition
     private var commandQueue: [UInt64: [PlayerCommand]] = [:]
+    private var eventQueue: [UInt64: [RunEvent]] = [:]
     private var holdDirection = 0
+    private var comboFramesRemaining: UInt64 = 0
 
     public init(configuration: RunConfigurationRecord, vehicle: VehicleDefinition) {
         self.configuration = configuration
         self.vehicle = vehicle
-        self.playerSlot = LaneModel.clampSlot(LaneModel.startSlot, for: vehicle.vehicleClass)
+        self.playerSlot = LaneModel.clampSlot(configuration.startingSlot, for: vehicle.vehicleClass)
         self.laneStale = LaneStaleState(currentSlot: playerSlot)
         self.pursuit = PursuitPressureState(value: min(0.22, configuration.capturePressureThreshold * 0.22))
     }
 
     public func enqueue(_ command: PlayerCommand, forFrame frame: UInt64) {
         commandQueue[frame, default: []].append(command)
+    }
+
+    public func enqueue(_ event: RunEvent, forFrame frame: UInt64) {
+        eventQueue[frame, default: []].append(event)
     }
 
     public func step() {
@@ -362,6 +479,23 @@ public final class FixedStepRunSimulation {
 
         if holdDirection != 0, frameIndex.isMultiple(of: 12) {
             moved = move(bySlots: holdDirection) || moved
+        }
+
+        if comboFramesRemaining > 0 {
+            comboFramesRemaining -= 1
+            if comboFramesRemaining == 0 {
+                comboCount = 0
+            }
+        }
+
+        let events = eventQueue.removeValue(forKey: frameIndex) ?? []
+        for event in events {
+            apply(event)
+        }
+
+        guard case .running = outcome else {
+            frameIndex += 1
+            return
         }
 
         laneStale.step(slot: playerSlot, previousSlot: previousSlot, deltaTime: configuration.fixedStep)
@@ -391,6 +525,8 @@ public final class FixedStepRunSimulation {
             flow: flow.value,
             laneStaleEffect: laneStale.effect,
             pursuitPressure: pursuit.value,
+            nearMissCount: nearMissCount,
+            highestCombo: highestCombo,
             score: score,
             outcome: outcome
         )
@@ -425,6 +561,87 @@ public final class FixedStepRunSimulation {
         flow.recordCleanShift(fast: fast)
         return true
     }
+
+    private func apply(_ event: RunEvent) {
+        switch event {
+        case .nearMiss:
+            nearMissCount += 1
+            comboCount = comboFramesRemaining > 0 ? comboCount + 1 : 1
+            highestCombo = max(highestCombo, comboCount)
+            comboFramesRemaining = UInt64((2.5 / configuration.fixedStep).rounded())
+            flow.recordNearMiss()
+            pursuit.recordNearMiss()
+            score += Int((35 + Double(comboCount) * 12 + flow.value * 18).rounded())
+        case .trafficCollision:
+            flow.recordCollision()
+            pursuit.recordCollision()
+            outcome = .crashed(cause: .traffic)
+        case .roadblockCollision:
+            flow.recordCollision()
+            pursuit.recordCollision()
+            outcome = .crashed(cause: .roadblock)
+        }
+    }
+}
+
+public enum ExitRoutePlanner {
+    public static func commands(
+        from startingSlot: Int,
+        to exitSide: ExitSide,
+        vehicleClass: VehicleClass,
+        firstFrame: UInt64 = 0,
+        frameStride: UInt64 = 1
+    ) -> [RecordedCommand] {
+        let exitSlots = LaneModel.exitSlots(for: exitSide, vehicleClass: vehicleClass)
+        var slot = LaneModel.clampSlot(startingSlot, for: vehicleClass)
+        guard !exitSlots.contains(slot) else { return [] }
+
+        var commands: [RecordedCommand] = []
+        var frame = firstFrame
+        var guardCount = 0
+        while !exitSlots.contains(slot) && guardCount < LaneModel.slotCount {
+            let target = nearestExitSlot(to: slot, exitSlots: exitSlots)
+            let delta = target - slot
+            let command: PlayerCommand
+            let slotDelta: Int
+            switch vehicleClass {
+            case .car:
+                if abs(delta) >= 4 {
+                    command = delta < 0 ? .fastMoveLeft : .fastMoveRight
+                    slotDelta = delta < 0 ? -4 : 4
+                } else {
+                    command = delta < 0 ? .moveLeft : .moveRight
+                    slotDelta = delta < 0 ? -2 : 2
+                }
+            case .motorcycle:
+                if abs(delta) >= 3 {
+                    command = delta < 0 ? .fastMoveLeft : .fastMoveRight
+                    slotDelta = delta < 0 ? -3 : 3
+                } else {
+                    command = delta < 0 ? .moveLeft : .moveRight
+                    slotDelta = delta < 0 ? -1 : 1
+                }
+            }
+
+            commands.append(RecordedCommand(frameIndex: frame, command: command))
+            slot = LaneModel.targetSlot(from: slot, delta: slotDelta, vehicleClass: vehicleClass)
+            frame += frameStride
+            guardCount += 1
+        }
+
+        return commands
+    }
+
+    private static func nearestExitSlot(to slot: Int, exitSlots: Set<Int>) -> Int {
+        exitSlots.min { lhs, rhs in
+            let lhsDistance = abs(lhs - slot)
+            let rhsDistance = abs(rhs - slot)
+            if lhsDistance == rhsDistance {
+                return lhs < rhs
+            }
+            return lhsDistance < rhsDistance
+        } ?? slot
+    }
 }
 
 public enum RunReplayVerifier {
@@ -433,8 +650,16 @@ public enum RunReplayVerifier {
         for command in replay.commands {
             simulation.enqueue(command.command, forFrame: command.frameIndex)
         }
+        for event in replay.events {
+            simulation.enqueue(event.event, forFrame: event.frameIndex)
+        }
 
-        let finalFrame = max(replay.configuration.exitDeadlineFrame + 1, replay.stateHashes.map(\.frameIndex).max() ?? 0)
+        let finalFrame = [
+            replay.configuration.exitDeadlineFrame + 1,
+            replay.commands.map(\.frameIndex).max() ?? 0,
+            replay.events.map(\.frameIndex).max() ?? 0,
+            replay.stateHashes.map(\.frameIndex).max() ?? 0
+        ].max() ?? 0
         var recordedHashes: [RecordedStateHash] = []
         while simulation.frameIndex <= finalFrame {
             if replay.stateHashes.contains(where: { $0.frameIndex == simulation.frameIndex }) {

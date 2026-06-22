@@ -26,6 +26,66 @@ struct TrafficPatternContext {
     let dodgeBoostActive: Bool
 }
 
+struct AppSeededRNG {
+    private var state: UInt64
+
+    init(seed: UInt64) {
+        state = seed == 0 ? 0x1234ABCD : seed
+    }
+
+    mutating func next() -> UInt64 {
+        state = state &* 6364136223846793005 &+ 1442695040888963407
+        return state
+    }
+
+    mutating func double(in range: ClosedRange<Double>) -> Double {
+        let unit = Double(next() >> 11) / Double(UInt64.max >> 11)
+        return range.lowerBound + unit * (range.upperBound - range.lowerBound)
+    }
+
+    mutating func cgFloat(in range: ClosedRange<CGFloat>) -> CGFloat {
+        CGFloat(double(in: Double(range.lowerBound)...Double(range.upperBound)))
+    }
+
+    mutating func int(in range: ClosedRange<Int>) -> Int {
+        guard range.lowerBound < range.upperBound else { return range.lowerBound }
+        let width = UInt64(range.upperBound - range.lowerBound + 1)
+        return range.lowerBound + Int(next() % width)
+    }
+
+    mutating func chance(_ probability: Double) -> Bool {
+        double(in: 0...1) < max(0, min(1, probability))
+    }
+
+    mutating func element<T>(from values: [T]) -> T? {
+        guard !values.isEmpty else { return nil }
+        return values[int(in: 0...(values.count - 1))]
+    }
+
+    mutating func shuffled<T>(_ values: [T]) -> [T] {
+        guard values.count > 1 else { return values }
+        var result = values
+        for index in stride(from: result.count - 1, through: 1, by: -1) {
+            let swapIndex = int(in: 0...index)
+            result.swapAt(index, swapIndex)
+        }
+        return result
+    }
+
+    func derivedStream(named name: String) -> AppSeededRNG {
+        AppSeededRNG(seed: Self.stableSeed(for: name, runIndex: 0, baseSeed: state))
+    }
+
+    static func stableSeed(for key: String, runIndex: Int, baseSeed: UInt64 = 0) -> UInt64 {
+        var hash: UInt64 = 1469598103934665603
+        for byte in key.utf8 {
+            hash ^= UInt64(byte)
+            hash = hash &* 1099511628211
+        }
+        return hash &+ baseSeed &+ UInt64(runIndex * 7919 + 17)
+    }
+}
+
 struct TrafficWavePlan {
     let patternName: String
     let spawns: [TrafficSpawnRequest]
@@ -47,11 +107,11 @@ enum TrafficPatternGenerator {
         case policePressure
     }
 
-    static func generate(context: TrafficPatternContext) -> TrafficWavePlan? {
+    static func generate(context: TrafficPatternContext, rng: inout AppSeededRNG) -> TrafficWavePlan? {
         var lastRejection = "unknown"
         for attempt in 0..<10 {
-            let pattern = choosePattern(context: context)
-            let requests = makeRequests(pattern: pattern, context: context)
+            let pattern = choosePattern(context: context, rng: &rng)
+            let requests = makeRequests(pattern: pattern, context: context, rng: &rng)
             let validation = TrafficSafetyAnalyzer.validateWave(requests: requests, context: context)
 
             if validation.isValid {
@@ -72,102 +132,102 @@ enum TrafficPatternGenerator {
             }
         }
 
-        return recoveryWave(context: context, lastRejection: lastRejection)
+        return recoveryWave(context: context, lastRejection: lastRejection, rng: &rng)
     }
 
-    private static func choosePattern(context: TrafficPatternContext) -> Pattern {
+    private static func choosePattern(context: TrafficPatternContext, rng: inout AppSeededRNG) -> Pattern {
         let easy: [Pattern] = [.sparseLanes, .staggeredCars, .denseClusters]
         let mid: [Pattern] = [.denseClusters, .staggeredCars, .compactPack, .fastLaneBurst, .haulerWall]
         let hard: [Pattern] = [.denseClusters, .haulerWall, .compactPack, .fastLaneBurst, .policePressure, .staggeredCars]
 
         if context.density < 0.46 {
-            return easy.randomElement() ?? .sparseLanes
+            return rng.element(from: easy) ?? .sparseLanes
         } else if context.density < 0.72 {
-            return mid.randomElement() ?? .denseClusters
+            return rng.element(from: mid) ?? .denseClusters
         } else {
-            return hard.randomElement() ?? .policePressure
+            return rng.element(from: hard) ?? .policePressure
         }
     }
 
-    private static func makeRequests(pattern: Pattern, context: TrafficPatternContext) -> [TrafficSpawnRequest] {
-        let occupiedTarget = occupiedLaneTarget(context)
-        let lanes = shuffledPlayableLanes(context)
+    private static func makeRequests(pattern: Pattern, context: TrafficPatternContext, rng: inout AppSeededRNG) -> [TrafficSpawnRequest] {
+        let occupiedTarget = occupiedLaneTarget(context, rng: &rng)
+        let lanes = shuffledPlayableLanes(context, rng: &rng)
         var requests: [TrafficSpawnRequest] = []
 
         switch pattern {
         case .sparseLanes:
             for lane in lanes.prefix(min(5, occupiedTarget)) {
-                requests.append(request(lane: lane, type: randomCivilian(context), index: requests.count))
+                requests.append(request(lane: lane, type: randomCivilian(context, rng: &rng), index: requests.count, rng: &rng))
             }
 
         case .denseClusters:
-            let gapStart = Int.random(in: 0...(context.laneCount - 2))
+            let gapStart = rng.int(in: 0...(context.laneCount - 2))
             let gap = Set([gapStart, gapStart + 1]).union(context.protectedLanes)
             for lane in lanes where !gap.contains(lane) && occupiedCount(requests, context) < occupiedTarget {
-                requests.append(request(lane: lane, type: randomCivilian(context), index: requests.count))
+                requests.append(request(lane: lane, type: randomCivilian(context, rng: &rng), index: requests.count, rng: &rng))
             }
 
         case .staggeredCars:
             for lane in lanes where occupiedCount(requests, context) < occupiedTarget {
                 let offset = CGFloat((lane + requests.count) % 4) * 42
-                requests.append(TrafficSpawnRequest(lane: lane, type: randomCivilian(context), yOffset: offset, speedMultiplier: CGFloat.random(in: 0.9...1.08)))
+                requests.append(TrafficSpawnRequest(lane: lane, type: randomCivilian(context, rng: &rng), yOffset: offset, speedMultiplier: rng.cgFloat(in: 0.9...1.08)))
             }
 
         case .haulerWall:
-            let gap = Set(openGap(width: context.density > 0.78 ? 2 : 3, context: context))
+            let gap = Set(openGap(width: context.density > 0.78 ? 2 : 3, context: context, rng: &rng))
             for lane in lanes where !gap.contains(lane) && occupiedCount(requests, context) < occupiedTarget {
-                let type: VehicleType = requests.count.isMultiple(of: 2) ? .boxTruck : randomCivilian(context)
-                requests.append(request(lane: lane, type: type, index: requests.count, speed: 0.92))
+                let type: VehicleType = requests.count.isMultiple(of: 2) ? .boxTruck : randomCivilian(context, rng: &rng)
+                requests.append(request(lane: lane, type: type, index: requests.count, speed: 0.92, rng: &rng))
             }
 
         case .compactPack:
-            let gap = Set(openGap(width: 2, context: context))
+            let gap = Set(openGap(width: 2, context: context, rng: &rng))
             for lane in lanes where !gap.contains(lane) && occupiedCount(requests, context) < occupiedTarget {
-                requests.append(request(lane: lane, type: .compact, index: requests.count, speed: 0.96))
+                requests.append(request(lane: lane, type: .compact, index: requests.count, speed: 0.96, rng: &rng))
             }
 
         case .fastLaneBurst:
             for lane in lanes.prefix(min(context.laneCount - 2, occupiedTarget + 1)) where occupiedCount(requests, context) < occupiedTarget {
-                requests.append(request(lane: lane, type: .sportCoupe, index: requests.count, speed: 1.12))
+                requests.append(request(lane: lane, type: .sportCoupe, index: requests.count, speed: 1.12, rng: &rng))
             }
 
         case .policePressure:
-            let gap = Set(openGap(width: 2, context: context))
+            let gap = Set(openGap(width: 2, context: context, rng: &rng))
             for lane in lanes where !gap.contains(lane) && occupiedCount(requests, context) < occupiedTarget {
-                let type: VehicleType = context.wantedLevel >= 4 && requests.count.isMultiple(of: 3) ? .policeMoto : (requests.count.isMultiple(of: 4) ? .van : randomCivilian(context))
-                requests.append(request(lane: lane, type: type, index: requests.count, speed: 1.02))
+                let type: VehicleType = context.wantedLevel >= 4 && requests.count.isMultiple(of: 3) ? .policeMoto : (requests.count.isMultiple(of: 4) ? .van : randomCivilian(context, rng: &rng))
+                requests.append(request(lane: lane, type: type, index: requests.count, speed: 1.02, rng: &rng))
             }
         }
 
         return requests
     }
 
-    private static func occupiedLaneTarget(_ context: TrafficPatternContext) -> Int {
+    private static func occupiedLaneTarget(_ context: TrafficPatternContext, rng: inout AppSeededRNG) -> Int {
         let bikeBonus = context.vehicleClass == .motorcycle ? 1 : 0
         if context.density < 0.28 {
-            return Int.random(in: (2 + bikeBonus)...(4 + bikeBonus))
+            return rng.int(in: (2 + bikeBonus)...(4 + bikeBonus))
         }
         if context.density < 0.46 {
-            return Int.random(in: (3 + bikeBonus)...(5 + bikeBonus))
+            return rng.int(in: (3 + bikeBonus)...(5 + bikeBonus))
         }
         if context.density < 0.72 {
-            return Int.random(in: (5 + bikeBonus)...min(context.laneCount - 2, 8 + bikeBonus))
+            return rng.int(in: (5 + bikeBonus)...min(context.laneCount - 2, 8 + bikeBonus))
         }
-        return Int.random(in: (7 + bikeBonus)...min(context.laneCount - 1, 10 + bikeBonus))
+        return rng.int(in: (7 + bikeBonus)...min(context.laneCount - 1, 10 + bikeBonus))
     }
 
-    private static func shuffledPlayableLanes(_ context: TrafficPatternContext) -> [Int] {
-        Array(0..<context.laneCount)
+    private static func shuffledPlayableLanes(_ context: TrafficPatternContext, rng: inout AppSeededRNG) -> [Int] {
+        return rng.shuffled(Array(0..<context.laneCount)
             .filter { !context.protectedLanes.contains($0) && !context.recentBlockedLanes.contains($0) }
-            .shuffled()
+        )
     }
 
-    private static func openGap(width: Int, context: TrafficPatternContext) -> [Int] {
-        let start = Int.random(in: 0...max(0, context.laneCount - width))
+    private static func openGap(width: Int, context: TrafficPatternContext, rng: inout AppSeededRNG) -> [Int] {
+        let start = rng.int(in: 0...max(0, context.laneCount - width))
         return Array(start..<(start + width))
     }
 
-    private static func recoveryWave(context: TrafficPatternContext, lastRejection: String) -> TrafficWavePlan? {
+    private static func recoveryWave(context: TrafficPatternContext, lastRejection: String, rng: inout AppSeededRNG) -> TrafficWavePlan? {
         let laneOrder = Array(0..<context.laneCount)
             .filter { lane in
                 !context.protectedLanes.contains(lane)
@@ -186,7 +246,7 @@ enum TrafficPatternGenerator {
                 lane: lane,
                 type: types[index % types.count],
                 yOffset: CGFloat(index) * 68,
-                speedMultiplier: CGFloat.random(in: 0.88...0.98)
+                speedMultiplier: rng.cgFloat(in: 0.88...0.98)
             )
         }
         let validation = TrafficSafetyAnalyzer.validateWave(requests: requests, context: context)
@@ -206,17 +266,17 @@ enum TrafficPatternGenerator {
         )
     }
 
-    private static func request(lane: Int, type: VehicleType, index: Int, speed: CGFloat = 1) -> TrafficSpawnRequest {
+    private static func request(lane: Int, type: VehicleType, index: Int, speed: CGFloat = 1, rng: inout AppSeededRNG) -> TrafficSpawnRequest {
         TrafficSpawnRequest(
             lane: lane,
             type: type,
-            yOffset: CGFloat(index % 4) * CGFloat.random(in: 38...76),
-            speedMultiplier: speed * CGFloat.random(in: 0.92...1.08)
+            yOffset: CGFloat(index % 4) * rng.cgFloat(in: 38...76),
+            speedMultiplier: speed * rng.cgFloat(in: 0.92...1.08)
         )
     }
 
-    private static func randomCivilian(_ context: TrafficPatternContext) -> VehicleType {
-        WorldThemeCatalog.theme(id: context.worldThemeID).trafficPool(wantedLevel: context.wantedLevel).randomElement() ?? .sedan
+    private static func randomCivilian(_ context: TrafficPatternContext, rng: inout AppSeededRNG) -> VehicleType {
+        rng.element(from: WorldThemeCatalog.theme(id: context.worldThemeID).trafficPool(wantedLevel: context.wantedLevel)) ?? .sedan
     }
 
     private static func occupiedCount(_ requests: [TrafficSpawnRequest], _ context: TrafficPatternContext) -> Int {

@@ -130,6 +130,17 @@ final class GameCoreTests: XCTestCase {
         XCTAssertTrue(ProgressionModel.isLevelUnlocked(levelTwo, state: ProgressionState(completedLevelIDs: ["la_01"])))
     }
 
+    func testFirstSunsetMergeEscapeUnlocksStarterBikeOnce() {
+        let reward = FinalRunReward(baseCash: 0, cash: 210, xp: 90)
+        let fresh = ProgressionState()
+        let first = ProgressionModel.applyRunReward(reward, completedLevelID: "la_01", state: fresh)
+        XCTAssertTrue(first.unlockedVehicleIDs.contains(VehicleCatalog.starterBikeID))
+        XCTAssertEqual(first.unlockedVehicleIDs.filter { $0 == VehicleCatalog.starterBikeID }.count, 1)
+
+        let replay = ProgressionModel.applyRunReward(reward, completedLevelID: "la_01", state: first)
+        XCTAssertEqual(replay.unlockedVehicleIDs.filter { $0 == VehicleCatalog.starterBikeID }.count, 1)
+    }
+
     func testSeededRNGDerivedStreamsDoNotConsumeGameplayStream() {
         var gameplayA = SeededRNG(seed: 24680)
         let cosmetic = gameplayA.derivedStream(named: "cosmetic")
@@ -225,5 +236,238 @@ final class GameCoreTests: XCTestCase {
         let result = RunReplayVerifier.replay(replay, vehicle: vehicle)
         XCTAssertTrue(result.matches)
         XCTAssertEqual(result.snapshot.outcome, .escaped)
+    }
+
+    func testFixedStepReplayMatchesPassiveCapture() throws {
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
+        let configuration = RunConfigurationRecord(
+            levelID: level.levelID,
+            cityID: level.city,
+            vehicleID: vehicle.id,
+            seed: 1001,
+            fixedStep: 1.0 / 60.0,
+            exitSide: .right,
+            exitWarningFrame: 10_000,
+            exitDeadlineFrame: 12_000,
+            capturePressureThreshold: 0.12
+        )
+
+        let result = runAndReplay(configuration: configuration, vehicle: vehicle, hashFrames: [0, 30, 60, 90])
+
+        XCTAssertTrue(result.replayMatches)
+        XCTAssertEqual(result.snapshot.outcome, .captured)
+        XCTAssertGreaterThanOrEqual(result.snapshot.pursuitPressure, 0.12)
+    }
+
+    func testFixedStepReplayMatchesMissedExit() throws {
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
+        let configuration = RunConfigurationRecord(
+            levelID: level.levelID,
+            cityID: level.city,
+            vehicleID: vehicle.id,
+            seed: 1002,
+            fixedStep: 1.0 / 60.0,
+            exitSide: .right,
+            exitWarningFrame: 4,
+            exitDeadlineFrame: 8,
+            capturePressureThreshold: 99
+        )
+
+        let result = runAndReplay(configuration: configuration, vehicle: vehicle, hashFrames: [0, 4, 9])
+
+        XCTAssertTrue(result.replayMatches)
+        XCTAssertEqual(result.snapshot.outcome, .missedExit)
+    }
+
+    func testFixedStepReplayMatchesTrafficCollisionEvent() throws {
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
+        let configuration = RunConfigurationRecord(
+            levelID: level.levelID,
+            cityID: level.city,
+            vehicleID: vehicle.id,
+            seed: 1003,
+            fixedStep: 1.0 / 60.0,
+            exitSide: .right,
+            exitWarningFrame: 100,
+            exitDeadlineFrame: 120,
+            capturePressureThreshold: 99
+        )
+        let events = [RecordedRunEvent(frameIndex: 6, event: .trafficCollision)]
+
+        let result = runAndReplay(configuration: configuration, vehicle: vehicle, events: events, hashFrames: [0, 6, 7])
+
+        XCTAssertTrue(result.replayMatches)
+        if case .crashed(let cause) = result.snapshot.outcome {
+            XCTAssertEqual(cause, .traffic)
+        } else {
+            XCTFail("Expected traffic crash, got \(result.snapshot.outcome)")
+        }
+    }
+
+    func testFixedStepReplayMatchesMultiNearMissCombo() throws {
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
+        let configuration = RunConfigurationRecord(
+            levelID: level.levelID,
+            cityID: level.city,
+            vehicleID: vehicle.id,
+            seed: 1004,
+            fixedStep: 1.0 / 60.0,
+            exitSide: .right,
+            exitWarningFrame: 100,
+            exitDeadlineFrame: 120,
+            capturePressureThreshold: 99
+        )
+        let events = [
+            RecordedRunEvent(frameIndex: 1, event: .nearMiss),
+            RecordedRunEvent(frameIndex: 20, event: .nearMiss),
+            RecordedRunEvent(frameIndex: 40, event: .nearMiss)
+        ]
+
+        let result = runAndReplay(configuration: configuration, vehicle: vehicle, events: events, hashFrames: [0, 2, 21, 41, 121])
+
+        XCTAssertTrue(result.replayMatches)
+        XCTAssertEqual(result.simulation.nearMissCount, 3)
+        XCTAssertEqual(result.simulation.highestCombo, 3)
+        XCTAssertGreaterThan(result.simulation.score, 0)
+        XCTAssertEqual(result.snapshot.outcome, .missedExit)
+    }
+
+    func testMotorcycleReplayCanEscapeThroughInterstitialExitSlot() throws {
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterBikeID)
+        let configuration = RunConfigurationRecord(
+            levelID: level.levelID,
+            cityID: level.city,
+            vehicleID: vehicle.id,
+            seed: 1005,
+            fixedStep: 1.0 / 60.0,
+            exitSide: .right,
+            exitWarningFrame: 3,
+            exitDeadlineFrame: 20,
+            capturePressureThreshold: 99
+        )
+        let commands = [
+            RecordedCommand(frameIndex: 0, command: .fastMoveRight),
+            RecordedCommand(frameIndex: 1, command: .fastMoveRight),
+            RecordedCommand(frameIndex: 2, command: .fastMoveRight)
+        ]
+
+        let result = runAndReplay(configuration: configuration, vehicle: vehicle, commands: commands, hashFrames: [0, 3, 4])
+
+        XCTAssertTrue(result.replayMatches)
+        XCTAssertEqual(result.simulation.playerSlot, 19)
+        XCTAssertTrue(LaneModel.isSplitSlot(result.simulation.playerSlot))
+        XCTAssertEqual(result.snapshot.outcome, .escaped)
+    }
+
+    func testSunsetMergeTrafficStressCommitsReachableWaves() throws {
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
+        var impossibleCommittedWaves = 0
+        var exitReachabilityFailures = 0
+        var fallbackWaves = 0
+
+        for runIndex in 0..<250 {
+            var rng = SeededRNG(seed: SeededRNG.stableSeed(for: "la_01|starter_compact|test_stress", runIndex: runIndex, baseSeed: 12345))
+            var playerSlot = LaneModel.startSlot
+
+            for waveIndex in 0..<12 {
+                let exitActive = waveIndex >= 8
+                let progress = Double(waveIndex) / 11.0
+                let density = min(level.maxTrafficDensity, level.startingTrafficDensity + (level.maxTrafficDensity - level.startingTrafficDensity) * progress)
+                let context = TrafficPatternContext(
+                    laneCount: LaneModel.laneCount,
+                    playerLane: LaneModel.nearestLaneForSlot(playerSlot),
+                    playerSlot: playerSlot,
+                    vehicleClass: vehicle.vehicleClass,
+                    density: density,
+                    wantedLevel: min(6, 1 + waveIndex / 2),
+                    city: level.city,
+                    protectedLanes: exitActive ? LaneModel.exitGuardLanes(for: level.exitSide) : [],
+                    protectedSlots: exitActive ? LaneModel.exitSlots(for: level.exitSide, vehicleClass: vehicle.vehicleClass) : [],
+                    recentBlockedLanes: [],
+                    recentHazards: [],
+                    exitActive: exitActive,
+                    exitSide: exitActive ? level.exitSide : nil,
+                    dodgeBoostActive: false
+                )
+
+                let plan = try XCTUnwrap(TrafficPatternGenerator.generate(context: context, rng: &rng))
+                if plan.patternName == "recoveryWave" {
+                    fallbackWaves += 1
+                }
+                let validation = TrafficSafetyAnalyzer.validateWave(requests: plan.spawns, context: context)
+                if !validation.isValid {
+                    impossibleCommittedWaves += 1
+                    if validation.rejectionReason == "no reachable exit-side route" {
+                        exitReachabilityFailures += 1
+                    }
+                }
+
+                let safeSlots = plan.safeCarSlots
+                if let nextSlot = safeSlots.min(by: { abs($0 - playerSlot) < abs($1 - playerSlot) }) {
+                    playerSlot = LaneModel.clampSlot(nextSlot, for: vehicle.vehicleClass)
+                }
+            }
+        }
+
+        XCTAssertEqual(impossibleCommittedWaves, 0)
+        XCTAssertEqual(exitReachabilityFailures, 0)
+        XCTAssertGreaterThanOrEqual(fallbackWaves, 0)
+    }
+
+    private func runAndReplay(
+        configuration: RunConfigurationRecord,
+        vehicle: VehicleDefinition,
+        commands: [RecordedCommand] = [],
+        events: [RecordedRunEvent] = [],
+        hashFrames: Set<UInt64>
+    ) -> (simulation: FixedStepRunSimulation, replayMatches: Bool, snapshot: RunStateSnapshot) {
+        let simulation = FixedStepRunSimulation(configuration: configuration, vehicle: vehicle)
+        for command in commands {
+            simulation.enqueue(command.command, forFrame: command.frameIndex)
+        }
+        for event in events {
+            simulation.enqueue(event.event, forFrame: event.frameIndex)
+        }
+
+        var hashes: [RecordedStateHash] = []
+        let finalFrame = [
+            configuration.exitDeadlineFrame + 1,
+            commands.map(\.frameIndex).max() ?? 0,
+            events.map(\.frameIndex).max() ?? 0,
+            hashFrames.max() ?? 0
+        ].max() ?? 0
+        while simulation.frameIndex <= finalFrame {
+            if hashFrames.contains(simulation.frameIndex) {
+                let snapshot = simulation.makeSnapshot()
+                hashes.append(RecordedStateHash(frameIndex: snapshot.frameIndex, hash: snapshot.stableHash))
+            }
+            simulation.step()
+            if simulation.outcome != .running {
+                if hashFrames.contains(simulation.frameIndex) {
+                    let snapshot = simulation.makeSnapshot()
+                    hashes.append(RecordedStateHash(frameIndex: snapshot.frameIndex, hash: snapshot.stableHash))
+                }
+                break
+            }
+        }
+
+        let replay = RunReplay(
+            simulationVersion: configuration.simulationVersion,
+            configuration: configuration,
+            seed: configuration.seed,
+            commands: commands,
+            events: events,
+            expectedOutcome: simulation.outcome,
+            expectedScore: simulation.score,
+            stateHashes: hashes
+        )
+        let result = RunReplayVerifier.replay(replay, vehicle: vehicle)
+        return (simulation, result.matches, result.snapshot)
     }
 }

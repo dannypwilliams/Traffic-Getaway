@@ -8,6 +8,7 @@ struct Options {
     var seed: UInt64 = 12_345
     var list = false
     var help = false
+    var trafficStress = false
 }
 
 func parseOptions(_ arguments: [String]) -> Options {
@@ -21,6 +22,8 @@ func parseOptions(_ arguments: [String]) -> Options {
             options.help = true
         case "--list":
             options.list = true
+        case "--traffic-stress":
+            options.trafficStress = true
         case "--level":
             if index + 1 < arguments.count {
                 options.levelID = arguments[index + 1]
@@ -64,6 +67,7 @@ func printHelp() {
       --vehicle <id|name|all>     Vehicle to simulate. Default: starter_compact
       --runs <count>         Runs per level/vehicle configuration. Default: 10000
       --seed <number>        Base deterministic seed. Default: 12345
+      --traffic-stress       Run pure traffic wave reachability stress instead of chase simulation
       --list                 List known levels and vehicles
       --help                 Show this help
     """)
@@ -228,6 +232,112 @@ func printReport(levels: [LevelDefinition], vehicles: [VehicleDefinition], optio
     }
 }
 
+struct TrafficStressAggregate {
+    var runs = 0
+    var wavesGenerated = 0
+    var fallbackWaves = 0
+    var impossibleCommittedWaves = 0
+    var exitReachabilityFailures = 0
+    var missingPlans = 0
+    var rejectionReasons: [String: Int] = [:]
+    var patternCounts: [String: Int] = [:]
+
+    mutating func record(plan: TrafficWavePlan?, context: TrafficPatternContext) {
+        wavesGenerated += 1
+        guard let plan else {
+            missingPlans += 1
+            impossibleCommittedWaves += 1
+            rejectionReasons["missing plan", default: 0] += 1
+            return
+        }
+
+        patternCounts[plan.patternName, default: 0] += 1
+        if plan.patternName == "recoveryWave" {
+            fallbackWaves += 1
+            rejectionReasons[plan.rejectionReason, default: 0] += 1
+        }
+
+        let validation = TrafficSafetyAnalyzer.validateWave(requests: plan.spawns, context: context)
+        if !validation.isValid {
+            impossibleCommittedWaves += 1
+            rejectionReasons[validation.rejectionReason, default: 0] += 1
+            if context.exitActive && validation.rejectionReason == "no reachable exit-side route" {
+                exitReachabilityFailures += 1
+            }
+        }
+    }
+}
+
+func printTrafficStressReport(levels: [LevelDefinition], vehicles: [VehicleDefinition], options: Options) {
+    print("Traffic Getaway Traffic Stress")
+    print("Runs per configuration: \(options.runs)")
+    print("Base seed: \(options.seed)")
+    print("")
+    print("levelID,vehicleID,runs,waves,fallbackWaves,impossibleCommittedWaves,exitReachabilityFailures,missingPlans,topRejection,topPattern")
+
+    for level in levels {
+        for vehicle in vehicles {
+            var aggregate = TrafficStressAggregate()
+            aggregate.runs = options.runs
+
+            for runIndex in 0..<options.runs {
+                var rng = SeededRNG(seed: SeededRNG.stableSeed(for: "\(level.levelID)|\(vehicle.id)|traffic_stress", runIndex: runIndex, baseSeed: options.seed))
+                var playerSlot = LaneModel.startSlot
+                let waveCount = max(8, Int((level.durationBeforeExit + level.exitWindowSeconds) / 3.5))
+
+                for waveIndex in 0..<waveCount {
+                    let progress = Double(waveIndex) / Double(max(1, waveCount - 1))
+                    let density = min(level.maxTrafficDensity, level.startingTrafficDensity + (level.maxTrafficDensity - level.startingTrafficDensity) * progress)
+                    let exitActive = progress >= 0.72
+                    let protectedLanes: Set<Int> = exitActive ? LaneModel.exitGuardLanes(for: level.exitSide) : []
+                    let protectedSlots: Set<Int> = exitActive ? LaneModel.exitSlots(for: level.exitSide, vehicleClass: vehicle.vehicleClass) : []
+                    let context = TrafficPatternContext(
+                        laneCount: LaneModel.laneCount,
+                        playerLane: LaneModel.nearestLaneForSlot(playerSlot),
+                        playerSlot: playerSlot,
+                        vehicleClass: vehicle.vehicleClass,
+                        density: density,
+                        wantedLevel: min(6, 1 + Int(progress * 5)),
+                        city: level.city,
+                        protectedLanes: protectedLanes,
+                        protectedSlots: protectedSlots,
+                        recentBlockedLanes: [],
+                        recentHazards: [],
+                        exitActive: exitActive,
+                        exitSide: exitActive ? level.exitSide : nil,
+                        dodgeBoostActive: false
+                    )
+
+                    let plan = TrafficPatternGenerator.generate(context: context, rng: &rng)
+                    aggregate.record(plan: plan, context: context)
+
+                    if let plan {
+                        let safeSlots = vehicle.vehicleClass == .motorcycle ? plan.safeMotorcycleSlots : plan.safeCarSlots
+                        if let nextSlot = safeSlots.min(by: { abs($0 - playerSlot) < abs($1 - playerSlot) }) {
+                            playerSlot = LaneModel.clampSlot(nextSlot, for: vehicle.vehicleClass)
+                        }
+                    }
+                }
+            }
+
+            let topRejection = aggregate.rejectionReasons.max(by: { $0.value < $1.value }).map { "\($0.key):\($0.value)" } ?? "none"
+            let topPattern = aggregate.patternCounts.max(by: { $0.value < $1.value }).map { "\($0.key):\($0.value)" } ?? "none"
+            print([
+                level.levelID,
+                vehicle.id,
+                "\(aggregate.runs)",
+                "\(aggregate.wavesGenerated)",
+                "\(aggregate.fallbackWaves)",
+                "\(aggregate.impossibleCommittedWaves)",
+                "\(aggregate.exitReachabilityFailures)",
+                "\(aggregate.missingPlans)",
+                csvSafe(topRejection),
+                csvSafe(topPattern)
+            ].joined(separator: ","))
+        }
+    }
+}
+
 let options = parseOptions(Array(CommandLine.arguments.dropFirst()))
 
 if options.help {
@@ -235,7 +345,11 @@ if options.help {
 } else if options.list {
     printCatalog()
 } else if let levels = selectedLevels(options.levelID), let vehicles = selectedVehicles(options.vehicleID) {
-    printReport(levels: levels, vehicles: vehicles, options: options)
+    if options.trafficStress {
+        printTrafficStressReport(levels: levels, vehicles: vehicles, options: options)
+    } else {
+        printReport(levels: levels, vehicles: vehicles, options: options)
+    }
 } else {
     print("Unknown level or vehicle.")
     print("")

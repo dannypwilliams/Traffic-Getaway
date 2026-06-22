@@ -107,6 +107,13 @@ cd GameSim
 swift run GameSim --level la_01 --vehicle all --runs 10000 --seed 12345
 ```
 
+Run the pure traffic reachability stress report:
+
+```powershell
+cd GameSim
+swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress
+```
+
 ## Mac Handoff
 
 Use the Mac to answer whether the game actually feels good:

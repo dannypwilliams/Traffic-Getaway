@@ -2,7 +2,7 @@
 
 ## Current Session Summary
 
-Continued the Core Gameplay Lock / First Minute Fix milestone from the pasted production brief. Completed a source-level Phase 0 audit/checkpoint pass, added a PBX duplicate-ID regression gate, documented the first-minute architecture/plan, made scoped Phase 1 presentation fixes, and added initial deterministic `GameCore` replay/Flow/lane-stale/pursuit primitives with tests. This Windows environment still cannot run Git, Swift, Python scripts, Xcode, or iOS Simulator, so Mac/Swift validation remains required before claiming the milestone complete.
+Continued the Core Gameplay Lock / First Minute Fix milestone from the pasted production brief. Completed a source-level Phase 0 audit/checkpoint pass, added a PBX duplicate-ID regression gate, documented the first-minute architecture/plan, made scoped Phase 1 presentation fixes, added deterministic `GameCore` replay/Flow/lane-stale/pursuit primitives with broader terminal-state tests, added a pure traffic stress command, wired the first Sunset Merge escape to unlock/select the Starter Bike for 405 Afterburn, and moved the SpriteKit traffic/hazard path onto run-owned seeded RNG streams. This Windows environment still cannot run Git, Swift, Python scripts, Xcode, or iOS Simulator, so Mac/Swift validation remains required before claiming the milestone complete.
 
 ## Files Changed This Session
 
@@ -12,16 +12,20 @@ Continued the Core Gameplay Lock / First Minute Fix milestone from the pasted pr
 - `Docs/REPLAY_FORMAT.md`
 - `Docs/KNOWN_BUGS.md`
 - `Docs/CODEX_HANDOFF.md`
+- `WINDOWS_DEVELOPMENT.md`
 - `Tools/windows/check_pc_handoff.ps1`
 - `scripts/validate_pbxproj_ids.py`
 - `Traffic Getaway/GameViewController.swift`
 - `Traffic Getaway/UIHelpers.swift`
 - `Traffic Getaway/OnboardingScene.swift`
 - `Traffic Getaway/GameScene.swift`
+- `Traffic Getaway/TrafficPatternGenerator.swift`
 - `Traffic Getaway/ResultsScene.swift`
 - `GameCore/Sources/GameCore/SeededRNG.swift`
 - `GameCore/Sources/GameCore/RunSimulation.swift`
+- `GameCore/Sources/GameCore/ProgressionModel.swift`
 - `GameCore/Tests/GameCoreTests/GameCoreTests.swift`
+- `GameSim/Sources/GameSim/main.swift`
 
 ## What Changed This Session
 
@@ -40,6 +44,19 @@ Continued the Core Gameplay Lock / First Minute Fix milestone from the pasted pr
 - Added `GameCore` fixed-step/replay primitives: `PlayerCommand`, `RunOutcome`, `RunConfigurationRecord`, `RunReplay`, `LaneStaleState`, `FlowState`, `PursuitPressureState`, `RunStateSnapshot`, and `FixedStepRunSimulation`.
 - Added `SeededRNG.derivedStream(named:)` so cosmetic streams can be separated from gameplay streams.
 - Added tests for derived RNG streams, lane-stale/Flow/pursuit behavior, and fixed-step replay hash matching.
+- Added replayable non-input run events in `GameCore`: `RecordedRunEvent` and `RunEvent` for near misses, traffic collisions, and roadblock collisions.
+- Extended fixed-step snapshots and hashes with near-miss count and highest combo.
+- Added replay fixtures for passive capture, missed exit, traffic collision, multi-near-miss combo, and motorcycle interstitial-slot escape.
+- Preserved replay decoding compatibility for older encoded replays without an `events` field.
+- Added `GameSim --traffic-stress`, a pure traffic reachability stress mode that reports generated waves, recovery fallback waves, impossible committed waves, exit reachability failures, missing plans, top rejection reason, and top pattern.
+- Added a `GameCore` Sunset Merge traffic stress test covering 250 seeds x 12 waves.
+- Added pure progression coverage so first `la_01` completion unlocks the Starter Bike once.
+- Updated app progression so the first Sunset Merge escape unlocks and selects the Starter Bike exactly once, making the existing Next Level path demonstrate motorcycle lane splitting in 405 Afterburn.
+- Updated results copy so the primary unlock line calls out the Starter Bike and the primary next action becomes `USE BIKE` when that payoff is newly granted.
+- Added app-local `AppSeededRNG` mirroring the pure `GameCore` RNG shape.
+- Updated `Traffic Getaway/TrafficPatternGenerator.swift` so pattern selection, lane shuffling, open gaps, vehicle choices, wave offsets, and wave speed multipliers use seeded RNG instead of ambient Swift randomness.
+- Updated `GameScene` run start to derive a run seed from level ID, vehicle ID, game mode, and save run count, then split traffic into `traffic-plan`, `traffic-spawn`, and `traffic-events` streams.
+- Updated normal traffic spawning, roadblock lane choice, road-event selection/timing, traffic-jam lane ordering, construction block lanes, and VIP motorcade lanes to use the run-owned traffic streams.
 
 ## Tests And Checks Run This Session
 
@@ -55,12 +72,14 @@ Continued the Core Gameplay Lock / First Minute Fix milestone from the pasted pr
   - No conflict markers found.
 - Random-use scan:
   - Confirmed `GameCore` traffic generation uses seeded RNG.
-  - Confirmed the SpriteKit app still has many `random`/`randomElement`/`shuffle` uses, including app-local traffic spawning paths that remain to be migrated.
+  - Confirmed `Traffic Getaway/TrafficPatternGenerator.swift` no longer uses ambient `Int.random`, `CGFloat.random`, `randomElement`, or `shuffle` in committed wave generation.
+  - Confirmed `GameScene` still has presentation-only `random` calls for scenery, camera shake, particles, speed-line recycling, and feedback effects.
 - `swift --version`
   - Failed because Swift is not on PATH.
 - `cd GameCore && swift test`
   - Failed because Swift is not on PATH.
-- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345`
+  - Newly added replay tests still need actual execution on a Swift-capable machine.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress`
   - Failed because Swift is not on PATH.
 - `python --version`
   - Failed because `python.exe` cannot be accessed by this system.
@@ -76,14 +95,15 @@ No `GameSim` simulation results are available. The command was attempted and fai
 - Core Gameplay Lock is partially complete, not done.
 - No Swift compile/test proof is available for the new `GameCore` files until Swift is installed or a Mac runs the tests.
 - No Xcode build, Simulator launch, screenshots, or video proof are available from this Windows environment.
-- App-local SpriteKit gameplay still uses unseeded randomness in traffic and road-event paths; `GameCore` deterministic primitives are not yet wired into `GameScene`.
+- App-local SpriteKit traffic and road-event hazards now use seeded streams, but the app still needs Swift/Xcode proof and eventual direct rendering of `GameCore` committed plans.
+- Presentation-only random calls remain in `GameScene` for scenery, camera shake, particles, speed-line recycling, and feedback effects; they should stay isolated from gameplay authority.
 - The results/HUD/tutorial fixes need real compact and Dynamic Island simulator screenshots.
-- Phase 5 auto-unlocking/auto-selecting the starter motorcycle after first Sunset Merge escape is not wired yet.
+- Phase 5 source wiring now unlocks/selects the Starter Bike after first Sunset Merge escape, but it still needs Swift/Xcode/Simulator validation.
 - `git` remains unavailable, so no commit was created and no normal diff/status check was possible here.
 
 ## Highest-Priority Next Task
 
-On a machine with Swift and Xcode, run `swift test` in `GameCore`, run the Sunset Merge `GameSim` command, then run `Tools/mac/verify_on_mac.sh` and capture clean-launch/tutorial/HUD/results screenshots. After compile proof, wire the seeded `GameCore` traffic/replay primitives into `GameScene` and complete the first-escape starter-bike payoff.
+On a machine with Swift and Xcode, run `swift test` in `GameCore`, run the Sunset Merge `GameSim` command plus `--traffic-stress`, then run `Tools/mac/verify_on_mac.sh` and capture clean-launch/tutorial/HUD/results screenshots. After compile proof, validate that seeded app traffic still plays fairly in Sunset Merge, then continue the deeper bridge from SpriteKit-local traffic plans to rendered `GameCore` committed plans.
 
 ## Previous Session Summary
 

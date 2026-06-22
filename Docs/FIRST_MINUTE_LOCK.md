@@ -36,7 +36,7 @@ The intended architecture is already documented in `Docs/DESIGN.md`: `GameCore` 
 
 ## Gameplay System Map
 
-- Traffic spawning: app-local `TrafficPatternGenerator.swift` and `GameScene.spawnTrafficWave()`.
+- Traffic spawning: app-local `TrafficPatternGenerator.swift` and `GameScene.spawnTrafficWave()`, now using run-owned `AppSeededRNG` streams for wave planning, spawn offsets/speeds, and traffic-event hazards.
 - Traffic safety checks: app-local `TrafficSafetyAnalyzer.swift`; pure equivalent in `GameCore/Sources/GameCore/TrafficSafety.swift`.
 - Lane and slot rules: app-local `LaneManager.swift`; pure equivalent in `GameCore/Sources/GameCore/LaneModel.swift`.
 - Player vehicle model: app-local `CarData.swift`; pure equivalent in `GameCore/Sources/GameCore/GameModels.swift`.
@@ -69,7 +69,7 @@ The intended architecture is already documented in `Docs/DESIGN.md`: `GameCore` 
 - Keep SpriteKit nodes, layout, safe areas, haptics, audio, StoreKit, analytics, and scene transitions in `Traffic Getaway`.
 - Keep deterministic gameplay models, RNG, lane topology, traffic planning, reachability, scoring, replay records, and progression helpers in `GameCore`.
 - Keep command-line seed stress and tuning summaries in `GameSim`.
-- During this milestone, prefer low-risk app-local adoption over a full iOS target dependency reshuffle unless Mac/Xcode validation is available.
+- During this milestone, prefer low-risk app-local adoption over a full iOS target dependency reshuffle unless Mac/Xcode validation is available. The SpriteKit scene currently mirrors the seeded RNG shape from `GameCore`; the production follow-up is to render committed `GameCore` traffic plans directly.
 
 ## Phase Checklist
 
@@ -88,6 +88,7 @@ The intended architecture is already documented in `Docs/DESIGN.md`: `GameCore` 
 - `Traffic Getaway/UIHelpers.swift` or a new app-local layout file: centralize SpriteKit safe-area layout metrics.
 - `Traffic Getaway/OnboardingScene.swift`: ensure title/skip/header stay safe and align exit instruction with repeated lane movement.
 - `Traffic Getaway/GameScene.swift`: split HUD zones, move transient combo/near-miss feedback out of the persistent top row, clamp police presentation above the bottom unsafe region, expose debug HUD bounds.
+- `Traffic Getaway/TrafficPatternGenerator.swift`: keep app traffic generation seeded while the SpriteKit scene still owns committed spawns.
 - `Traffic Getaway/ResultsScene.swift`: rebuild fixed header/action regions with scrollable middle content or compact rows.
 - `GameCore/Sources/GameCore`: add deterministic run records, replay state, traffic director/reachability, lane-stale, Flow, and pursuit pressure in focused files.
 - `GameCore/Tests/GameCoreTests`: add deterministic RNG, replay, reachability, flow/pursuit, exit, and progression tests.
@@ -111,6 +112,8 @@ Exact final tuning values must be measured with `GameCore` tests, `GameSim`, and
 - PBX validator: `python scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"` and `python scripts/validate_pbxproj_ids.py --self-test` when Python is available.
 - GameCore: `cd GameCore && swift test` when Swift is available.
 - GameSim: `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345` when Swift is available.
+- Traffic stress: `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress` when Swift is available.
+- App traffic seed scan: verify `Traffic Getaway/TrafficPatternGenerator.swift` has no `Int.random`, `CGFloat.random`, `randomElement`, or `shuffle` calls in committed wave generation.
 - Mac/Xcode: `Tools/mac/verify_on_mac.sh`.
 - Simulator manual matrix: clean install, passive driver, skilled driver, collision, missed exit, extreme HUD pressure, first escape progression, replay.
 
@@ -129,7 +132,7 @@ Exact final tuning values must be measured with `GameCore` tests, `GameSim`, and
 - Traffic and exit waves are validated for reachability or replaced by deterministic fallback.
 - Passive play predictably raises pursuit risk; skilled movement creates measurable advantage.
 - Escaped, crashed, captured, and missed-exit outcomes remain distinct.
-- First Sunset Merge escape grants one meaningful persisted progression payoff.
+- First Sunset Merge escape grants and selects the Starter Bike once, making 405 Afterburn demonstrate split-lane motorcycle capability.
 
 ## Explicit Non-Goals
 
@@ -146,7 +149,8 @@ Exact final tuning values must be measured with `GameCore` tests, `GameSim`, and
 - Windows environment lacks Git, Swift, Python, Xcode, and Simulator on PATH, so source edits need Mac validation before release claims.
 - The iOS app and `GameCore` still duplicate core data; drift is possible until adoption is complete.
 - `GameScene` is large, so presentation edits must stay scoped and avoid accidental gameplay regressions.
-- App-local traffic currently uses unseeded Swift randomness; full determinism requires more than `GameCore` coverage.
+- SpriteKit traffic planning now uses app-local seeded streams, but the authoritative app loop still needs Swift/Xcode proof and eventual direct adoption of `GameCore` committed traffic plans.
+- Remaining app `random` calls are still present for scenery, camera shake, particles, and other presentation effects; those should stay isolated from gameplay authority.
 - Results and HUD fixes need device screenshots because source-only geometry is not enough proof.
 
 ## Assumptions

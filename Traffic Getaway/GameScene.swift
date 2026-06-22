@@ -271,6 +271,10 @@ final class GameScene: SKScene {
     private var latestTrafficPlan: TrafficWavePlan?
     private var lastPoliceBuddyLevel = 1
     private var trafficSpawnSerial = 0
+    private var runSeed: UInt64 = 0
+    private var trafficPlanRNG = AppSeededRNG(seed: 1)
+    private var trafficSpawnRNG = AppSeededRNG(seed: 2)
+    private var trafficEventRNG = AppSeededRNG(seed: 3)
     private var debugAutoplayTimer: TimeInterval = 0
     private var performanceSampleTimer: TimeInterval = 0
     private var performanceFrameCounter = 0
@@ -1039,6 +1043,20 @@ final class GameScene: SKScene {
 
     // MARK: - Game Flow
 
+    private func configureRunSeed() {
+        let levelKey = currentLevel?.levelID ?? "endless"
+        let key = "\(levelKey)|\(activeCar.id)|\(gameMode.rawValue)"
+        runSeed = AppSeededRNG.stableSeed(
+            for: key,
+            runIndex: SaveManager.shared.data.totalRuns,
+            baseSeed: 0x54524146464943
+        )
+        let runRNG = AppSeededRNG(seed: runSeed)
+        trafficPlanRNG = runRNG.derivedStream(named: "traffic-plan")
+        trafficSpawnRNG = runRNG.derivedStream(named: "traffic-spawn")
+        trafficEventRNG = runRNG.derivedStream(named: "traffic-events")
+    }
+
     private func startGame() {
         gameState = .playing
         loadSelectedLoadout()
@@ -1129,6 +1147,7 @@ final class GameScene: SKScene {
         policeGap = maxPoliceGap
         currentWorld = currentLevel?.worldTheme ?? WorldThemeCatalog.endlessTheme(score: score)
         currentCity = currentWorld.audioCity.cityTheme
+        configureRunSeed()
         setPlayerSlot(laneManager.clampSlot(LaneManager.startSlot, for: activeCar.vehicleClass))
 
         AudioManager.shared.updateTheme(currentCity.audioTheme, crossfadeDuration: 0)
@@ -2899,7 +2918,7 @@ final class GameScene: SKScene {
             dodgeBoostActive: dodgeBoostTimer > 0
         )
 
-        guard let plan = TrafficPatternGenerator.generate(context: context) else {
+        guard let plan = TrafficPatternGenerator.generate(context: context, rng: &trafficPlanRNG) else {
             if AppConfig.printRejectedTrafficWaves {
                 print("[TrafficPattern] all retries rejected density=\(context.density) wanted=\(wantedLevel)")
             }
@@ -2923,7 +2942,7 @@ final class GameScene: SKScene {
         let nearPlayer = [playerLane - 1, playerLane, playerLane + 1].map(laneManager.clampedLane)
         candidates.append(contentsOf: nearPlayer)
 
-        let randomStart = Int.random(in: 0...(laneCount - 2))
+        let randomStart = trafficPlanRNG.int(in: 0...(laneCount - 2))
         candidates.append(randomStart)
         candidates.append(randomStart + 1)
 
@@ -3020,7 +3039,7 @@ final class GameScene: SKScene {
     private func spawnVehicle(in lane: Int, type: VehicleType, yOffset: CGFloat = 0, speedMultiplier: CGFloat = 1) {
         trafficSpawnSerial += 1
         let vehicle = makeTrafficVehicle(type: type)
-        vehicle.position = CGPoint(x: laneCenters[lane], y: size.height + vehicle.size.height / 2 + CGFloat.random(in: 0...34) + yOffset)
+        vehicle.position = CGPoint(x: laneCenters[lane], y: size.height + vehicle.size.height / 2 + trafficSpawnRNG.cgFloat(in: 0...34) + yOffset)
         vehicle.name = "traffic"
         vehicle.userData = [
             "spawnID": trafficSpawnSerial,
@@ -3070,11 +3089,11 @@ final class GameScene: SKScene {
     }
 
     private func randomVehicleType() -> VehicleType {
-        currentWorld.trafficPool(wantedLevel: wantedLevel).randomElement() ?? .sedan
+        trafficSpawnRNG.element(from: currentWorld.trafficPool(wantedLevel: wantedLevel)) ?? .sedan
     }
 
     private func randomTrafficSpeed(for type: VehicleType) -> CGFloat {
-        var speed = trafficSpeed + CGFloat.random(in: -22...28)
+        var speed = trafficSpeed + trafficSpawnRNG.cgFloat(in: -22...28)
 
         speed += ArcadeArt.speedOffset(for: type)
 
@@ -3494,7 +3513,7 @@ final class GameScene: SKScene {
         let safeLane = safestRoadblockLane()
         let protectedLanes = protectedExitLanes()
         var lanes = Array(0..<laneCount).filter { $0 != safeLane && !protectedLanes.contains($0) }
-        lanes.shuffle()
+        lanes = trafficEventRNG.shuffled(lanes)
 
         let blockedCount = min(lanes.count, wantedLevel >= 6 ? 4 : (wantedLevel >= 5 ? 3 : 2))
         let blockedLanes = Array(lanes.prefix(blockedCount))
@@ -3526,13 +3545,13 @@ final class GameScene: SKScene {
     private func safestRoadblockLane() -> Int {
         let protectedLanes = protectedExitLanes()
         let clearLanes = Array(0..<laneCount).filter { !laneHasRecentVehicle($0) && !protectedLanes.contains($0) }
-        if clearLanes.contains(playerLane) && Bool.random() {
+        if clearLanes.contains(playerLane) && trafficEventRNG.chance(0.5) {
             return playerLane
         }
-        if let adjacent = clearLanes.filter({ abs($0 - playerLane) <= 1 }).randomElement() {
+        if let adjacent = trafficEventRNG.element(from: clearLanes.filter({ abs($0 - playerLane) <= 1 })) {
             return adjacent
         }
-        return clearLanes.randomElement() ?? playerLane
+        return trafficEventRNG.element(from: clearLanes) ?? playerLane
     }
 
     private func protectedExitLanes() -> Set<Int> {
@@ -3579,13 +3598,13 @@ final class GameScene: SKScene {
 
         eventCooldown -= deltaTime
         guard runTime > 18, eventCooldown <= 0 else { return }
-        let event = RoadEventType.allCases.randomElement() ?? .trafficJam
+        let event = trafficEventRNG.element(from: RoadEventType.allCases) ?? .trafficJam
         startRoadEvent(event)
     }
 
     private func startRoadEvent(_ event: RoadEventType) {
         currentEvent = event
-        eventTimer = Double.random(in: 9.0...14.0)
+        eventTimer = trafficEventRNG.double(in: 9.0...14.0)
         eventSpawnTimer = 0.4
         eventNode.removeAllChildren()
         showEventBanner(event.title)
@@ -3640,7 +3659,7 @@ final class GameScene: SKScene {
         currentEvent = nil
         eventTimer = 0
         eventSpawnTimer = 0
-        eventCooldown = Double.random(in: 15.0...24.0)
+        eventCooldown = trafficEventRNG.double(in: 15.0...24.0)
         eventNode.removeAllChildren()
     }
 
@@ -3649,7 +3668,7 @@ final class GameScene: SKScene {
         let protectedLanes = protectedExitLanes()
         let targetCount = max(count, Int((4 + currentTrafficDensity() * 4).rounded()))
         var lanes = Array(0..<laneCount).filter { $0 != safeLane && !protectedLanes.contains($0) && !laneHasRecentVehicle($0) }
-        lanes.shuffle()
+        lanes = trafficEventRNG.shuffled(lanes)
         let spawnCount = min(targetCount, lanes.count, laneCount - 2)
 
         for (index, lane) in lanes.prefix(spawnCount).enumerated() {
@@ -3666,7 +3685,7 @@ final class GameScene: SKScene {
         let safeLane = safestRoadblockLane()
         let protectedLanes = protectedExitLanes()
         var lanes = Array(0..<laneCount).filter { $0 != safeLane && !protectedLanes.contains($0) }
-        lanes.shuffle()
+        lanes = trafficEventRNG.shuffled(lanes)
         let blockedLanes = Array(lanes.prefix(2))
         showRoadblockWarning(lanes: blockedLanes)
 
@@ -3691,7 +3710,7 @@ final class GameScene: SKScene {
         let safeLane = safestRoadblockLane()
         let protectedLanes = protectedExitLanes()
         var lanes = Array(0..<laneCount).filter { $0 != safeLane && !protectedLanes.contains($0) && !laneHasRecentVehicle($0) }
-        lanes.shuffle()
+        lanes = trafficEventRNG.shuffled(lanes)
 
         for (index, lane) in lanes.prefix(3).enumerated() {
             let type: VehicleType = index == 1 ? .sportCoupe : .sedan
