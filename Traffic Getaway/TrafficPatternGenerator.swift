@@ -18,6 +18,7 @@ struct TrafficPatternContext {
     let density: CGFloat
     let wantedLevel: Int
     let city: CityTheme
+    let worldThemeID: WorldThemeID
     let protectedLanes: Set<Int>
     let protectedSlots: Set<Int>
     let recentBlockedLanes: Set<Int>
@@ -42,9 +43,9 @@ enum TrafficPatternGenerator {
         case sparseLanes
         case denseClusters
         case staggeredCars
-        case truckWall
-        case taxiSwarm
-        case sportsBurst
+        case haulerWall
+        case compactPack
+        case fastLaneBurst
         case policePressure
     }
 
@@ -77,13 +78,13 @@ enum TrafficPatternGenerator {
     }
 
     private static func choosePattern(context: TrafficPatternContext) -> Pattern {
-        if isBrooklynWarmupGrace(context) {
+        if isStarterRouteGrace(context) {
             return [.sparseLanes, .sparseLanes, .staggeredCars].randomElement() ?? .sparseLanes
         }
 
         let easy: [Pattern] = [.sparseLanes, .staggeredCars, .denseClusters]
-        let mid: [Pattern] = [.denseClusters, .staggeredCars, .taxiSwarm, .sportsBurst, .truckWall]
-        let hard: [Pattern] = [.denseClusters, .truckWall, .taxiSwarm, .sportsBurst, .policePressure, .staggeredCars]
+        let mid: [Pattern] = [.denseClusters, .staggeredCars, .compactPack, .fastLaneBurst, .haulerWall]
+        let hard: [Pattern] = [.denseClusters, .haulerWall, .compactPack, .fastLaneBurst, .policePressure, .staggeredCars]
 
         if context.density < 0.46 {
             return easy.randomElement() ?? .sparseLanes
@@ -118,28 +119,28 @@ enum TrafficPatternGenerator {
                 requests.append(TrafficSpawnRequest(lane: lane, type: randomCivilian(context), yOffset: offset, speedMultiplier: CGFloat.random(in: 0.9...1.08)))
             }
 
-        case .truckWall:
+        case .haulerWall:
             let gap = Set(openGap(width: context.density > 0.78 ? 2 : 3, context: context))
             for lane in lanes where !gap.contains(lane) && occupiedCount(requests, context) < occupiedTarget {
-                let type: VehicleType = requests.count.isMultiple(of: 2) ? .truck : randomCivilian(context)
+                let type: VehicleType = requests.count.isMultiple(of: 2) ? .boxTruck : randomCivilian(context)
                 requests.append(request(lane: lane, type: type, index: requests.count, speed: 0.92))
             }
 
-        case .taxiSwarm:
+        case .compactPack:
             let gap = Set(openGap(width: 2, context: context))
             for lane in lanes where !gap.contains(lane) && occupiedCount(requests, context) < occupiedTarget {
-                requests.append(request(lane: lane, type: .taxi, index: requests.count, speed: 0.96))
+                requests.append(request(lane: lane, type: .compact, index: requests.count, speed: 0.96))
             }
 
-        case .sportsBurst:
+        case .fastLaneBurst:
             for lane in lanes.prefix(min(context.laneCount - 2, occupiedTarget + 1)) where occupiedCount(requests, context) < occupiedTarget {
-                requests.append(request(lane: lane, type: .sports, index: requests.count, speed: 1.12))
+                requests.append(request(lane: lane, type: .sportCoupe, index: requests.count, speed: 1.12))
             }
 
         case .policePressure:
             let gap = Set(openGap(width: 2, context: context))
             for lane in lanes where !gap.contains(lane) && occupiedCount(requests, context) < occupiedTarget {
-                let type: VehicleType = context.wantedLevel >= 4 && requests.count.isMultiple(of: 3) ? .policeMoto : (requests.count.isMultiple(of: 4) ? .bus : randomCivilian(context))
+                let type: VehicleType = context.wantedLevel >= 4 && requests.count.isMultiple(of: 3) ? .policeMoto : (requests.count.isMultiple(of: 4) ? .van : randomCivilian(context))
                 requests.append(request(lane: lane, type: type, index: requests.count, speed: 1.02))
             }
         }
@@ -148,7 +149,7 @@ enum TrafficPatternGenerator {
     }
 
     private static func occupiedLaneTarget(_ context: TrafficPatternContext) -> Int {
-        if isBrooklynWarmupGrace(context) {
+        if isStarterRouteGrace(context) {
             return context.runTime < 18 ? Int.random(in: 1...2) : Int.random(in: 2...3)
         }
 
@@ -172,7 +173,7 @@ enum TrafficPatternGenerator {
     }
 
     private static func openGap(width: Int, context: TrafficPatternContext) -> [Int] {
-        let adjustedWidth = isBrooklynWarmupGrace(context) ? max(width, 4) : width
+        let adjustedWidth = isStarterRouteGrace(context) ? max(width, 4) : width
         let start = Int.random(in: 0...max(0, context.laneCount - adjustedWidth))
         return Array(start..<(start + adjustedWidth))
     }
@@ -190,7 +191,7 @@ enum TrafficPatternGenerator {
         let fallbackLanes = Array(laneOrder.prefix(3))
         guard !fallbackLanes.isEmpty else { return nil }
 
-        let types: [VehicleType] = [.sedan, .taxi, .sports]
+        let types: [VehicleType] = [.sedan, .compact, .sportCoupe]
         let requests = fallbackLanes.enumerated().map { index, lane in
             TrafficSpawnRequest(
                 lane: lane,
@@ -226,18 +227,11 @@ enum TrafficPatternGenerator {
     }
 
     private static func randomCivilian(_ context: TrafficPatternContext) -> VehicleType {
-        if context.levelID == "ny_01" && context.runTime < 32 {
-            return [.sedan, .sedan, .taxi, .taxi, .sports].randomElement() ?? .sedan
+        if isStarterRouteGrace(context) {
+            return [.compact, .sedan, .sedan, .sportCoupe].randomElement() ?? .sedan
         }
 
-        switch context.city {
-        case .newYork:
-            return [.taxi, .taxi, .sedan, .sedan, .truck, .bus].randomElement() ?? .sedan
-        case .losAngeles:
-            return [.sports, .sports, .sedan, .sedan, .taxi, .truck].randomElement() ?? .sedan
-        case .miami:
-            return [.sports, .sports, .sports, .sedan, .taxi, .bus].randomElement() ?? .sports
-        }
+        return WorldThemeCatalog.theme(id: context.worldThemeID).trafficPool(wantedLevel: context.wantedLevel).randomElement() ?? .sedan
     }
 
     private static func occupiedCount(_ requests: [TrafficSpawnRequest], _ context: TrafficPatternContext) -> Int {
@@ -249,13 +243,13 @@ enum TrafficPatternGenerator {
     }
 
     private static func occupiedLanes(for lane: Int, type: VehicleType, laneCount: Int) -> Set<Int> {
-        guard type == .truck || type == .bus else { return [max(0, min(laneCount - 1, lane))] }
+        guard type == .boxTruck else { return [max(0, min(laneCount - 1, lane))] }
         let sideLane = lane < laneCount - 1 ? lane + 1 : lane - 1
         return [max(0, min(laneCount - 1, lane)), max(0, min(laneCount - 1, sideLane))]
     }
 
-    private static func isBrooklynWarmupGrace(_ context: TrafficPatternContext) -> Bool {
-        context.levelID == "ny_01" && context.runTime < 32
+    private static func isStarterRouteGrace(_ context: TrafficPatternContext) -> Bool {
+        context.levelID == "la_01" && context.runTime < 32
     }
 
 }

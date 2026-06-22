@@ -59,12 +59,14 @@ extension RunCity {
     }
 }
 
-enum VehicleType: String {
+enum VehicleType: String, CaseIterable {
     case sedan
-    case taxi
-    case truck
-    case bus
-    case sports
+    case compact
+    case suv
+    case pickup
+    case van
+    case boxTruck
+    case sportCoupe
     case policeMoto
 }
 
@@ -147,17 +149,7 @@ private enum ExitPhase {
     case completed
 }
 
-private struct ThemePalette {
-    let background: SKColor
-    let road: SKColor
-    let shoulder: SKColor
-    let laneMarker: SKColor
-    let accent: SKColor
-    let secondAccent: SKColor
-    let roadTexture: SKColor
-    let edgeLine: SKColor
-    let panel: SKColor
-}
+private typealias ThemePalette = ArcadeArt.RoadPalette
 
 final class GameScene: SKScene {
     private let laneCount = LaneManager.laneCount
@@ -196,7 +188,8 @@ final class GameScene: SKScene {
     private let crashHaptic = UINotificationFeedbackGenerator()
 
     private var gameState: GameState = .start
-    private var currentCity: CityTheme = .newYork
+    private var currentCity: CityTheme = .losAngeles
+    private var currentWorld: WorldTheme = WorldThemeCatalog.defaultTheme
     private var activeCar = CarCatalog.defaultCar
     private var activePaint = CarCatalog.defaultPaint
 
@@ -283,6 +276,7 @@ final class GameScene: SKScene {
     private var primaryExitTriggered = false
     private var emergencyExitUsed = false
     private var emergencyExitTimer: TimeInterval = 0
+    private var exitAnticipationShown = false
     private var exitPhase: ExitPhase = .inactive
     private var activeExitSide: ExitSide?
     private var exitCountdown: TimeInterval = 0
@@ -305,12 +299,16 @@ final class GameScene: SKScene {
             self.currentLevel = nil
         }
         super.init(size: size)
+        currentWorld = currentLevel?.worldTheme ?? WorldThemeCatalog.defaultTheme
+        currentCity = currentWorld.audioCity.cityTheme
     }
 
     required init?(coder aDecoder: NSCoder) {
         self.gameMode = .storyChase
         self.currentLevel = LevelCatalog.nextPlayableLevel(completedIDs: SaveManager.shared.data.completedLevelIDs)
         super.init(coder: aDecoder)
+        currentWorld = currentLevel?.worldTheme ?? WorldThemeCatalog.defaultTheme
+        currentCity = currentWorld.audioCity.cityTheme
     }
 
     override func didMove(to view: SKView) {
@@ -327,7 +325,7 @@ final class GameScene: SKScene {
         setupPlayer()
         setupPolice()
         setupScoreLabel()
-        AudioManager.shared.updateTheme(.newYork, crossfadeDuration: 0)
+        AudioManager.shared.updateTheme(currentCity.audioTheme, crossfadeDuration: 0)
         startGame()
     }
 
@@ -398,15 +396,15 @@ final class GameScene: SKScene {
 
     private func recalculateLayout() {
         let roadScale: CGFloat
-        switch currentCity {
-        case .newYork:
-            roadScale = 0.98
-        case .losAngeles:
-            roadScale = 0.99
-        case .miami:
-            roadScale = 0.98
+        switch currentWorld.roadStyle {
+        case .openFreeway:
+            roadScale = 0.94
+        case .urbanExpressway:
+            roadScale = 0.9
+        case .tropicalBoulevard:
+            roadScale = 0.92
         }
-        roadWidth = min(size.width * roadScale, size.width - 8)
+        roadWidth = min(size.width * roadScale, size.width - 32)
         roadLeft = (size.width - roadWidth) / 2
         laneManager = LaneManager(roadLeft: roadLeft, roadWidth: roadWidth)
         laneWidth = laneManager.laneWidth
@@ -428,37 +426,40 @@ final class GameScene: SKScene {
         let palette = palette(for: currentCity)
         backgroundColor = palette.background
 
+        addWorldBackdrop(with: palette)
+
         let roadRect = CGRect(x: roadLeft, y: -80, width: roadWidth, height: size.height + 160)
         let road = SKShapeNode(rect: roadRect)
         road.fillColor = palette.road
-        road.strokeColor = .clear
+        road.strokeColor = palette.roadTexture.withAlphaComponent(0.24)
+        road.lineWidth = 2
         roadNode.addChild(road)
 
         let sideStripWidth = max(0, roadLeft - 5)
         let leftSideStrip = SKShapeNode(rect: CGRect(x: 0, y: -80, width: sideStripWidth, height: size.height + 160))
-        leftSideStrip.fillColor = palette.shoulder.withAlphaComponent(0.28)
+        leftSideStrip.fillColor = palette.shoulder.withAlphaComponent(0.78)
         leftSideStrip.strokeColor = .clear
         roadNode.addChild(leftSideStrip)
 
         let rightSideStrip = SKShapeNode(rect: CGRect(x: roadLeft + roadWidth + 5, y: -80, width: sideStripWidth, height: size.height + 160))
-        rightSideStrip.fillColor = palette.secondAccent.withAlphaComponent(currentCity == .miami ? 0.22 : 0.1)
+        rightSideStrip.fillColor = palette.shoulder.withAlphaComponent(0.78)
         rightSideStrip.strokeColor = .clear
         roadNode.addChild(rightSideStrip)
 
-        let leftShoulder = SKShapeNode(rect: CGRect(x: roadLeft - 7, y: -80, width: 7, height: size.height + 160))
+        let leftShoulder = SKShapeNode(rect: CGRect(x: roadLeft - 10, y: -80, width: 10, height: size.height + 160))
         leftShoulder.fillColor = palette.shoulder
         leftShoulder.strokeColor = palette.edgeLine
         leftShoulder.lineWidth = 1.5
         roadNode.addChild(leftShoulder)
 
-        let rightShoulder = SKShapeNode(rect: CGRect(x: roadLeft + roadWidth, y: -80, width: 7, height: size.height + 160))
+        let rightShoulder = SKShapeNode(rect: CGRect(x: roadLeft + roadWidth, y: -80, width: 10, height: size.height + 160))
         rightShoulder.fillColor = palette.shoulder
         rightShoulder.strokeColor = palette.edgeLine
         rightShoulder.lineWidth = 1.5
         roadNode.addChild(rightShoulder)
 
-        addRoadEdgeGlow(x: roadLeft - 8, color: palette.edgeLine)
-        addRoadEdgeGlow(x: roadLeft + roadWidth + 8, color: palette.secondAccent)
+        addRoadEdgeGlow(x: roadLeft - 11, color: palette.edgeLine)
+        addRoadEdgeGlow(x: roadLeft + roadWidth + 11, color: palette.edgeLine)
         createRoadTexture(with: palette)
         createRoadDebris(with: palette)
         createLaneMarkers(with: palette)
@@ -469,26 +470,96 @@ final class GameScene: SKScene {
         AtmosphereManager.shared.setCityGlow(primary: palette.accent, secondary: palette.secondAccent)
     }
 
+    private func addWorldBackdrop(with palette: ThemePalette) {
+        let horizonWash = SKShapeNode(rect: CGRect(x: 0, y: size.height * 0.58, width: size.width, height: size.height * 0.42 + 80))
+        let horizonAlpha: CGFloat
+        switch currentWorld.lightingMood {
+        case .coolUrbanShadow:
+            horizonAlpha = 0.1
+        case .sunlitCalifornia, .tropicalNeon:
+            horizonAlpha = 0.16
+        }
+        horizonWash.fillColor = palette.accent.withAlphaComponent(horizonAlpha)
+        horizonWash.strokeColor = .clear
+        sceneryNode.addChild(horizonWash)
+
+        switch currentWorld.skylineStyle {
+        case .laLowRiseCoast:
+            let oceanWidth = max(roadLeft - 12, 18)
+            let ocean = SKShapeNode(rect: CGRect(x: 0, y: -80, width: oceanWidth, height: size.height + 160))
+            ocean.fillColor = palette.secondAccent.withAlphaComponent(0.24)
+            ocean.strokeColor = .clear
+            sceneryNode.addChild(ocean)
+
+            for index in 0..<6 {
+                let wave = SKShapeNode(rectOf: CGSize(width: oceanWidth * 0.56, height: 3), cornerRadius: 1.5)
+                wave.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(0.28)
+                wave.strokeColor = .clear
+                wave.position = CGPoint(x: oceanWidth * 0.42, y: CGFloat(index) * 118 - 20)
+                wave.userData = ["speedFactor": CGFloat(0.42)]
+                sceneryNode.addChild(wave)
+            }
+
+            for index in 0..<5 {
+                let width = max(28, roadLeft * CGFloat.random(in: 0.18...0.3))
+                let height = CGFloat(34 + (index % 3) * 14)
+                let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 3)
+                building.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(0.32)
+                building.strokeColor = palette.accent.withAlphaComponent(0.16)
+                building.position = CGPoint(x: roadLeft + roadWidth + roadLeft * CGFloat.random(in: 0.22...0.78), y: size.height * 0.66)
+                sceneryNode.addChild(building)
+            }
+
+        case .newYorkVertical:
+            for index in 0..<8 {
+                let width = max(22, roadLeft * CGFloat.random(in: 0.18...0.32))
+                let height = CGFloat(90 + (index % 4) * 28)
+                let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 2)
+                building.fillColor = SKColor.black.withAlphaComponent(0.18)
+                building.strokeColor = palette.secondAccent.withAlphaComponent(0.18)
+                building.position = CGPoint(x: CGFloat(index) / 7 * size.width, y: size.height * 0.68)
+                sceneryNode.addChild(building)
+            }
+
+        case .miamiPastelCoast:
+            let waterWidth = max(roadLeft - 12, 18)
+            let water = SKShapeNode(rect: CGRect(x: 0, y: -80, width: waterWidth, height: size.height + 160))
+            water.fillColor = palette.secondAccent.withAlphaComponent(0.34)
+            water.strokeColor = .clear
+            sceneryNode.addChild(water)
+
+            for index in 0..<7 {
+                let width = max(24, roadLeft * CGFloat.random(in: 0.2...0.36))
+                let height = CGFloat(42 + (index % 4) * 18)
+                let hotel = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 4)
+                hotel.fillColor = (index.isMultiple(of: 2) ? palette.accent : ArcadeArt.Palette.cream).withAlphaComponent(0.28)
+                hotel.strokeColor = palette.secondAccent.withAlphaComponent(0.28)
+                hotel.position = CGPoint(x: roadLeft + roadWidth + roadLeft * CGFloat.random(in: 0.2...0.8), y: size.height * 0.65)
+                sceneryNode.addChild(hotel)
+            }
+        }
+    }
+
     private func createLaneMarkers(with palette: ThemePalette) {
-        let dashSize = CGSize(width: 4, height: 34)
+        let dashSize = CGSize(width: 3.5, height: 30)
 
         for laneDivider in 1..<laneCount {
             let x = roadLeft + laneWidth * CGFloat(laneDivider)
             var y: CGFloat = -70
             while y < size.height + 110 {
-                let glow = SKShapeNode(rectOf: CGSize(width: dashSize.width + 7, height: dashSize.height + 8), cornerRadius: 4)
+                let glow = SKShapeNode(rectOf: CGSize(width: dashSize.width + 5, height: dashSize.height + 6), cornerRadius: 3)
                 glow.position = CGPoint(x: x, y: y)
-                glow.fillColor = palette.laneMarker.withAlphaComponent(0.16)
+                glow.fillColor = palette.laneMarker.withAlphaComponent(0.12)
                 glow.strokeColor = .clear
                 markerNode.addChild(glow)
 
                 let dash = SKShapeNode(rectOf: dashSize, cornerRadius: 2)
                 dash.position = CGPoint(x: x, y: y)
                 dash.fillColor = palette.laneMarker
-                dash.strokeColor = palette.laneMarker.withAlphaComponent(0.35)
+                dash.strokeColor = palette.edgeLine.withAlphaComponent(0.26)
                 dash.lineWidth = 1
                 markerNode.addChild(dash)
-                y += 72
+                y += 70
             }
         }
     }
@@ -504,17 +575,17 @@ final class GameScene: SKScene {
     }
 
     private func createRoadTexture(with palette: ThemePalette) {
-        let stripCount = 26
+        let stripCount = 20
 
         for index in 0..<stripCount {
             let width = CGFloat.random(in: 1...3)
-            let height = CGFloat.random(in: 34...96)
+            let height = CGFloat.random(in: 28...78)
             let strip = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: width / 2)
             strip.position = CGPoint(
                 x: CGFloat.random(in: (roadLeft + 16)...(roadLeft + roadWidth - 16)),
                 y: CGFloat(index) / CGFloat(stripCount) * (size.height + 180) - 70
             )
-            strip.fillColor = palette.roadTexture.withAlphaComponent(CGFloat.random(in: 0.12...0.28))
+            strip.fillColor = palette.roadTexture.withAlphaComponent(CGFloat.random(in: 0.08...0.18))
             strip.strokeColor = .clear
             strip.userData = ["speedFactor": CGFloat.random(in: 0.35...0.65)]
             markerNode.addChild(strip)
@@ -522,9 +593,9 @@ final class GameScene: SKScene {
     }
 
     private func createRoadDebris(with palette: ThemePalette) {
-        for index in 0..<18 {
-            let debris = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 2...5), height: CGFloat.random(in: 2...8)), cornerRadius: 1)
-            debris.fillColor = [palette.roadTexture, palette.laneMarker, SKColor.black].randomElement()?.withAlphaComponent(CGFloat.random(in: 0.16...0.32)) ?? palette.roadTexture
+        for index in 0..<12 {
+            let debris = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 2...4), height: CGFloat.random(in: 2...5)), cornerRadius: 1)
+            debris.fillColor = [palette.roadTexture, palette.laneMarker, SKColor.black].randomElement()?.withAlphaComponent(CGFloat.random(in: 0.08...0.18)) ?? palette.roadTexture
             debris.strokeColor = .clear
             debris.zRotation = CGFloat.random(in: -0.7...0.7)
             debris.position = CGPoint(
@@ -537,16 +608,34 @@ final class GameScene: SKScene {
     }
 
     private func createRoadMarkings(with palette: ThemePalette) {
-        var y = CGFloat(90)
+        var y = CGFloat(120)
 
         while y < size.height + 160 {
-            if Int(y).isMultiple(of: 2) {
-                addArrowMarking(atY: y, color: palette.laneMarker.withAlphaComponent(0.24))
-            } else {
-                addCrosswalkMarking(atY: y, color: palette.laneMarker.withAlphaComponent(0.2))
+            switch currentWorld.roadStyle {
+            case .urbanExpressway:
+                addCrosswalkMarking(atY: y, color: palette.laneMarker.withAlphaComponent(0.14))
+            case .tropicalBoulevard:
+                addArrowMarking(atY: y, color: palette.secondAccent.withAlphaComponent(0.16))
+            case .openFreeway:
+                addFreewayChevron(atY: y, color: palette.laneMarker.withAlphaComponent(0.16))
             }
+            y += CGFloat.random(in: 280...360)
+        }
+    }
 
-            y += CGFloat.random(in: 260...360)
+    private func addFreewayChevron(atY y: CGFloat, color: SKColor) {
+        for side in [-1, 1] {
+            let centerX = side < 0 ? roadLeft + laneWidth * 0.6 : roadLeft + roadWidth - laneWidth * 0.6
+            let path = CGMutablePath()
+            path.move(to: CGPoint(x: centerX - CGFloat(side) * laneWidth * 0.22, y: y - 18))
+            path.addLine(to: CGPoint(x: centerX, y: y))
+            path.addLine(to: CGPoint(x: centerX - CGFloat(side) * laneWidth * 0.22, y: y + 18))
+
+            let mark = SKShapeNode(path: path)
+            mark.strokeColor = color
+            mark.lineWidth = 4
+            mark.fillColor = .clear
+            markerNode.addChild(mark)
         }
     }
 
@@ -591,9 +680,9 @@ final class GameScene: SKScene {
         for _ in 0..<24 {
             let height = CGFloat.random(in: 70...150)
             let line = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 1.4...3), height: height), cornerRadius: 1)
-            line.fillColor = [palette.laneMarker, palette.accent, palette.secondAccent].randomElement() ?? palette.laneMarker
+            line.fillColor = [palette.laneMarker, palette.accent, ArcadeArt.Palette.cream].randomElement() ?? palette.laneMarker
             line.strokeColor = .clear
-            line.alpha = CGFloat.random(in: 0.08...0.24)
+            line.alpha = CGFloat.random(in: 0.05...0.18)
             let edgeBand = Bool.random()
             let xRange = edgeBand
                 ? (Bool.random() ? (roadLeft + 8)...(roadLeft + 34) : (roadLeft + roadWidth - 34)...(roadLeft + roadWidth - 8))
@@ -602,7 +691,10 @@ final class GameScene: SKScene {
                 x: CGFloat.random(in: xRange),
                 y: CGFloat.random(in: -60...(size.height + 120))
             )
-            line.userData = ["speedFactor": CGFloat.random(in: 1.25...1.85)]
+            line.userData = [
+                "assetID": ArcadeArt.EffectAsset.speedStreak.rawValue,
+                "speedFactor": CGFloat.random(in: 1.25...1.85)
+            ]
             speedLineNode.addChild(line)
         }
     }
@@ -637,7 +729,16 @@ final class GameScene: SKScene {
         let x = side < 0 ? roadLeft / 2 : roadLeft + roadWidth + roadLeft / 2
         node.position = CGPoint(x: x, y: y)
 
-        switch currentCity {
+        switch currentWorld.propSet {
+        case .losAngeles:
+            if index.isMultiple(of: 4) {
+                let sign = ArcadeArt.makeFreewaySign(size: CGSize(width: min(sideWidth, 48), height: 54))
+                sign.setScale(0.84)
+                node.addChild(sign)
+            } else {
+                addPalmTree(to: node, palette: palette, height: CGFloat(52 + (index % 3) * 9))
+            }
+
         case .newYork:
             let height = CGFloat(54 + (index % 4) * 16)
             let width = min(sideWidth, CGFloat(28 + (index % 3) * 8))
@@ -667,63 +768,24 @@ final class GameScene: SKScene {
                 addSteamVent(to: node, xOffset: side < 0 ? width * 0.18 : -width * 0.18, yOffset: -height * 0.48)
             }
 
-        case .losAngeles:
-            if index.isMultiple(of: 4) {
-                let signPost = SKShapeNode(rectOf: CGSize(width: 4, height: 42), cornerRadius: 1)
-                signPost.fillColor = SKColor(red: 0.16, green: 0.19, blue: 0.2, alpha: 1)
-                signPost.strokeColor = .clear
-                signPost.position = CGPoint(x: 0, y: -6)
-                node.addChild(signPost)
-
-                let sign = SKShapeNode(rectOf: CGSize(width: min(sideWidth, 44), height: 18), cornerRadius: 3)
-                sign.fillColor = SKColor(red: 0.05, green: 0.34, blue: 0.2, alpha: 1)
-                sign.strokeColor = palette.laneMarker.withAlphaComponent(0.5)
-                sign.lineWidth = 1
-                sign.position = CGPoint(x: 0, y: 18)
-                node.addChild(sign)
-
-                let line = SKShapeNode(rectOf: CGSize(width: min(sideWidth, 28), height: 2), cornerRadius: 1)
-                line.fillColor = palette.laneMarker.withAlphaComponent(0.85)
-                line.strokeColor = .clear
-                line.position = CGPoint(x: 0, y: 18)
-                node.addChild(line)
-            } else {
-                addPalmTree(to: node, palette: palette, height: CGFloat(52 + (index % 3) * 9))
-            }
-
         case .miami:
-            let height = CGFloat(52 + (index % 4) * 14)
-            let width = min(sideWidth, CGFloat(30 + (index % 2) * 8))
-            let bar = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 4)
-            bar.fillColor = SKColor(red: 0.05, green: 0.07, blue: 0.18, alpha: 1)
-            bar.strokeColor = index.isMultiple(of: 2) ? palette.accent : palette.secondAccent
-            bar.lineWidth = 1.5
-            node.addChild(bar)
+            if index.isMultiple(of: 2) {
+                let height = CGFloat(52 + (index % 4) * 14)
+                let width = min(sideWidth, CGFloat(30 + (index % 2) * 8))
+                let bar = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 4)
+                bar.fillColor = index.isMultiple(of: 4) ? palette.accent.withAlphaComponent(0.82) : SKColor(red: 0.05, green: 0.07, blue: 0.18, alpha: 1)
+                bar.strokeColor = index.isMultiple(of: 4) ? palette.accent : palette.secondAccent
+                bar.lineWidth = 1.5
+                node.addChild(bar)
 
-            let inset = SKShapeNode(rectOf: CGSize(width: width * 0.62, height: height * 0.68), cornerRadius: 3)
-            inset.fillColor = (index.isMultiple(of: 2) ? palette.accent : palette.secondAccent).withAlphaComponent(0.18)
-            inset.strokeColor = .clear
-            node.addChild(inset)
-
-            let crown = SKShapeNode(rectOf: CGSize(width: width * 0.86, height: 5), cornerRadius: 2)
-            crown.position = CGPoint(x: 0, y: height / 2 + 4)
-            crown.fillColor = index.isMultiple(of: 2) ? palette.secondAccent : palette.accent
-            crown.strokeColor = .clear
-            node.addChild(crown)
-
-            for row in 0..<3 {
-                let window = SKShapeNode(rectOf: CGSize(width: width * 0.5, height: 3), cornerRadius: 1.5)
-                window.fillColor = (row.isMultiple(of: 2) ? palette.secondAccent : palette.accent).withAlphaComponent(0.55)
-                window.strokeColor = .clear
-                window.position = CGPoint(x: 0, y: CGFloat(row - 1) * height * 0.18)
-                node.addChild(window)
+                let crown = SKShapeNode(rectOf: CGSize(width: width * 0.86, height: 5), cornerRadius: 2)
+                crown.position = CGPoint(x: 0, y: height / 2 + 4)
+                crown.fillColor = index.isMultiple(of: 4) ? palette.secondAccent : palette.accent
+                crown.strokeColor = .clear
+                node.addChild(crown)
+            } else {
+                addPalmTree(to: node, palette: palette, height: CGFloat(48 + (index % 3) * 8))
             }
-
-            let glow = SKShapeNode(circleOfRadius: 9)
-            glow.fillColor = (index.isMultiple(of: 2) ? palette.secondAccent : palette.accent).withAlphaComponent(0.38)
-            glow.strokeColor = .clear
-            glow.position = CGPoint(x: 0, y: -height * 0.5)
-            node.addChild(glow)
         }
 
         return node
@@ -884,12 +946,12 @@ final class GameScene: SKScene {
         scoreLabel.text = "SCORE \(score)"
         wantedLabel.text = wantedLevel >= 6 ? "ELITE PURSUIT \(wantedStars)" : "WANTED \(wantedStars)"
         if exitPhase == .active, let activeExitSide {
-            distanceLabel.text = "EXIT \(activeExitSide.displayName)"
+            distanceLabel.text = "\(currentWorld.stageCode)  EXIT \(activeExitSide.displayName)"
         } else if let currentLevel, gameMode == .storyChase {
             let remaining = max(0, currentLevel.durationBeforeExit - runTime)
-            distanceLabel.text = "EXIT \(Int(ceil(remaining)))s"
+            distanceLabel.text = "\(currentWorld.stageCode)  EXIT \(Int(ceil(remaining)))s"
         } else {
-            distanceLabel.text = "DIST \(Int(runDistance))"
+            distanceLabel.text = "\(currentWorld.stageCode)  DIST \(Int(runDistance))"
         }
 
         if comboCount > 0 {
@@ -985,7 +1047,7 @@ final class GameScene: SKScene {
         roadSpeed = 330
         trafficSpeed = 275
         spawnInterval = 1.08
-        spawnTimer = currentLevel?.levelID == "ny_01" ? -0.72 : 0.45
+        spawnTimer = currentLevel?.levelID == "la_01" ? -0.72 : 0.45
         difficultyTimer = 0
         lastUpdateTime = 0
         smokeTimer = 0
@@ -1021,6 +1083,7 @@ final class GameScene: SKScene {
         primaryExitTriggered = false
         emergencyExitUsed = false
         emergencyExitTimer = 0
+        exitAnticipationShown = false
         exitPhase = .inactive
         activeExitSide = nil
         exitCountdown = 0
@@ -1033,7 +1096,8 @@ final class GameScene: SKScene {
         holdActivated = false
         policeClosingSpeed = 3.4
         policeGap = maxPoliceGap
-        currentCity = currentLevel?.city.cityTheme ?? .newYork
+        currentWorld = currentLevel?.worldTheme ?? WorldThemeCatalog.endlessTheme(score: score)
+        currentCity = currentWorld.audioCity.cityTheme
         setPlayerSlot(laneManager.clampSlot(LaneManager.startSlot, for: activeCar.vehicleClass))
 
         AudioManager.shared.updateTheme(currentCity.audioTheme, crossfadeDuration: 0)
@@ -1050,10 +1114,10 @@ final class GameScene: SKScene {
         updateHUD()
         setHUDVisible(true)
         if let currentLevel {
-            showCityBanner("LEVEL \(LevelCatalog.displayNumber(for: currentLevel.levelID)): \(currentLevel.name.uppercased())")
-            buddy.say(.levelStart, detail: "\(currentLevel.name). Floor it!", force: true)
+            showCityBanner(currentWorld.displayName.uppercased())
+            buddy.say(.levelStart, detail: "\(currentLevel.name). \(currentWorld.shortName) is live.", force: true)
         } else {
-            showCityBanner(currentCity.title)
+            showCityBanner(currentWorld.displayName.uppercased())
             buddy.say(.levelStart, force: true)
         }
         applyDebugOverrides()
@@ -1137,7 +1201,7 @@ final class GameScene: SKScene {
             clutchSaves: clutchSaveCount,
             highestCombo: highestCombo,
             wantedLevelReached: highestWantedLevel,
-            cityReached: currentCity.runCity,
+            cityReached: currentLevel?.city ?? currentCity.runCity,
             dodgeBoostsUsed: dodgeBoostCount,
             crashes: crashes,
             selectedCarID: activeCar.id,
@@ -1303,7 +1367,7 @@ final class GameScene: SKScene {
         title.fontColor = palette(for: currentCity).accent
         overlayNode.addChild(title)
 
-        let subtitle = makeLabel("Swipe or tap to change lanes", size: 20, y: size.height * 0.55)
+        let subtitle = makeLabel("\(currentWorld.displayName.uppercased())  \(activeCar.displayName)", size: 20, y: size.height * 0.55)
         subtitle.fontColor = SKColor(white: 0.9, alpha: 1)
         overlayNode.addChild(subtitle)
 
@@ -1332,6 +1396,8 @@ final class GameScene: SKScene {
         overlayNode.addChild(busted)
 
         let rows: [(String, String)] = [
+            ("City", currentWorld.displayName),
+            ("Vehicle", activeCar.displayName),
             ("Distance", "\(Int(runDistance))"),
             ("Score", "\(score)"),
             ("Highest Combo", "x\(highestCombo)"),
@@ -1342,7 +1408,7 @@ final class GameScene: SKScene {
         ]
 
         for (index, row) in rows.enumerated() {
-            addResultsRow(title: row.0, value: row.1, y: topY - 64 - CGFloat(index) * 36)
+            addResultsRow(title: row.0, value: row.1, y: topY - 64 - CGFloat(index) * 28)
         }
 
         let best = makeLabel("High Score \(highScore)   Total Cash $\(totalCash)", size: 16, y: topY - 334)
@@ -1464,6 +1530,11 @@ final class GameScene: SKScene {
         let title = makeLabel("SETTINGS", size: 34, y: topY)
         title.fontColor = palette(for: currentCity).accent
         overlayNode.addChild(title)
+
+        let city = makeLabel("\(currentWorld.stageCode)  \(currentWorld.displayName.uppercased())", size: 14, y: topY - 34)
+        city.fontColor = palette(for: currentCity).secondAccent
+        fitLabel(city, maxWidth: size.width - 76)
+        overlayNode.addChild(city)
 
         addVolumeSetting(
             title: "MUSIC VOLUME",
@@ -1662,8 +1733,9 @@ final class GameScene: SKScene {
             let side: CGFloat = Bool.random() ? -1 : 1
             let radius = CGFloat.random(in: 3...8)
             let puff = SKShapeNode(circleOfRadius: radius)
-            puff.fillColor = SKColor(white: 0.82, alpha: 0.42)
-            puff.strokeColor = .clear
+            puff.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(0.24)
+            puff.strokeColor = ArcadeArt.Palette.asphaltLight.withAlphaComponent(0.18)
+            puff.userData = ["assetID": ArcadeArt.EffectAsset.tireSmoke.rawValue]
             puff.position = CGPoint(
                 x: playerCar.position.x + side * playerCar.size.width * 0.3 + CGFloat.random(in: -5...5),
                 y: playerCar.position.y - playerCar.size.height * 0.48 + CGFloat.random(in: -5...5)
@@ -1724,7 +1796,7 @@ final class GameScene: SKScene {
             ring.run(.sequence([.group([scale, .fadeOut(withDuration: 0.48)]), .removeFromParent()]))
         }
 
-        let debrisColors: [SKColor] = [.red, .orange, .yellow, .white, .black]
+        let debrisColors: [SKColor] = [ArcadeArt.Palette.red, ArcadeArt.Palette.orange, ArcadeArt.Palette.gold, ArcadeArt.Palette.cream, ArcadeArt.Palette.asphaltDark]
 
         for _ in 0..<18 {
             let piece = SKSpriteNode(
@@ -1737,6 +1809,7 @@ final class GameScene: SKScene {
             )
             piece.zRotation = CGFloat.random(in: 0...(CGFloat.pi * 2))
             piece.zPosition = 7
+            piece.userData = ["assetID": ArcadeArt.EffectAsset.crashSpark.rawValue]
             floatingTextNode.addChild(piece)
 
             let move = SKAction.moveBy(
@@ -1751,8 +1824,9 @@ final class GameScene: SKScene {
 
         for _ in 0..<12 {
             let smoke = SKShapeNode(circleOfRadius: CGFloat.random(in: 8...18))
-            smoke.fillColor = SKColor(white: CGFloat.random(in: 0.22...0.42), alpha: 0.72)
-            smoke.strokeColor = .clear
+            smoke.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(CGFloat.random(in: 0.18...0.34))
+            smoke.strokeColor = ArcadeArt.Palette.asphaltLight.withAlphaComponent(0.16)
+            smoke.userData = ["assetID": ArcadeArt.EffectAsset.tireSmoke.rawValue]
             smoke.position = position
             smoke.zPosition = 6
             floatingTextNode.addChild(smoke)
@@ -2055,9 +2129,10 @@ final class GameScene: SKScene {
 
         for _ in 0..<count {
             let streak = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 2...4), height: CGFloat.random(in: 24...58)), cornerRadius: 1.5)
-            streak.fillColor = [palette.accent, palette.secondAccent, SKColor.white].randomElement()?.withAlphaComponent(0.72) ?? .white
+            streak.fillColor = [palette.accent, palette.secondAccent, ArcadeArt.Palette.cream].randomElement()?.withAlphaComponent(0.72) ?? ArcadeArt.Palette.cream
             streak.strokeColor = .clear
             streak.glowWidth = 3
+            streak.userData = ["assetID": ArcadeArt.EffectAsset.boostTrail.rawValue]
             streak.position = CGPoint(
                 x: playerCar.position.x + CGFloat.random(in: -playerCar.size.width * 0.48...playerCar.size.width * 0.48),
                 y: playerCar.position.y - playerCar.size.height * 0.44 + CGFloat.random(in: -8...10)
@@ -2079,6 +2154,7 @@ final class GameScene: SKScene {
             streak.fillColor = (index.isMultiple(of: 2) ? activeCar.accentColor : palette.accent).withAlphaComponent(0.8)
             streak.strokeColor = .clear
             streak.glowWidth = 3
+            streak.userData = ["assetID": ArcadeArt.EffectAsset.speedStreak.rawValue]
             streak.position = CGPoint(
                 x: playerCar.position.x - CGFloat(direction) * CGFloat.random(in: 6...15),
                 y: playerCar.position.y - CGFloat.random(in: 16...34)
@@ -2394,6 +2470,11 @@ final class GameScene: SKScene {
             }
         }
 
+        if !exitAnticipationShown, !primaryExitTriggered, runTime >= max(0, currentLevel.durationBeforeExit - 5) {
+            exitAnticipationShown = true
+            showExitAnticipation(side: currentLevel.exitSide)
+        }
+
         if !primaryExitTriggered, (runTime >= currentLevel.durationBeforeExit || (AppConfig.forceExitEvent && runTime > 4)) {
             primaryExitTriggered = true
             activateExit(side: currentLevel.exitSide, isEmergency: false)
@@ -2449,6 +2530,30 @@ final class GameScene: SKScene {
         shakeCamera(intensity: 5, duration: 0.16)
     }
 
+    private func showExitAnticipation(side: ExitSide) {
+        let palette = palette(for: currentCity)
+        let sign = SKShapeNode(rectOf: CGSize(width: min(size.width * 0.54, 210), height: 40), cornerRadius: 7)
+        sign.position = CGPoint(x: side == .left ? size.width * 0.31 : size.width * 0.69, y: size.height * 0.76)
+        sign.fillColor = currentWorld.exitSignFill(isEmergency: false).withAlphaComponent(0.72)
+        sign.strokeColor = palette.edgeLine.withAlphaComponent(0.76)
+        sign.lineWidth = 2
+        sign.glowWidth = 5
+        sign.zPosition = 9
+        floatingTextNode.addChild(sign)
+
+        let label = UIHelpers.label("EXIT SOON  \(side.displayName)", size: 17, color: ArcadeArt.Palette.cream, width: sign.frame.width - 18)
+        label.position = .zero
+        sign.addChild(label)
+
+        sign.setScale(0.88)
+        sign.run(.sequence([
+            .group([.fadeIn(withDuration: 0.08), .scale(to: 1, duration: 0.1)]),
+            .wait(forDuration: 1.1),
+            .fadeOut(withDuration: 0.28),
+            .removeFromParent()
+        ]))
+    }
+
     private func buildExitRamp(side: ExitSide, isEmergency: Bool) {
         exitNode.removeAllChildren()
         exitNode.alpha = 1
@@ -2462,7 +2567,7 @@ final class GameScene: SKScene {
         let exitLanes = laneManager.exitLanes(for: side)
         let rampWidth = laneWidth * 2.35
         let rampCenterX = side == .left ? laneCenters[0] + laneWidth * 0.5 : laneCenters[laneCount - 1] - laneWidth * 0.5
-        let rampColor = isEmergency ? UITheme.Color.orange : UITheme.Color.green
+        let rampColor = isEmergency ? UITheme.Color.orange : palette.accent
 
         let laneGlow = SKShapeNode(rectOf: CGSize(width: rampWidth, height: size.height + 160), cornerRadius: 10)
         laneGlow.position = CGPoint(x: rampCenterX, y: size.height / 2)
@@ -2490,13 +2595,13 @@ final class GameScene: SKScene {
 
         let sign = SKShapeNode(rectOf: CGSize(width: min(size.width * 0.46, 180), height: 48), cornerRadius: 7)
         sign.position = CGPoint(x: side == .left ? size.width * 0.28 : size.width * 0.72, y: size.height * 0.72)
-        sign.fillColor = SKColor(red: 0.02, green: 0.35, blue: 0.16, alpha: 0.94)
-        sign.strokeColor = SKColor.white.withAlphaComponent(0.75)
+        sign.fillColor = currentWorld.exitSignFill(isEmergency: isEmergency)
+        sign.strokeColor = palette.laneMarker.withAlphaComponent(0.78)
         sign.lineWidth = 2
         sign.glowWidth = 5
         exitNode.addChild(sign)
 
-        let signText = UIHelpers.label("\(side.displayName) EXIT", size: 20, color: .white, width: sign.frame.width - 18)
+        let signText = UIHelpers.label(currentWorld.exitSignText(side: side, isEmergency: isEmergency), size: 20, color: .white, width: sign.frame.width - 18)
         signText.position = .zero
         sign.addChild(signText)
 
@@ -2596,7 +2701,7 @@ final class GameScene: SKScene {
 
     private func clearExitApproach(side: ExitSide) {
         var protectedLanes = laneManager.exitGuardLanes(for: side)
-        protectedLanes.formUnion(brooklynExitLearningLanes(for: side))
+        protectedLanes.formUnion(starterExitLearningLanes(for: side))
         let safetyGap = currentLevel.map { LevelDifficultyConfig.snapshot(for: $0, elapsed: runTime, exitActive: true).exitSafetyGap } ?? 360
         for node in trafficNode.children {
             guard let vehicle = node as? SKSpriteNode,
@@ -2735,7 +2840,7 @@ final class GameScene: SKScene {
         var protectedLanes = reservedEscapeLanes()
         if exitPhase == .active, let side = activeExitSide {
             protectedLanes.formUnion(laneManager.exitGuardLanes(for: side))
-            protectedLanes.formUnion(brooklynExitLearningLanes(for: side))
+            protectedLanes.formUnion(starterExitLearningLanes(for: side))
         }
         var protectedSlots = Set(protectedLanes.map { $0 * 2 })
         if exitPhase == .active, let side = activeExitSide {
@@ -2752,6 +2857,7 @@ final class GameScene: SKScene {
             density: currentTrafficDensity(),
             wantedLevel: wantedLevel,
             city: currentCity,
+            worldThemeID: currentWorld.id,
             protectedLanes: protectedLanes,
             protectedSlots: protectedSlots,
             recentBlockedLanes: recentBlockedLanes(),
@@ -2781,10 +2887,10 @@ final class GameScene: SKScene {
     }
 
     private func reservedEscapeLanes() -> Set<Int> {
-        if currentLevel?.levelID == "ny_01" {
+        if currentLevel?.levelID == "la_01" {
             var lanes = Set((playerLane - 2...playerLane + 2).map(laneManager.clampedLane))
             if exitPhase == .active, let activeExitSide {
-                lanes.formUnion(brooklynExitLearningLanes(for: activeExitSide))
+                lanes.formUnion(starterExitLearningLanes(for: activeExitSide))
             }
             return lanes
         }
@@ -2800,8 +2906,8 @@ final class GameScene: SKScene {
         return Set(candidates.prefix(currentTrafficDensity() < 0.82 ? 3 : 2))
     }
 
-    private func brooklynExitLearningLanes(for side: ExitSide) -> Set<Int> {
-        guard currentLevel?.levelID == "ny_01" else { return [] }
+    private func starterExitLearningLanes(for side: ExitSide) -> Set<Int> {
+        guard currentLevel?.levelID == "la_01" else { return [] }
         let edgeLane = side == .left ? 0 : laneCount - 1
         let lower = min(playerLane, edgeLane)
         let upper = max(playerLane, edgeLane)
@@ -2902,6 +3008,7 @@ final class GameScene: SKScene {
         vehicle.name = "traffic"
         vehicle.userData = [
             "spawnID": trafficSpawnSerial,
+            "assetID": ArcadeArt.assetID(for: type).rawValue,
             "lane": lane,
             "laneSpan": laneSpan(for: type),
             "speed": randomTrafficSpeed(for: type) * speedMultiplier,
@@ -2912,12 +3019,7 @@ final class GameScene: SKScene {
     }
 
     private func laneSpan(for type: VehicleType) -> Int {
-        switch type {
-        case .truck, .bus:
-            return 2
-        case .sedan, .taxi, .sports, .policeMoto:
-            return 1
-        }
+        ArcadeArt.laneSpan(for: type)
     }
 
     private func occupiedLanes(for centerLane: Int, span: Int) -> Set<Int> {
@@ -2952,41 +3054,19 @@ final class GameScene: SKScene {
     }
 
     private func randomVehicleType() -> VehicleType {
-        if currentLevel?.levelID == "ny_01" && runTime < 32 {
-            return [.sedan, .sedan, .taxi, .taxi, .sports].randomElement() ?? .sedan
+        if currentLevel?.levelID == "la_01" && runTime < 32 {
+            return [.compact, .sedan, .sedan, .sportCoupe].randomElement() ?? .sedan
         }
 
-        let pool: [VehicleType]
-
-        switch currentCity {
-        case .newYork:
-            pool = wantedLevel >= 4 ? [.taxi, .taxi, .sedan, .sedan, .truck, .bus, .policeMoto] : [.taxi, .taxi, .taxi, .sedan, .sedan, .truck, .bus]
-        case .losAngeles:
-            pool = wantedLevel >= 4 ? [.sports, .sports, .sedan, .taxi, .truck, .bus, .policeMoto] : [.sports, .sports, .sedan, .sedan, .taxi, .truck, .bus]
-        case .miami:
-            pool = wantedLevel >= 4 ? [.sports, .sports, .sports, .sedan, .taxi, .truck, .bus, .policeMoto] : [.sports, .sports, .sports, .sedan, .taxi, .truck, .bus, .bus]
-        }
-
-        return pool.randomElement() ?? .sedan
+        return currentWorld.trafficPool(wantedLevel: wantedLevel).randomElement() ?? .sedan
     }
 
     private func randomTrafficSpeed(for type: VehicleType) -> CGFloat {
         var speed = trafficSpeed + CGFloat.random(in: -22...28)
 
-        switch type {
-        case .truck, .bus:
-            speed -= 18
-        case .sports:
-            speed += 34
-        case .policeMoto:
-            speed += 54
-        case .sedan, .taxi:
-            break
-        }
+        speed += ArcadeArt.speedOffset(for: type)
 
-        if currentCity == .miami {
-            speed += 38
-        }
+        speed += currentWorld.trafficSpeedOffset
 
         return speed
     }
@@ -2997,7 +3077,8 @@ final class GameScene: SKScene {
         guard let policeCar, let playerCar else { return }
 
         let resistance = max(0.92, min(1.18, activeCar.policeResistance))
-        policeGap = max(minPoliceGap, policeGap - (policeClosingSpeed / resistance) * deltaTime)
+        let worldPressure = max(0.92, min(1.12, currentWorld.policePressureMultiplier))
+        policeGap = max(minPoliceGap, policeGap - (policeClosingSpeed * worldPressure / resistance) * deltaTime)
 
         let targetX = slotCenters.indices.contains(playerSlot) ? slotCenters[playerSlot] : playerCar.position.x
         let followAmount = min(1, deltaTime * 5.4)
@@ -3114,12 +3195,15 @@ final class GameScene: SKScene {
             forcedCity = .miami
         }
 
-        if let forcedCity, forcedCity != currentCity {
+        if let forcedCity {
+            let forcedWorld = WorldThemeCatalog.legacyTheme(for: forcedCity)
+            guard forcedCity != currentCity || forcedWorld.id != currentWorld.id else { return }
             currentCity = forcedCity
+            currentWorld = forcedWorld
             setupRoad()
             AudioManager.shared.updateTheme(forcedCity.audioTheme)
             updateHUD()
-            showCityBanner(forcedCity.title)
+            showCityBanner(currentWorld.displayName.uppercased())
         }
     }
 
@@ -3157,7 +3241,7 @@ final class GameScene: SKScene {
         if mode.showcaseTraffic, !screenshotShowcaseSpawned, laneCenters.count == laneCount {
             screenshotShowcaseSpawned = true
             for lane in 0..<laneCount where lane != playerLane {
-                let type: VehicleType = lane.isMultiple(of: 2) ? .taxi : .sports
+                let type: VehicleType = lane.isMultiple(of: 3) ? .boxTruck : (lane.isMultiple(of: 2) ? .compact : .sportCoupe)
                 spawnVehicle(in: lane, type: type, yOffset: CGFloat(lane) * 58, speedMultiplier: 0.82)
             }
             if wantedLevel < 5 {
@@ -3225,27 +3309,10 @@ final class GameScene: SKScene {
     }
 
     private func makePoliceSUV() -> SKSpriteNode {
-        let suvSize = CGSize(width: min(34, max(25, laneWidth * 0.92)), height: min(92, max(72, laneWidth * 2.18)))
-        let suv = makeVehicleShell(
-            size: suvSize,
-            bodyColor: SKColor(red: 0.02, green: 0.025, blue: 0.035, alpha: 1),
-            strokeColor: SKColor(red: 0.88, green: 0.96, blue: 1, alpha: 0.9),
-            glowColor: SKColor(red: 1, green: 0.05, blue: 0.1, alpha: 1),
-            frontInset: 0.08,
-            rearInset: 0.04
+        ArcadeArt.makeVehicleSprite(
+            spec: ArcadeArt.policeSUVSpec(laneWidth: laneWidth, world: currentWorld),
+            reducedFlashing: SaveManager.shared.data.reducedFlashingEnabled
         )
-
-        let armor = SKShapeNode(rectOf: CGSize(width: suvSize.width * 0.72, height: suvSize.height * 0.48), cornerRadius: 4)
-        armor.fillColor = SKColor(white: 0.9, alpha: 0.95)
-        armor.strokeColor = SKColor.black.withAlphaComponent(0.4)
-        armor.position = CGPoint(x: 0, y: -suvSize.height * 0.02)
-        suv.addChild(armor)
-
-        addWindow(to: suv, size: suvSize, y: suvSize.height * 0.2, widthScale: 0.5, heightScale: 0.15, color: SKColor(red: 0.45, green: 0.72, blue: 0.95, alpha: 0.94))
-        addPoliceLightBar(to: suv, size: suvSize)
-        addVehicleLights(to: suv, size: suvSize, headColor: SKColor(red: 0.96, green: 1, blue: 0.78, alpha: 1), tailColor: SKColor.red)
-        addWheels(to: suv, size: suvSize, style: .heavy)
-        return suv
     }
 
     private func ensureHelicopter() {
@@ -3388,30 +3455,7 @@ final class GameScene: SKScene {
 
     private func makeRoadblockNode() -> SKSpriteNode {
         let blockSize = CGSize(width: laneWidth * 0.78, height: 44)
-        let node = SKSpriteNode(color: .clear, size: blockSize)
-
-        let base = SKShapeNode(rectOf: blockSize, cornerRadius: 5)
-        base.fillColor = SKColor(red: 0.08, green: 0.08, blue: 0.09, alpha: 1)
-        base.strokeColor = SKColor.red.withAlphaComponent(0.8)
-        base.lineWidth = 2
-        base.glowWidth = 5
-        node.addChild(base)
-
-        for stripeIndex in -1...1 {
-            let stripe = SKShapeNode(rectOf: CGSize(width: blockSize.width * 0.68, height: 7), cornerRadius: 2)
-            stripe.fillColor = stripeIndex.isMultiple(of: 2) ? SKColor.white : SKColor.red
-            stripe.strokeColor = .clear
-            stripe.zRotation = -0.38
-            stripe.position = CGPoint(x: 0, y: CGFloat(stripeIndex) * 12)
-            node.addChild(stripe)
-        }
-
-        let spikes = SKShapeNode(rectOf: CGSize(width: blockSize.width * 0.86, height: 5), cornerRadius: 2)
-        spikes.fillColor = SKColor(white: 0.88, alpha: 1)
-        spikes.strokeColor = .clear
-        spikes.position = CGPoint(x: 0, y: -blockSize.height * 0.42)
-        node.addChild(spikes)
-        return node
+        return ArcadeArt.makeRoadblock(size: blockSize)
     }
 
     private func showRoadblockWarning(lanes: [Int]) {
@@ -3454,7 +3498,7 @@ final class GameScene: SKScene {
     }
 
     private func shouldSuppressRoadEventsForLearning() -> Bool {
-        guard currentLevel?.levelID == "ny_01" else { return false }
+        guard currentLevel?.levelID == "la_01" else { return false }
         guard exitPhase != .completed else { return false }
         return true
     }
@@ -3560,28 +3604,7 @@ final class GameScene: SKScene {
     }
 
     private func makeConstructionNode() -> SKSpriteNode {
-        let node = SKSpriteNode(color: .clear, size: CGSize(width: laneWidth * 0.72, height: 52))
-
-        for x in [-laneWidth * 0.18, laneWidth * 0.18] {
-            let cone = SKShapeNode()
-            let path = CGMutablePath()
-            path.move(to: CGPoint(x: 0, y: 22))
-            path.addLine(to: CGPoint(x: -13, y: -22))
-            path.addLine(to: CGPoint(x: 13, y: -22))
-            path.closeSubpath()
-            cone.path = path
-            cone.fillColor = SKColor(red: 1, green: 0.42, blue: 0.02, alpha: 1)
-            cone.strokeColor = SKColor.white.withAlphaComponent(0.6)
-            cone.position = CGPoint(x: x, y: 0)
-            node.addChild(cone)
-        }
-
-        let bar = SKShapeNode(rectOf: CGSize(width: laneWidth * 0.62, height: 8), cornerRadius: 3)
-        bar.fillColor = SKColor(red: 1, green: 0.72, blue: 0.12, alpha: 1)
-        bar.strokeColor = SKColor.black.withAlphaComponent(0.35)
-        bar.position = CGPoint(x: 0, y: 0)
-        node.addChild(bar)
-        return node
+        ArcadeArt.makeConstructionMarker(laneWidth: laneWidth)
     }
 
     private func spawnVIPMotorcade() {
@@ -3591,7 +3614,7 @@ final class GameScene: SKScene {
         lanes.shuffle()
 
         for (index, lane) in lanes.prefix(3).enumerated() {
-            let type: VehicleType = index == 1 ? .sports : .sedan
+            let type: VehicleType = index == 1 ? .sportCoupe : .sedan
             spawnVehicle(in: lane, type: type, yOffset: CGFloat(index) * 70, speedMultiplier: 1.08)
         }
     }
@@ -3735,17 +3758,11 @@ final class GameScene: SKScene {
     private func updateCityIfNeeded() {
         guard gameMode == .endlessPursuit else { return }
         guard AppConfig.forcedCity == .automatic else { return }
-        let newCity: CityTheme
+        let newWorld = WorldThemeCatalog.endlessTheme(score: score)
+        let newCity = newWorld.audioCity.cityTheme
 
-        if score >= 2500 {
-            newCity = .miami
-        } else if score >= 1000 {
-            newCity = .losAngeles
-        } else {
-            newCity = .newYork
-        }
-
-        guard newCity != currentCity else { return }
+        guard newCity != currentCity || newWorld.id != currentWorld.id else { return }
+        currentWorld = newWorld
         currentCity = newCity
         setupRoad()
         positionPlayer(animated: true)
@@ -3758,8 +3775,8 @@ final class GameScene: SKScene {
             warningHaptic.impactOccurred(intensity: 0.55)
             warningHaptic.prepare()
         }
-        showCityBanner(newCity.title)
-        triggerEventCinematic(title: "\(newCity.title) ARRIVAL", color: cityPalette.accent)
+        showCityBanner(newWorld.displayName.uppercased())
+        triggerEventCinematic(title: "\(newWorld.shortName.uppercased()) ARRIVAL", color: cityPalette.accent)
     }
 
     private func checkNearMiss(for vehicle: SKSpriteNode) {
@@ -3863,6 +3880,7 @@ final class GameScene: SKScene {
             spark.fillColor = (index.isMultiple(of: 2) ? activeCar.accentColor : palette.secondAccent).withAlphaComponent(0.88)
             spark.strokeColor = .clear
             spark.glowWidth = 4
+            spark.userData = ["assetID": ArcadeArt.EffectAsset.crashSpark.rawValue]
             spark.position = CGPoint(x: position.x + CGFloat.random(in: -12...12), y: position.y + CGFloat.random(in: -12...26))
             spark.zRotation = CGFloat.random(in: -0.7...0.7)
             floatingTextNode.addChild(spark)
@@ -4017,8 +4035,9 @@ final class GameScene: SKScene {
         let palette = palette(for: currentCity)
         for _ in 0..<10 {
             let spark = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 3...7), height: 2), cornerRadius: 1)
-            spark.fillColor = [palette.accent, palette.secondAccent, SKColor.white].randomElement() ?? .white
+            spark.fillColor = [palette.accent, palette.secondAccent, ArcadeArt.Palette.cream].randomElement() ?? ArcadeArt.Palette.cream
             spark.strokeColor = .clear
+            spark.userData = ["assetID": ArcadeArt.EffectAsset.crashSpark.rawValue]
             spark.position = CGPoint(
                 x: position.x + CGFloat.random(in: -26...26),
                 y: position.y + CGFloat.random(in: 4...36)
@@ -4075,20 +4094,9 @@ final class GameScene: SKScene {
             widthScale = 1.02
             heightScale = 0.92
         } else {
-            switch type {
-            case .truck, .bus:
-                widthScale = 1.05
-                heightScale = 0.94
-            case .policeMoto:
-                widthScale = 0.5
-                heightScale = 0.82
-            case .sports:
-                widthScale = 0.82
-                heightScale = 0.88
-            case .sedan, .taxi, .none:
-                widthScale = 0.9
-                heightScale = 0.9
-            }
+            let scale = type.map { ArcadeArt.hitboxScale(for: $0) } ?? ArcadeArt.HitboxScale(width: 0.9, height: 0.9)
+            widthScale = scale.width
+            heightScale = scale.height
         }
 
         let width = vehicle.size.width * widthScale
@@ -4110,185 +4118,21 @@ final class GameScene: SKScene {
     }
 
     private func makePoliceCar() -> SKSpriteNode {
-        let carSize = CGSize(width: min(34, max(24, laneWidth * 0.9)), height: min(84, max(70, laneWidth * 2.05)))
-        let car = makeVehicleShell(
-            size: carSize,
-            bodyColor: SKColor(red: 0.03, green: 0.035, blue: 0.045, alpha: 1),
-            strokeColor: SKColor.white.withAlphaComponent(0.7),
-            glowColor: SKColor(red: 0.25, green: 0.55, blue: 1, alpha: 1),
-            frontInset: 0.12,
-            rearInset: 0.06
+        let car = ArcadeArt.makeVehicleSprite(
+            spec: ArcadeArt.policeCruiserSpec(laneWidth: laneWidth, world: currentWorld),
+            reducedFlashing: SaveManager.shared.data.reducedFlashingEnabled
         )
         car.zPosition = 1
-
-        let whitePanel = SKShapeNode(rectOf: CGSize(width: carSize.width * 0.7, height: carSize.height * 0.44), cornerRadius: 5)
-        whitePanel.fillColor = SKColor(white: 0.93, alpha: 1)
-        whitePanel.strokeColor = SKColor.black.withAlphaComponent(0.35)
-        whitePanel.lineWidth = 1
-        whitePanel.position = CGPoint(x: 0, y: -carSize.height * 0.03)
-        car.addChild(whitePanel)
-
-        let sideStripe = SKShapeNode(rectOf: CGSize(width: carSize.width * 0.92, height: 5), cornerRadius: 2)
-        sideStripe.fillColor = SKColor.black.withAlphaComponent(0.85)
-        sideStripe.strokeColor = .clear
-        sideStripe.position = CGPoint(x: 0, y: -carSize.height * 0.03)
-        car.addChild(sideStripe)
-
-        addWindow(to: car, size: carSize, y: carSize.height * 0.2, widthScale: 0.54, heightScale: 0.17, color: SKColor(red: 0.46, green: 0.74, blue: 0.95, alpha: 0.95))
-        addWindow(to: car, size: carSize, y: -carSize.height * 0.23, widthScale: 0.46, heightScale: 0.13, color: SKColor(red: 0.08, green: 0.11, blue: 0.16, alpha: 0.96))
-        addVehicleLights(to: car, size: carSize, headColor: SKColor(red: 0.95, green: 1, blue: 0.76, alpha: 1), tailColor: SKColor(red: 1, green: 0.04, blue: 0.08, alpha: 1))
-
-        let pushBar = SKShapeNode(rectOf: CGSize(width: carSize.width * 0.8, height: 5), cornerRadius: 2)
-        pushBar.fillColor = SKColor(white: 0.03, alpha: 1)
-        pushBar.strokeColor = SKColor.white.withAlphaComponent(0.22)
-        pushBar.position = CGPoint(x: 0, y: carSize.height * 0.49)
-        car.addChild(pushBar)
-
-        addPoliceLightBar(to: car, size: carSize)
-        addWheels(to: car, size: carSize, style: .heavy)
         return car
     }
 
     private func makeTrafficVehicle(type: VehicleType) -> SKSpriteNode {
-        let vehicleSize: CGSize
-        let bodyColor: SKColor
-        let strokeColor: SKColor
-        let glowColor: SKColor
-        let frontInset: CGFloat
-        let rearInset: CGFloat
-
-        switch type {
-        case .sedan:
-            vehicleSize = CGSize(width: min(28, max(20, laneWidth * 0.72)), height: min(76, max(58, laneWidth * 1.85)))
-            bodyColor = [
-                SKColor(red: 0.22, green: 0.28, blue: 0.34, alpha: 1),
-                SKColor(red: 0.05, green: 0.36, blue: 0.84, alpha: 1),
-                SKColor(red: 0.03, green: 0.58, blue: 0.32, alpha: 1)
-            ].randomElement() ?? .gray
-            strokeColor = bodyColor.withAlphaComponent(0.95)
-            glowColor = SKColor(red: 0.3, green: 0.75, blue: 1, alpha: 1)
-            frontInset = 0.18
-            rearInset = 0.08
-        case .taxi:
-            vehicleSize = CGSize(width: min(28, max(20, laneWidth * 0.72)), height: min(76, max(58, laneWidth * 1.82)))
-            bodyColor = SKColor(red: 1, green: 0.82, blue: 0.02, alpha: 1)
-            strokeColor = SKColor(red: 1, green: 0.96, blue: 0.32, alpha: 1)
-            glowColor = SKColor(red: 1, green: 0.8, blue: 0.04, alpha: 1)
-            frontInset = 0.16
-            rearInset = 0.1
-        case .truck:
-            vehicleSize = CGSize(width: min(54, max(42, laneWidth * 1.55)), height: min(118, max(88, laneWidth * 2.95)))
-            bodyColor = SKColor(red: 0.5, green: 0.56, blue: 0.62, alpha: 1)
-            strokeColor = SKColor(red: 0.84, green: 0.9, blue: 0.96, alpha: 1)
-            glowColor = SKColor(white: 0.72, alpha: 1)
-            frontInset = 0.08
-            rearInset = 0.04
-        case .bus:
-            vehicleSize = CGSize(width: min(52, max(40, laneWidth * 1.46)), height: min(130, max(98, laneWidth * 3.25)))
-            bodyColor = SKColor(red: 0.97, green: 0.38, blue: 0.07, alpha: 1)
-            strokeColor = SKColor(red: 1, green: 0.72, blue: 0.18, alpha: 1)
-            glowColor = SKColor(red: 1, green: 0.35, blue: 0.08, alpha: 1)
-            frontInset = 0.06
-            rearInset = 0.04
-        case .sports:
-            vehicleSize = CGSize(width: min(26, max(19, laneWidth * 0.66)), height: min(70, max(54, laneWidth * 1.72)))
-            bodyColor = currentCity == .miami
-                ? SKColor(red: 1, green: 0.12, blue: 0.66, alpha: 1)
-                : SKColor(red: 0.02, green: 0.54, blue: 0.95, alpha: 1)
-            strokeColor = SKColor.white.withAlphaComponent(0.75)
-            glowColor = currentCity == .miami ? SKColor(red: 1, green: 0.1, blue: 0.8, alpha: 1) : SKColor(red: 0, green: 0.8, blue: 1, alpha: 1)
-            frontInset = 0.24
-            rearInset = 0.16
-        case .policeMoto:
-            vehicleSize = CGSize(width: min(18, max(13, laneWidth * 0.42)), height: min(66, max(48, laneWidth * 1.55)))
-            bodyColor = SKColor(white: 0.04, alpha: 1)
-            strokeColor = SKColor.white.withAlphaComponent(0.85)
-            glowColor = SKColor(red: 0.25, green: 0.55, blue: 1, alpha: 1)
-            frontInset = 0.34
-            rearInset = 0.26
-        }
-
-        let vehicle = makeVehicleShell(
-            size: vehicleSize,
-            bodyColor: bodyColor,
-            strokeColor: strokeColor,
-            glowColor: glowColor,
-            frontInset: frontInset,
-            rearInset: rearInset
+        let spec = ArcadeArt.trafficSpec(for: type, laneWidth: laneWidth, world: currentWorld)
+        let vehicle = ArcadeArt.makeVehicleSprite(
+            spec: spec,
+            reducedFlashing: SaveManager.shared.data.reducedFlashingEnabled
         )
         vehicle.zPosition = 1
-        addVehicleLights(to: vehicle, size: vehicleSize, headColor: SKColor(red: 0.95, green: 1, blue: 0.72, alpha: 0.95), tailColor: SKColor(red: 1, green: 0.05, blue: 0.06, alpha: 1))
-
-        switch type {
-        case .sedan:
-            addWindow(to: vehicle, size: vehicleSize, y: vehicleSize.height * 0.18, widthScale: 0.52, heightScale: 0.17, color: SKColor(red: 0.62, green: 0.9, blue: 1, alpha: 0.92))
-            addWindow(to: vehicle, size: vehicleSize, y: -vehicleSize.height * 0.19, widthScale: 0.42, heightScale: 0.13, color: SKColor(red: 0.08, green: 0.12, blue: 0.18, alpha: 0.86))
-            addWheels(to: vehicle, size: vehicleSize, style: .standard)
-        case .taxi:
-            addWindow(to: vehicle, size: vehicleSize, y: vehicleSize.height * 0.18, widthScale: 0.52, heightScale: 0.16, color: SKColor(red: 0.66, green: 0.92, blue: 1, alpha: 0.9))
-            addWindow(to: vehicle, size: vehicleSize, y: -vehicleSize.height * 0.2, widthScale: 0.42, heightScale: 0.12, color: SKColor(red: 0.08, green: 0.1, blue: 0.12, alpha: 0.9))
-            let checker = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.62, height: 5), cornerRadius: 1)
-            checker.fillColor = SKColor.black.withAlphaComponent(0.78)
-            checker.strokeColor = .clear
-            checker.position = CGPoint(x: 0, y: -vehicleSize.height * 0.02)
-            vehicle.addChild(checker)
-
-            let sign = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.42, height: 9), cornerRadius: 2)
-            sign.fillColor = SKColor.white.withAlphaComponent(0.95)
-            sign.strokeColor = SKColor.black.withAlphaComponent(0.5)
-            sign.position = CGPoint(x: 0, y: vehicleSize.height * 0.02)
-            vehicle.addChild(sign)
-            addWheels(to: vehicle, size: vehicleSize, style: .standard)
-        case .truck:
-            let trailer = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.82, height: vehicleSize.height * 0.48), cornerRadius: 4)
-            trailer.fillColor = SKColor(red: 0.68, green: 0.72, blue: 0.78, alpha: 1)
-            trailer.strokeColor = SKColor.white.withAlphaComponent(0.45)
-            trailer.position = CGPoint(x: 0, y: -vehicleSize.height * 0.18)
-            vehicle.addChild(trailer)
-
-            let cabWindow = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.48, height: vehicleSize.height * 0.12), cornerRadius: 3)
-            cabWindow.fillColor = SKColor(red: 0.66, green: 0.9, blue: 1, alpha: 0.95)
-            cabWindow.strokeColor = SKColor.white.withAlphaComponent(0.35)
-            cabWindow.position = CGPoint(x: 0, y: vehicleSize.height * 0.28)
-            vehicle.addChild(cabWindow)
-
-            for row in 0..<3 {
-                let seam = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.68, height: 2), cornerRadius: 1)
-                seam.fillColor = SKColor.black.withAlphaComponent(0.18)
-                seam.strokeColor = .clear
-                seam.position = CGPoint(x: 0, y: -vehicleSize.height * 0.36 + CGFloat(row) * vehicleSize.height * 0.16)
-                vehicle.addChild(seam)
-            }
-            addWheels(to: vehicle, size: vehicleSize, style: .heavy)
-        case .bus:
-            for row in 0..<3 {
-                let window = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.58, height: 10), cornerRadius: 3)
-                window.fillColor = SKColor(red: 0.72, green: 0.95, blue: 1, alpha: 0.92)
-                window.strokeColor = SKColor.white.withAlphaComponent(0.25)
-                window.position = CGPoint(x: 0, y: CGFloat(row) * 24 - vehicleSize.height * 0.13)
-                vehicle.addChild(window)
-            }
-
-            let routeStripe = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.84, height: 6), cornerRadius: 2)
-            routeStripe.fillColor = SKColor(red: 1, green: 0.92, blue: 0.3, alpha: 0.9)
-            routeStripe.strokeColor = .clear
-            routeStripe.position = CGPoint(x: 0, y: vehicleSize.height * 0.24)
-            vehicle.addChild(routeStripe)
-            addWheels(to: vehicle, size: vehicleSize, style: .heavy)
-        case .sports:
-            addWindow(to: vehicle, size: vehicleSize, y: vehicleSize.height * 0.12, widthScale: 0.46, heightScale: 0.16, color: SKColor(red: 0.5, green: 0.96, blue: 1, alpha: 0.9))
-            addVehicleHighlight(to: vehicle, size: vehicleSize, color: SKColor.white.withAlphaComponent(0.32))
-
-            let spoiler = SKShapeNode(rectOf: CGSize(width: vehicleSize.width * 0.78, height: 5), cornerRadius: 2)
-            spoiler.fillColor = SKColor.black.withAlphaComponent(0.72)
-            spoiler.strokeColor = glowColor.withAlphaComponent(0.35)
-            spoiler.position = CGPoint(x: 0, y: -vehicleSize.height * 0.46)
-            vehicle.addChild(spoiler)
-            addWheels(to: vehicle, size: vehicleSize, style: .sport)
-        case .policeMoto:
-            addMotorcycleDetails(to: vehicle, size: vehicleSize, bodyColor: bodyColor, accent: glowColor, police: true)
-        }
-
         return vehicle
     }
 
@@ -4558,46 +4402,10 @@ final class GameScene: SKScene {
     // MARK: - City Themes
 
     private func palette(for city: CityTheme) -> ThemePalette {
-        switch city {
-        case .newYork:
-            return ThemePalette(
-                background: SKColor(red: 0.03, green: 0.04, blue: 0.055, alpha: 1),
-                road: SKColor(red: 0.08, green: 0.09, blue: 0.105, alpha: 1),
-                shoulder: SKColor(red: 0.025, green: 0.03, blue: 0.04, alpha: 1),
-                laneMarker: SKColor(red: 0.82, green: 0.9, blue: 0.95, alpha: 1),
-                accent: SKColor(red: 1, green: 0.82, blue: 0.05, alpha: 1),
-                secondAccent: SKColor(red: 0.35, green: 0.6, blue: 0.9, alpha: 1),
-                roadTexture: SKColor(red: 0.58, green: 0.68, blue: 0.74, alpha: 1),
-                edgeLine: SKColor(red: 0.26, green: 0.68, blue: 1, alpha: 1),
-                panel: SKColor(red: 0.035, green: 0.045, blue: 0.06, alpha: 0.92)
-            )
-
-        case .losAngeles:
-            return ThemePalette(
-                background: SKColor(red: 0.22, green: 0.11, blue: 0.18, alpha: 1),
-                road: SKColor(red: 0.25, green: 0.21, blue: 0.19, alpha: 1),
-                shoulder: SKColor(red: 0.58, green: 0.28, blue: 0.12, alpha: 1),
-                laneMarker: SKColor(red: 1, green: 0.9, blue: 0.58, alpha: 1),
-                accent: SKColor(red: 1, green: 0.45, blue: 0.16, alpha: 1),
-                secondAccent: SKColor(red: 0.62, green: 0.18, blue: 0.95, alpha: 1),
-                roadTexture: SKColor(red: 0.72, green: 0.5, blue: 0.34, alpha: 1),
-                edgeLine: SKColor(red: 1, green: 0.52, blue: 0.18, alpha: 1),
-                panel: SKColor(red: 0.16, green: 0.07, blue: 0.12, alpha: 0.92)
-            )
-
-        case .miami:
-            return ThemePalette(
-                background: SKColor(red: 0.015, green: 0.02, blue: 0.08, alpha: 1),
-                road: SKColor(red: 0.035, green: 0.045, blue: 0.13, alpha: 1),
-                shoulder: SKColor(red: 0.0, green: 0.58, blue: 0.78, alpha: 1),
-                laneMarker: SKColor(red: 0.97, green: 0.93, blue: 1, alpha: 1),
-                accent: SKColor(red: 1, green: 0.12, blue: 0.66, alpha: 1),
-                secondAccent: SKColor(red: 0.0, green: 0.82, blue: 1, alpha: 1),
-                roadTexture: SKColor(red: 0.18, green: 0.38, blue: 0.55, alpha: 1),
-                edgeLine: SKColor(red: 1, green: 0.08, blue: 0.72, alpha: 1),
-                panel: SKColor(red: 0.025, green: 0.02, blue: 0.09, alpha: 0.92)
-            )
+        if currentWorld.audioCity.cityTheme == city {
+            return currentWorld.palette
         }
+        return WorldThemeCatalog.legacyTheme(for: city).palette
     }
 
     private func showCityBanner(_ text: String) {

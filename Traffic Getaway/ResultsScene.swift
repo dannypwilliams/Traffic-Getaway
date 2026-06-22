@@ -38,27 +38,30 @@ final class ResultsScene: SKScene {
         addChild(contentNode)
         addChild(overlayNode)
         overlayNode.zPosition = 100
-        backgroundColor = SKColor(red: 0.012, green: 0.014, blue: 0.04, alpha: 1)
+        let theme = resultWorldTheme
+        backgroundColor = theme.palette.panel
 
-        buildBackground()
+        buildBackground(theme: theme)
 
         let isStoryRun = result.runStats.gameMode == .storyChase
         let isLevelComplete = result.runStats.levelCompleted && result.completedLevel != nil
         let failedLevel = isStoryRun && !result.runStats.levelCompleted
         let titleText = isLevelComplete ? "ESCAPED" : (failedLevel ? "BUSTED" : "RUN COMPLETE")
-        let titleColor = failedLevel ? SKColor(red: 1, green: 0.18, blue: 0.16, alpha: 1) : SKColor(red: 1, green: 0.82, blue: 0.08, alpha: 1)
+        let titleColor = failedLevel ? SKColor(red: 1, green: 0.18, blue: 0.16, alpha: 1) : theme.palette.accent
         let title = UIHelpers.label(titleText, size: 34, color: titleColor, width: size.width - 32)
         title.position = CGPoint(x: size.width / 2, y: size.height - 70)
         contentNode.addChild(title)
 
         let panelSize = CGSize(width: min(size.width - 30, 370), height: min(size.height - 184, 610))
-        let panel = UIHelpers.panel(size: panelSize, stroke: SKColor.cyan.withAlphaComponent(0.75))
+        let panel = UIHelpers.panel(size: panelSize, fill: UITheme.Color.panelDeep.withAlphaComponent(0.94), stroke: theme.palette.accent.withAlphaComponent(0.75))
         panel.position = CGPoint(x: size.width / 2, y: size.height / 2 + 18)
         contentNode.addChild(panel)
 
         var rowY = panel.position.y + panelSize.height / 2 - 44
         if let level = result.runStats.levelID.flatMap(LevelCatalog.level) {
             addStaticRow(title: "Level", value: level.name, y: rowY)
+            rowY -= 34
+            addStaticRow(title: "City", value: level.worldTheme.displayName, y: rowY)
             rowY -= 34
             if isLevelComplete {
                 addStaticRow(title: "Rating", value: starText(result.levelStarRating), y: rowY)
@@ -69,7 +72,13 @@ final class ResultsScene: SKScene {
                 addStaticRow(title: "Survived", value: "\(Int(result.runStats.survivalTime))s", y: rowY)
                 rowY -= 34
             }
+        } else {
+            addStaticRow(title: "City", value: result.runStats.cityReached.displayName, y: rowY)
+            rowY -= 34
         }
+
+        addStaticRow(title: "Vehicle", value: CarCatalog.car(id: result.runStats.selectedCarID).displayName, y: rowY)
+        rowY -= 34
 
         addCountingRow(title: "Score", value: result.runStats.score, y: rowY)
         addCountingRow(title: "Distance", value: result.runStats.distance, y: rowY - 34)
@@ -111,15 +120,16 @@ final class ResultsScene: SKScene {
             primaryText = "PLAY AGAIN"
             primaryName = "results.play"
         }
-        let playAgain = UIHelpers.button(text: primaryText, name: primaryName, size: CGSize(width: 158, height: 42), fill: SKColor.red.withAlphaComponent(0.28), stroke: .red)
+        let primaryStroke = failedLevel ? SKColor.red : theme.palette.accent
+        let playAgain = UIHelpers.button(text: primaryText, name: primaryName, size: CGSize(width: 158, height: 42), fill: primaryStroke.withAlphaComponent(0.28), stroke: primaryStroke)
         playAgain.position = CGPoint(x: size.width / 2, y: 102)
         contentNode.addChild(playAgain)
 
-        let garage = UIHelpers.button(text: "GARAGE", name: "results.garage", size: CGSize(width: 98, height: 36), fill: SKColor.cyan.withAlphaComponent(0.18), stroke: .cyan)
+        let garage = UIHelpers.button(text: "GARAGE", name: "results.garage", size: CGSize(width: 98, height: 36), fill: theme.palette.secondAccent.withAlphaComponent(0.18), stroke: theme.palette.secondAccent)
         garage.position = CGPoint(x: size.width / 2 - 116, y: 54)
         contentNode.addChild(garage)
 
-        let levelSelect = UIHelpers.button(text: "LEVEL SELECT", name: "results.levelSelect", size: CGSize(width: 126, height: 36), fill: SKColor.magenta.withAlphaComponent(0.16), stroke: .magenta)
+        let levelSelect = UIHelpers.button(text: "LEVEL SELECT", name: "results.levelSelect", size: CGSize(width: 126, height: 36), fill: theme.palette.accent.withAlphaComponent(0.16), stroke: theme.palette.accent)
         levelSelect.position = CGPoint(x: size.width / 2, y: 54)
         contentNode.addChild(levelSelect)
 
@@ -128,10 +138,17 @@ final class ResultsScene: SKScene {
         contentNode.addChild(menu)
     }
 
-    private func buildBackground() {
+    private var resultWorldTheme: WorldTheme {
+        if let level = result.runStats.levelID.flatMap(LevelCatalog.level) {
+            return level.worldTheme
+        }
+        return WorldThemeCatalog.legacyTheme(for: result.runStats.cityReached)
+    }
+
+    private func buildBackground(theme: WorldTheme) {
         for index in 0..<18 {
             let line = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 1.4...3), height: CGFloat.random(in: 90...180)), cornerRadius: 1)
-            line.fillColor = (index.isMultiple(of: 2) ? SKColor.cyan : SKColor.magenta).withAlphaComponent(0.13)
+            line.fillColor = (index.isMultiple(of: 2) ? theme.palette.accent : theme.palette.secondAccent).withAlphaComponent(0.13)
             line.strokeColor = .clear
             line.glowWidth = 5
             line.position = CGPoint(x: CGFloat.random(in: 0...max(size.width, 1)), y: CGFloat.random(in: 0...max(size.height, 1)))
@@ -198,7 +215,11 @@ final class ResultsScene: SKScene {
                 lines.append("New rating: \(starText(result.levelStarRating))")
             }
             if let nextLevel = result.nextLevel {
-                lines.append("Next chase unlocked: \(nextLevel.name)")
+                if nextLevel.city != completedLevel.city {
+                    lines.append("New city unlocked: \(nextLevel.worldTheme.displayName) - \(nextLevel.name)")
+                } else {
+                    lines.append("Next chase unlocked: \(nextLevel.name)")
+                }
             }
         }
         if !result.missionUpdates.isEmpty {

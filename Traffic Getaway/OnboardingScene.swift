@@ -1,4 +1,5 @@
 import SpriteKit
+import UIKit
 
 final class OnboardingScene: SKScene {
     private enum Interaction {
@@ -15,6 +16,7 @@ final class OnboardingScene: SKScene {
         let subtitle: String
         let bullets: [String]
         let interaction: Interaction
+        let minimumReadTime: TimeInterval
     }
 
     private let contentNode = SKNode()
@@ -26,78 +28,79 @@ final class OnboardingScene: SKScene {
     private var trainingCombo = 0
     private weak var trainingCar: SKNode?
     private weak var promptLabel: SKLabelNode?
+    private var safeAreaInsets = UIEdgeInsets.zero
+    private var didRenderVisibleFrame = false
+    private var hasObservedFirstUpdate = false
+    private var stepPresentedAt: TimeInterval?
+    private var currentSceneTime: TimeInterval = 0
+    private var lastCanAdvance = false
 
     private let steps: [Step] = [
         Step(
-            title: "TRAFFIC GETAWAY",
-            subtitle: "Weave across twelve freeway lanes. Hit the exit before the cops close in.",
-            bullets: [],
-            interaction: .none
+            title: "QUICK CHASE SCHOOL",
+            subtitle: "Traffic is slower. Read the gaps.",
+            bullets: [
+                "Your getaway car is faster",
+                "Choose an opening before you reach it"
+            ],
+            interaction: .none,
+            minimumReadTime: 3.1
         ),
         Step(
-            title: "FREEWAY CONTROLS",
-            subtitle: "Move fast. Do not crawl across the road.",
+            title: "CHANGE LANES",
+            subtitle: "Swipe left or right to change lanes.",
             bullets: [
-                "Swipe left or right to move one lane",
-                "Fast swipes jump farther across traffic",
-                "Hold a side to carve lane after lane"
+                "One swipe moves one lane",
+                "Fast swipes cross wider gaps"
             ],
-            interaction: .laneChange
+            interaction: .laneChange,
+            minimumReadTime: 1.2
         ),
         Step(
-            title: "MOTORCYCLES",
-            subtitle: "Bikes can use the gaps cars cannot.",
+            title: "KEEP MOVING",
+            subtitle: "Do not sit still. Police close in when you hesitate.",
             bullets: [
-                "Cars snap to lane centers",
-                "Motorcycles can split between lanes",
-                "Smaller hitboxes mean higher risk"
+                "Waiting in one lane raises pressure",
+                "Clean lane changes keep the chase alive"
             ],
-            interaction: .laneSplit
+            interaction: .policePressure,
+            minimumReadTime: 1.4
         ),
         Step(
-            title: "RISK DRIVING",
-            subtitle: "Close passes fuel the chase.",
+            title: "COMMIT EARLY",
+            subtitle: "Near misses build combo when you pick real gaps.",
             bullets: [
-                "Drive close to traffic for bonus points",
-                "Lane splits and near misses build combo",
-                "Close calls trigger Dodge Boost"
+                "Close passes pay",
+                "Mindless zigzags do not"
             ],
-            interaction: .nearMiss
+            interaction: .nearMiss,
+            minimumReadTime: 1.4
         ),
         Step(
-            title: "EXIT RAMPS",
-            subtitle: "A chase is won by reaching the ramp.",
+            title: "ONE REVIVE",
+            subtitle: "Crash once and you may get one revive.",
             bullets: [
-                "Your buddy calls out left or right",
-                "Cross the freeway before time runs out",
-                "Missing the exit spikes police pressure"
+                "Use it to recover",
+                "Then the next hit ends the run"
             ],
-            interaction: .policePressure
+            interaction: .none,
+            minimumReadTime: 1.5
         ),
         Step(
-            title: "COMBO",
-            subtitle: "Aggressive driving pays.",
+            title: "SURVIVE THE CHASE",
+            subtitle: "Keep moving, read ahead, and hit the ramp.",
             bullets: [
-                "Chain risky passes back to back",
-                "Higher combo means bigger rewards",
-                "Stay calm when traffic gets dense"
+                "Traffic crashes and police catches are different",
+                "Changing lanes keeps the chase alive"
             ],
-            interaction: .combo
-        ),
-        Step(
-            title: "READY?",
-            subtitle: "Escape levels, earn rewards, and build the garage.",
-            bullets: [
-                "Earn cash, XP, and stars",
-                "Complete missions",
-                "Unlock cars, motorcycles, and paints"
-            ],
-            interaction: .none
+            interaction: .none,
+            minimumReadTime: 1.5
         )
     ]
 
     override func didMove(to view: SKView) {
         anchorPoint = .zero
+        safeAreaInsets = view.safeAreaInsets
         buildStep()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             AudioManager.shared.configure()
@@ -106,7 +109,24 @@ final class OnboardingScene: SKScene {
 
     override func didChangeSize(_ oldSize: CGSize) {
         guard oldSize != .zero else { return }
+        safeAreaInsets = view?.safeAreaInsets ?? .zero
         buildStep()
+    }
+
+    override func update(_ currentTime: TimeInterval) {
+        currentSceneTime = currentTime
+        if !hasObservedFirstUpdate {
+            hasObservedFirstUpdate = true
+        } else if !didRenderVisibleFrame {
+            didRenderVisibleFrame = true
+            stepPresentedAt = currentTime
+        }
+
+        let canAdvanceNow = canAdvanceCurrentStep
+        if canAdvanceNow != lastCanAdvance {
+            lastCanAdvance = canAdvanceNow
+            buildButtons()
+        }
     }
 
     private func buildStep() {
@@ -115,22 +135,32 @@ final class OnboardingScene: SKScene {
         actionComplete = steps[stepIndex].interaction == .none
         trainingLane = 5
         trainingCombo = 0
+        hasObservedFirstUpdate = false
+        didRenderVisibleFrame = false
+        stepPresentedAt = nil
+        lastCanAdvance = false
         addChild(contentNode)
 
         backgroundColor = UITheme.Color.background
         buildBackground()
 
         let step = steps[stepIndex]
+        let compact = isCompactLayout
+        let topY = size.height - topSafeInset
         let progress = UIHelpers.bodyLabel("\(stepIndex + 1) / \(steps.count)", size: 13, color: SKColor(white: 0.72, alpha: 1))
-        progress.position = CGPoint(x: size.width / 2, y: size.height - 54)
+        progress.zPosition = 20
+        progress.position = CGPoint(x: leadingSafeInset + 36, y: topY - 22)
         contentNode.addChild(progress)
 
-        let title = UIHelpers.label(step.title, size: step.title.count > 12 ? 35 : 43, color: UITheme.Color.gold, width: size.width - 36)
-        title.position = CGPoint(x: size.width / 2, y: size.height * 0.72)
+        let titleSize: CGFloat = compact ? 25 : (step.title.count > 14 ? 31 : 35)
+        let title = UIHelpers.label(step.title, size: titleSize, color: UITheme.Color.gold, width: size.width - 32)
+        title.zPosition = 20
+        title.position = CGPoint(x: size.width / 2, y: topY - (compact ? 68 : 74))
         contentNode.addChild(title)
 
-        let subtitle = UIHelpers.bodyLabel(step.subtitle, size: 17, color: .white, width: size.width - 52)
-        subtitle.position = CGPoint(x: size.width / 2, y: size.height * 0.63)
+        let subtitle = UIHelpers.bodyLabel(step.subtitle, size: compact ? 15 : 17, color: .white, width: size.width - 50)
+        subtitle.zPosition = 20
+        subtitle.position = CGPoint(x: size.width / 2, y: title.position.y - (compact ? 40 : 46))
         contentNode.addChild(subtitle)
 
         buildIllustration(for: stepIndex)
@@ -141,23 +171,31 @@ final class OnboardingScene: SKScene {
     }
 
     private func buildBackground() {
+        let wash = SKShapeNode(rect: CGRect(origin: .zero, size: size))
+        wash.fillColor = UITheme.Color.panelDeep.withAlphaComponent(0.72)
+        wash.strokeColor = .clear
+        wash.zPosition = -20
+        contentNode.addChild(wash)
+
         for index in 0..<22 {
             let line = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 1.5...3.5), height: CGFloat.random(in: 80...190)), cornerRadius: 1)
             line.fillColor = (index.isMultiple(of: 2) ? UITheme.Color.cyan : UITheme.Color.magenta).withAlphaComponent(0.14)
             line.strokeColor = .clear
             line.glowWidth = 6
+            line.zPosition = -10
             line.position = CGPoint(x: CGFloat.random(in: 0...max(size.width, 1)), y: CGFloat.random(in: 0...max(size.height, 1)))
             contentNode.addChild(line)
         }
     }
 
     private func buildIllustration(for index: Int) {
-        let center = CGPoint(x: size.width / 2, y: size.height * 0.45)
+        let center = CGPoint(x: size.width / 2, y: illustrationCenterY)
         let roadWidth = trainingRoadWidth()
         let road = SKShapeNode(rectOf: CGSize(width: roadWidth, height: 174), cornerRadius: 12)
         road.fillColor = SKColor(red: 0.05, green: 0.055, blue: 0.11, alpha: 1)
         road.strokeColor = SKColor.cyan.withAlphaComponent(0.55)
         road.lineWidth = 2
+        road.zPosition = 0
         road.position = center
         contentNode.addChild(road)
 
@@ -168,55 +206,126 @@ final class OnboardingScene: SKScene {
                 let marker = SKShapeNode(rectOf: CGSize(width: 2.2, height: 26), cornerRadius: 1)
                 marker.fillColor = SKColor.white.withAlphaComponent(separator.isMultiple(of: 2) ? 0.38 : 0.22)
                 marker.strokeColor = .clear
+                marker.zPosition = 1
                 marker.position = CGPoint(x: x, y: center.y - 58 + CGFloat(dash) * 56)
                 contentNode.addChild(marker)
             }
         }
 
-        let playerCar = index == 2 ? CarCatalog.car(id: CarCatalog.starterBikeID) : CarCatalog.defaultCar
-        let playerSize = index == 2 ? CGSize(width: 48, height: 88) : CGSize(width: 48, height: 82)
+        addTrainingTraffic(center: center, roadWidth: roadWidth, index: index)
+        if index == 2 {
+            addPolicePressureCue(center: center, roadWidth: roadWidth)
+        }
+
+        let playerCar = CarCatalog.defaultCar
+        let playerSize = CGSize(width: 48, height: 82)
         let player = UIHelpers.carPreview(car: playerCar, paint: CarCatalog.defaultPaint, size: playerSize)
         player.position = CGPoint(x: xForTrainingLane(trainingLane), y: center.y - 38)
+        player.zPosition = 4
         trainingCar = player
         contentNode.addChild(player)
 
         if index >= 1 {
             let leftArrow = UIHelpers.label("<", size: 36, color: SKColor.cyan)
             leftArrow.position = CGPoint(x: center.x - roadWidth * 0.42, y: center.y - 38)
+            leftArrow.zPosition = 5
             contentNode.addChild(leftArrow)
             let rightArrow = UIHelpers.label(">", size: 36, color: SKColor.cyan)
             rightArrow.position = CGPoint(x: center.x + roadWidth * 0.42, y: center.y - 38)
+            rightArrow.zPosition = 5
             contentNode.addChild(rightArrow)
         }
 
-        if index >= 2 {
-            let traffic = UIHelpers.carPreview(car: CarCatalog.car(id: "yellow_cab"), paint: CarCatalog.defaultPaint, size: CGSize(width: 46, height: 76))
-            traffic.position = CGPoint(x: xForTrainingLane(6), y: center.y + 48)
-            contentNode.addChild(traffic)
-            traffic.run(.repeatForever(.sequence([
-                .moveBy(x: 0, y: -92, duration: 1.2),
-                .moveBy(x: 0, y: 92, duration: 0)
-            ])))
-            let secondTraffic = UIHelpers.carPreview(car: CarCatalog.car(id: "boxy_retro"), paint: CarCatalog.defaultPaint, size: CGSize(width: 46, height: 76))
-            secondTraffic.position = CGPoint(x: xForTrainingLane(4), y: center.y + 18)
-            contentNode.addChild(secondTraffic)
+        if index >= 3 {
             let bonus = UIHelpers.label("+25", size: 22, color: SKColor.green)
             bonus.position = CGPoint(x: center.x - roadWidth * 0.31, y: center.y + 56)
+            bonus.zPosition = 6
             contentNode.addChild(bonus)
         }
 
-        if index >= 3 {
-            let sign = UIHelpers.label(index == 4 ? "EXIT RIGHT" : "x3", size: index == 4 ? 18 : 28, color: index == 4 ? UITheme.Color.green : UITheme.Color.magenta, width: roadWidth - 22)
+        if index >= 5 {
+            let sign = UIHelpers.label("EXIT RIGHT", size: 18, color: UITheme.Color.green, width: roadWidth - 22)
             sign.position = CGPoint(x: center.x, y: center.y + 70)
+            sign.zPosition = 6
             contentNode.addChild(sign)
-            let arrow = UIHelpers.label(index == 4 ? ">>>" : "+50", size: 28, color: UITheme.Color.gold)
-            arrow.position = CGPoint(x: index == 4 ? center.x + roadWidth * 0.31 : center.x - roadWidth * 0.31, y: center.y + 42)
+            let arrow = UIHelpers.label(">>>", size: 28, color: UITheme.Color.gold)
+            arrow.position = CGPoint(x: center.x + roadWidth * 0.31, y: center.y + 42)
+            arrow.zPosition = 6
             contentNode.addChild(arrow)
         }
     }
 
+    private func addTrainingTraffic(center: CGPoint, roadWidth: CGFloat, index: Int) {
+        let traffic = UIHelpers.carPreview(car: CarCatalog.car(id: "yellow_cab"), paint: CarCatalog.defaultPaint, size: CGSize(width: 46, height: 76))
+        traffic.position = CGPoint(x: xForTrainingLane(index == 0 ? 3 : 6), y: center.y + 48)
+        traffic.zPosition = 3
+        contentNode.addChild(traffic)
+
+        let secondTraffic = UIHelpers.carPreview(car: CarCatalog.car(id: "boxy_retro"), paint: CarCatalog.defaultPaint, size: CGSize(width: 46, height: 76))
+        secondTraffic.position = CGPoint(x: xForTrainingLane(index == 0 ? 7 : 4), y: center.y + 18)
+        secondTraffic.zPosition = 3
+        contentNode.addChild(secondTraffic)
+
+        if index > 0 {
+            traffic.run(.repeatForever(.sequence([
+                .moveBy(x: 0, y: -92, duration: 1.2),
+                .moveBy(x: 0, y: 92, duration: 0)
+            ])))
+        }
+
+        let gap = SKShapeNode(rectOf: CGSize(width: max(30, roadWidth / CGFloat(LaneManager.laneCount) * 1.2), height: 142), cornerRadius: 6)
+        gap.fillColor = SKColor.green.withAlphaComponent(index == 0 ? 0.12 : 0.07)
+        gap.strokeColor = SKColor.green.withAlphaComponent(index == 0 ? 0.32 : 0.12)
+        gap.lineWidth = 1.2
+        gap.zPosition = 2
+        gap.position = CGPoint(x: xForTrainingLane(5), y: center.y + 28)
+        contentNode.addChild(gap)
+    }
+
+    private func addPolicePressureCue(center: CGPoint, roadWidth: CGFloat) {
+        let siren = SKShapeNode(rectOf: CGSize(width: roadWidth * 0.72, height: 42), cornerRadius: 8)
+        siren.fillColor = SKColor.red.withAlphaComponent(0.18)
+        siren.strokeColor = SKColor.red.withAlphaComponent(0.42)
+        siren.glowWidth = 5
+        siren.zPosition = 2
+        siren.position = CGPoint(x: center.x, y: center.y - 82)
+        contentNode.addChild(siren)
+
+        let label = UIHelpers.label("POLICE CLOSING", size: 15, color: SKColor.red, width: roadWidth - 28)
+        label.zPosition = 6
+        label.position = siren.position
+        contentNode.addChild(label)
+    }
+
     private func trainingRoadWidth() -> CGFloat {
-        min(size.width * 0.78, 302)
+        min(size.width * (isCompactLayout ? 0.8 : 0.78), 302)
+    }
+
+    private var isCompactLayout: Bool {
+        size.width <= 340 || size.height <= 600
+    }
+
+    private var topSafeInset: CGFloat {
+        max(safeAreaInsets.top, 18)
+    }
+
+    private var bottomSafeInset: CGFloat {
+        max(safeAreaInsets.bottom, 12)
+    }
+
+    private var leadingSafeInset: CGFloat {
+        max(safeAreaInsets.left, 12)
+    }
+
+    private var trailingSafeInset: CGFloat {
+        max(safeAreaInsets.right, 12)
+    }
+
+    private var illustrationCenterY: CGFloat {
+        if isCompactLayout {
+            return max(bottomSafeInset + 226, min(size.height * 0.47, size.height - topSafeInset - 238))
+        }
+        return size.height * 0.45
     }
 
     private func xForTrainingLane(_ lane: Int) -> CGFloat {
@@ -240,11 +349,12 @@ final class OnboardingScene: SKScene {
         case .combo:
             text = "Tap twice to chain a combo"
         case .policePressure:
-            text = "Tap to commit to the exit"
+            text = "Tap a gap to break the pressure"
         }
 
-        let label = UIHelpers.label(text, size: 16, color: UITheme.Color.cyan, width: size.width - 46)
-        label.position = CGPoint(x: size.width / 2, y: size.height * 0.32)
+        let label = UIHelpers.label(text, size: isCompactLayout ? 14 : 16, color: UITheme.Color.cyan, width: size.width - 46)
+        label.zPosition = 20
+        label.position = CGPoint(x: size.width / 2, y: promptY)
         promptLabel = label
         contentNode.addChild(label)
         UIHelpers.pulse(label, scale: 1.04, duration: 0.6)
@@ -252,20 +362,30 @@ final class OnboardingScene: SKScene {
 
     private func buildBullets(_ bullets: [String]) {
         guard !bullets.isEmpty else { return }
-        let baseY = size.height * 0.27
+        let baseY = bulletBaseY
         for (index, bullet) in bullets.enumerated() {
-            let label = UIHelpers.bodyLabel(bullet, size: 14, color: SKColor(white: 0.86, alpha: 1), width: size.width - 54)
+            let label = UIHelpers.bodyLabel(bullet, size: isCompactLayout ? 12 : 14, color: SKColor(white: 0.86, alpha: 1), width: size.width - 54)
+            label.zPosition = 20
             label.position = CGPoint(x: size.width / 2, y: baseY - CGFloat(index) * 26)
             contentNode.addChild(label)
         }
     }
 
+    private var promptY: CGFloat {
+        max(bottomSafeInset + 118, illustrationCenterY - (isCompactLayout ? 98 : 104))
+    }
+
+    private var bulletBaseY: CGFloat {
+        min(promptY - 28, max(bottomSafeInset + 104, size.height * (isCompactLayout ? 0.27 : 0.28)))
+    }
+
     private func buildPagerDots() {
-        let y = 104.0
+        let y = bottomSafeInset + 86
         for index in steps.indices {
             let dot = SKShapeNode(circleOfRadius: index == stepIndex ? 5 : 3.5)
             dot.fillColor = index == stepIndex ? SKColor.cyan : SKColor.white.withAlphaComponent(0.35)
             dot.strokeColor = .clear
+            dot.zPosition = 20
             dot.position = CGPoint(x: size.width / 2 - 34 + CGFloat(index) * 17, y: CGFloat(y))
             contentNode.addChild(dot)
         }
@@ -282,15 +402,31 @@ final class OnboardingScene: SKScene {
             contentNode.addChild(back)
         }
 
+        let buttonY = bottomSafeInset + 38
         let isFinal = stepIndex == steps.count - 1
-        let title = isFinal ? "START RUN" : (actionComplete ? "NEXT" : "TRY IT")
-        let next = UIHelpers.button(text: title, name: isFinal ? "onboarding.start" : "onboarding.next", size: CGSize(width: isFinal ? 178 : 112, height: 44), style: actionComplete ? .primary : .secondary)
-        next.position = CGPoint(x: stepIndex > 0 ? size.width / 2 + 74 : size.width / 2, y: 54)
+        let canAdvance = canAdvanceCurrentStep
+        let title = isFinal ? (canAdvance ? "START RUN" : "READ") : (actionComplete ? (canAdvance ? "NEXT" : "READ") : "TRY IT")
+        let nextStyle: UITheme.ButtonStyle = canAdvance ? .primary : .secondary
+        let next = UIHelpers.button(text: title, name: isFinal ? "onboarding.start" : "onboarding.next", size: CGSize(width: isFinal ? 178 : 112, height: 44), style: actionComplete ? nextStyle : .secondary)
+        next.alpha = actionComplete && !canAdvance ? 0.68 : 1
+        next.zPosition = 24
+        next.position = CGPoint(x: stepIndex > 0 ? size.width / 2 + 74 : size.width / 2, y: buttonY)
         contentNode.addChild(next)
 
         let skip = UIHelpers.button(text: "SKIP", name: "onboarding.skip", size: CGSize(width: 82, height: 32), style: .ghost)
-        skip.position = CGPoint(x: size.width - 54, y: size.height - 54)
+        skip.zPosition = 24
+        skip.position = CGPoint(x: size.width - trailingSafeInset - 41, y: size.height - topSafeInset - 22)
         contentNode.addChild(skip)
+
+        if stepIndex > 0 {
+            contentNode.childNode(withName: "onboarding.back")?.position = CGPoint(x: size.width / 2 - 74, y: buttonY)
+            contentNode.childNode(withName: "onboarding.back")?.zPosition = 24
+        }
+    }
+
+    private var canAdvanceCurrentStep: Bool {
+        guard actionComplete, didRenderVisibleFrame, let stepPresentedAt else { return false }
+        return currentSceneTime - stepPresentedAt >= steps[stepIndex].minimumReadTime
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -312,7 +448,7 @@ final class OnboardingScene: SKScene {
 
         switch name {
         case "onboarding.next":
-            guard actionComplete else {
+            guard actionComplete, canAdvanceCurrentStep else {
                 promptLabel?.run(.sequence([.scale(to: 1.12, duration: 0.08), .scale(to: 1, duration: 0.12)]))
                 return
             }
@@ -322,6 +458,7 @@ final class OnboardingScene: SKScene {
             stepIndex = max(0, stepIndex - 1)
             buildStep()
         case "onboarding.start":
+            guard canAdvanceCurrentStep else { return }
             completeOnboarding()
         case "onboarding.skip":
             completeOnboarding()
@@ -373,8 +510,8 @@ final class OnboardingScene: SKScene {
         case .policePressure:
             trainingLane = LaneManager.laneCount - 2
             trainingCar?.run(.moveTo(x: xForTrainingLane(trainingLane), duration: 0.18))
-            showPop("EXIT COMMITTED", color: UITheme.Color.gold)
-            completeAction(text: "RAMP READY")
+            showPop("PRESSURE DROPPED", color: UITheme.Color.gold)
+            completeAction(text: "KEEP MOVING")
             return true
         case .none:
             return false
@@ -392,6 +529,7 @@ final class OnboardingScene: SKScene {
 
     private func showPop(_ text: String, color: SKColor) {
         let label = UIHelpers.label(text, size: 22, color: color, width: size.width - 44)
+        label.zPosition = 26
         label.position = CGPoint(x: size.width / 2, y: size.height * 0.45 + 92)
         contentNode.addChild(label)
         label.run(.sequence([

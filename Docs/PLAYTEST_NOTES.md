@@ -60,3 +60,15 @@ Date: 2026-06-22 11:26 PDT
 - Test on a physical iPhone for haptics, audio latency, notch/cutout rendering, and touch feel.
 - Consider one more pass on exit completion affordance: the exit is readable, but the exact "far enough into the ramp" threshold should be unmistakable.
 - Investigate the `simctl` black screenshot frame after launch; live Simulator is fine, but launch capture behavior should be checked before App Store screenshot automation.
+
+## Pending Post-Merge Validation
+
+The Mac pass above was performed before the three-city world identity merge. After resolving this merge, validate the new first route and city presentation:
+
+- Build in Xcode.
+- Launch in iOS Simulator.
+- Play `la_01` / Sunset Merge at least 5 times.
+- Record first crash time, exit appearance, exit reachability, and completion/missed-exit causes.
+- Inspect Los Angeles, New York, and Miami city cards.
+- Verify road/lane readability, traffic/police contrast, prop placement outside lanes, exit event clarity, results layout, and frame-rate/node-count health.
+- Compare Simulator feel against a physical iPhone if available.

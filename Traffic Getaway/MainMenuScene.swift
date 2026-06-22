@@ -56,13 +56,15 @@ final class MainMenuScene: SKScene {
     }
 
     private func buildBackground() {
-        buildSkyline()
-        buildMenuTraffic()
-        buildHelicopter()
+        let nextLevel = LevelCatalog.nextPlayableLevel(completedIDs: SaveManager.shared.data.completedLevelIDs)
+        let theme = nextLevel.worldTheme
+        buildSkyline(theme: theme)
+        buildMenuTraffic(theme: theme)
+        buildHelicopter(theme: theme)
 
         for index in 0..<18 {
             let line = SKShapeNode(rectOf: CGSize(width: CGFloat.random(in: 1.5...3.5), height: CGFloat.random(in: 90...190)), cornerRadius: 1)
-            line.fillColor = (index.isMultiple(of: 2) ? UITheme.Color.cyan : UITheme.Color.magenta).withAlphaComponent(0.12)
+            line.fillColor = (index.isMultiple(of: 2) ? theme.palette.accent : theme.palette.secondAccent).withAlphaComponent(0.12)
             line.strokeColor = .clear
             line.glowWidth = 5
             line.position = CGPoint(x: CGFloat.random(in: 0...max(size.width, 1)), y: CGFloat.random(in: 0...max(size.height, 1)))
@@ -73,46 +75,93 @@ final class MainMenuScene: SKScene {
         }
     }
 
-    private func buildSkyline() {
+    private func buildSkyline(theme: WorldTheme) {
         let horizon = size.height * 0.67
-        for layer in 0..<2 {
-            let count = 10 + layer * 3
-            let alpha: CGFloat = layer == 0 ? 0.32 : 0.18
-            let yBase = horizon + CGFloat(layer) * 28
-            for index in 0..<count {
-                let width = size.width / CGFloat(count) * CGFloat.random(in: 0.74...1.08)
-                let height = CGFloat.random(in: 46...128) * (layer == 0 ? 1 : 0.72)
-                let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 2)
-                building.fillColor = SKColor(red: 0.025, green: 0.035, blue: 0.09, alpha: alpha)
-                building.strokeColor = (index.isMultiple(of: 2) ? UITheme.Color.cyan : UITheme.Color.magenta).withAlphaComponent(0.16)
-                building.lineWidth = 1
-                building.position = CGPoint(x: CGFloat(index) / CGFloat(max(1, count - 1)) * size.width, y: yBase - height / 2)
+        switch theme.skylineStyle {
+        case .laLowRiseCoast:
+            let ocean = SKShapeNode(rect: CGRect(x: 0, y: horizon - 28, width: size.width, height: 34))
+            ocean.fillColor = theme.palette.secondAccent.withAlphaComponent(0.18)
+            ocean.strokeColor = .clear
+            backgroundNode.addChild(ocean)
+
+            for index in 0..<10 {
+                let width = size.width / 10 * CGFloat.random(in: 0.62...0.92)
+                let height = CGFloat.random(in: 26...62)
+                let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 3)
+                building.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(0.18)
+                building.strokeColor = theme.palette.accent.withAlphaComponent(0.12)
+                building.position = CGPoint(x: CGFloat(index) / 9 * size.width, y: horizon - height / 2)
                 backgroundNode.addChild(building)
 
-                if layer == 0 && index.isMultiple(of: 2) {
-                    let antenna = SKShapeNode(rectOf: CGSize(width: 3, height: 24), cornerRadius: 1)
-                    antenna.fillColor = UITheme.Color.cyan.withAlphaComponent(0.4)
-                    antenna.strokeColor = .clear
-                    antenna.position = CGPoint(x: building.position.x, y: building.position.y + height / 2 + 12)
-                    backgroundNode.addChild(antenna)
+                if index.isMultiple(of: 3) {
+                    let palm = ArcadeArt.makePalmProp(height: 46)
+                    palm.setScale(0.55)
+                    palm.position = CGPoint(x: building.position.x + width * 0.36, y: horizon + 6)
+                    backgroundNode.addChild(palm)
                 }
+            }
+
+        case .newYorkVertical:
+            for layer in 0..<2 {
+                let count = 10 + layer * 3
+                let alpha: CGFloat = layer == 0 ? 0.32 : 0.18
+                let yBase = horizon + CGFloat(layer) * 28
+                for index in 0..<count {
+                    let width = size.width / CGFloat(count) * CGFloat.random(in: 0.74...1.08)
+                    let height = CGFloat.random(in: 64...146) * (layer == 0 ? 1 : 0.72)
+                    let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 2)
+                    building.fillColor = SKColor(red: 0.025, green: 0.035, blue: 0.09, alpha: alpha)
+                    building.strokeColor = (index.isMultiple(of: 2) ? theme.palette.accent : theme.palette.secondAccent).withAlphaComponent(0.16)
+                    building.lineWidth = 1
+                    building.position = CGPoint(x: CGFloat(index) / CGFloat(max(1, count - 1)) * size.width, y: yBase - height / 2)
+                    backgroundNode.addChild(building)
+
+                    if layer == 0 && index.isMultiple(of: 2) {
+                        let antenna = SKShapeNode(rectOf: CGSize(width: 3, height: 24), cornerRadius: 1)
+                        antenna.fillColor = theme.palette.accent.withAlphaComponent(0.4)
+                        antenna.strokeColor = .clear
+                        antenna.position = CGPoint(x: building.position.x, y: building.position.y + height / 2 + 12)
+                        backgroundNode.addChild(antenna)
+                    }
+                }
+            }
+
+        case .miamiPastelCoast:
+            let water = SKShapeNode(rect: CGRect(x: 0, y: horizon - 34, width: size.width, height: 42))
+            water.fillColor = theme.palette.secondAccent.withAlphaComponent(0.22)
+            water.strokeColor = .clear
+            backgroundNode.addChild(water)
+
+            for index in 0..<11 {
+                let width = size.width / 11 * CGFloat.random(in: 0.66...1.04)
+                let height = CGFloat.random(in: 34...90)
+                let hotel = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 4)
+                hotel.fillColor = (index.isMultiple(of: 2) ? theme.palette.accent : ArcadeArt.Palette.cream).withAlphaComponent(0.2)
+                hotel.strokeColor = theme.palette.secondAccent.withAlphaComponent(0.18)
+                hotel.position = CGPoint(x: CGFloat(index) / 10 * size.width, y: horizon - height / 2)
+                backgroundNode.addChild(hotel)
+
+                let cap = SKShapeNode(rectOf: CGSize(width: width * 0.72, height: 4), cornerRadius: 2)
+                cap.fillColor = (index.isMultiple(of: 2) ? theme.palette.secondAccent : theme.palette.accent).withAlphaComponent(0.45)
+                cap.strokeColor = .clear
+                cap.position = CGPoint(x: hotel.position.x, y: hotel.position.y + height / 2 + 3)
+                backgroundNode.addChild(cap)
             }
         }
     }
 
-    private func buildMenuTraffic() {
-        let road = SKShapeNode(rectOf: CGSize(width: min(size.width * 0.72, 290), height: size.height * 0.72), cornerRadius: 14)
-        road.fillColor = SKColor(red: 0.035, green: 0.04, blue: 0.085, alpha: 0.72)
-        road.strokeColor = UITheme.Color.cyan.withAlphaComponent(0.18)
-        road.lineWidth = 2
+    private func buildMenuTraffic(theme: WorldTheme) {
+        let roadSize = CGSize(width: min(size.width * 0.72, 290), height: size.height * 0.72)
+        let road = ArcadeArt.makeRoadSample(size: roadSize, theme: theme)
+        road.alpha = 0.72
         road.position = CGPoint(x: size.width / 2, y: size.height * 0.36)
         backgroundNode.addChild(road)
 
         for lane in -1...1 {
-            let x = size.width / 2 + CGFloat(lane) * road.frame.width * 0.22
+            let x = size.width / 2 + CGFloat(lane) * roadSize.width * 0.22
             for index in 0..<4 {
                 let dash = SKShapeNode(rectOf: CGSize(width: 4, height: 28), cornerRadius: 2)
-                dash.fillColor = SKColor.white.withAlphaComponent(0.18)
+                dash.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(0.24)
                 dash.strokeColor = .clear
                 dash.position = CGPoint(x: x, y: CGFloat(index) * 120 - 40)
                 backgroundNode.addChild(dash)
@@ -124,12 +173,13 @@ final class MainMenuScene: SKScene {
         }
 
         for index in 0..<6 {
-            let car = SKShapeNode(rectOf: CGSize(width: 22, height: 42), cornerRadius: 5)
-            car.fillColor = [UITheme.Color.cyan, UITheme.Color.magenta, UITheme.Color.orange, SKColor.yellow].randomElement()?.withAlphaComponent(0.36) ?? UITheme.Color.cyan
-            car.strokeColor = SKColor.white.withAlphaComponent(0.18)
-            car.glowWidth = 3
+            let type: VehicleType = [.compact, .sedan, .suv, .pickup, .sportCoupe].randomElement() ?? .sedan
+            let spec = ArcadeArt.trafficSpec(for: type, laneWidth: 30, world: theme)
+            let car = ArcadeArt.makeVehicleSprite(spec: spec)
+            car.alpha = 0.48
+            car.setScale(0.78)
             car.position = CGPoint(
-                x: size.width / 2 + CGFloat([-1, 0, 1].randomElement() ?? 0) * road.frame.width * 0.22,
+                x: size.width / 2 + CGFloat([-1, 0, 1].randomElement() ?? 0) * roadSize.width * 0.22,
                 y: CGFloat(index) * 135 - 60
             )
             backgroundNode.addChild(car)
@@ -140,7 +190,7 @@ final class MainMenuScene: SKScene {
         }
     }
 
-    private func buildHelicopter() {
+    private func buildHelicopter(theme: WorldTheme) {
         let helicopter = SKNode()
         helicopter.position = CGPoint(x: size.width * 0.78, y: size.height * 0.79)
         backgroundNode.addChild(helicopter)
@@ -159,7 +209,7 @@ final class MainMenuScene: SKScene {
 
         let body = SKShapeNode(ellipseOf: CGSize(width: 48, height: 24))
         body.fillColor = SKColor.black.withAlphaComponent(0.72)
-        body.strokeColor = UITheme.Color.cyan.withAlphaComponent(0.42)
+        body.strokeColor = theme.palette.accent.withAlphaComponent(0.42)
         body.lineWidth = 1
         helicopter.addChild(body)
 
@@ -260,7 +310,7 @@ final class MainMenuScene: SKScene {
         contentNode.addChild(rewards)
 
         let nextLevel = LevelCatalog.nextPlayableLevel(completedIDs: save.completedLevelIDs)
-        let chase = UIHelpers.bodyLabel("Story \(LevelCatalog.displayNumber(for: nextLevel.levelID)): \(nextLevel.name)", size: 11, color: UITheme.Color.green, width: 178)
+        let chase = UIHelpers.bodyLabel("\(nextLevel.worldTheme.stageCode) \(nextLevel.worldTheme.displayName): \(nextLevel.name)", size: 11, color: UITheme.Color.green, width: 178)
         chase.horizontalAlignmentMode = .left
         chase.position = CGPoint(x: panel.position.x - 22, y: panel.position.y - 68)
         contentNode.addChild(chase)

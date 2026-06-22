@@ -4,7 +4,7 @@ enum UIHelpers {
     static let titleFont = UITheme.Font.title
     static let bodyFont = UITheme.Font.body
 
-    static func label(_ text: String, size: CGFloat, color: SKColor = .white, width: CGFloat? = nil) -> SKLabelNode {
+    static func label(_ text: String, size: CGFloat, color: SKColor = UITheme.Color.text, width: CGFloat? = nil) -> SKLabelNode {
         let label = SKLabelNode(fontNamed: titleFont)
         label.text = text
         label.fontSize = size
@@ -17,7 +17,7 @@ enum UIHelpers {
         return label
     }
 
-    static func bodyLabel(_ text: String, size: CGFloat, color: SKColor = SKColor(white: 0.85, alpha: 1), width: CGFloat? = nil) -> SKLabelNode {
+    static func bodyLabel(_ text: String, size: CGFloat, color: SKColor = UITheme.Color.secondaryText, width: CGFloat? = nil) -> SKLabelNode {
         let label = SKLabelNode(fontNamed: bodyFont)
         label.text = text
         label.fontSize = size
@@ -35,9 +35,9 @@ enum UIHelpers {
         node.name = name
 
         let shadow = SKShapeNode(rectOf: size, cornerRadius: UITheme.Radius.button)
-        shadow.fillColor = SKColor.black.withAlphaComponent(0.28)
+        shadow.fillColor = SKColor.black.withAlphaComponent(0.34)
         shadow.strokeColor = .clear
-        shadow.position = CGPoint(x: 0, y: -3)
+        shadow.position = CGPoint(x: 0, y: -4)
         shadow.zPosition = -2
         node.addChild(shadow)
 
@@ -45,13 +45,28 @@ enum UIHelpers {
         backing.name = name
         backing.fillColor = fill
         backing.strokeColor = stroke
-        backing.lineWidth = 2
-        backing.glowWidth = 4
+        backing.lineWidth = 2.2
+        backing.glowWidth = 1.5
         backing.zPosition = -1
         node.addChild(backing)
 
+        let topLine = SKShapeNode(rectOf: CGSize(width: max(8, size.width - 16), height: 3), cornerRadius: 1)
+        topLine.fillColor = UITheme.Color.gold.withAlphaComponent(0.72)
+        topLine.strokeColor = .clear
+        topLine.position = CGPoint(x: 0, y: size.height / 2 - 7)
+        topLine.zPosition = 0
+        node.addChild(topLine)
+
+        let bottomLine = SKShapeNode(rectOf: CGSize(width: max(8, size.width - 18), height: 2), cornerRadius: 1)
+        bottomLine.fillColor = SKColor.black.withAlphaComponent(0.34)
+        bottomLine.strokeColor = .clear
+        bottomLine.position = CGPoint(x: 0, y: -size.height / 2 + 6)
+        bottomLine.zPosition = 0
+        node.addChild(bottomLine)
+
         let label = UIHelpers.label(text, size: min(20, size.height * 0.42), color: UITheme.Color.text, width: size.width - 12)
         label.name = name
+        label.position = CGPoint(x: 0, y: -1)
         node.addChild(label)
         return node
     }
@@ -65,7 +80,7 @@ enum UIHelpers {
         panel.fillColor = fill
         panel.strokeColor = stroke
         panel.lineWidth = 2
-        panel.glowWidth = 3
+        panel.glowWidth = 1.5
         return panel
     }
 

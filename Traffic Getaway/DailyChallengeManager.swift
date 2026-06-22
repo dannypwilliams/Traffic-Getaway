@@ -40,7 +40,7 @@ final class DailyChallengeManager {
         DailyChallengeDefinition(id: "daily_near_20", title: "Thread The Pack", description: "Get 20 near misses in one run.", kind: .nearMisses, target: 20, rewardCash: 500, rewardXP: 260, paintRewardID: nil),
         DailyChallengeDefinition(id: "daily_wanted_4", title: "Bring The Heat", description: "Reach wanted level 4.", kind: .wantedLevel, target: 4, rewardCash: 420, rewardXP: 220, paintRewardID: nil),
         DailyChallengeDefinition(id: "daily_survive_90", title: "Stay Gone", description: "Survive 90 seconds.", kind: .surviveSeconds, target: 90, rewardCash: 480, rewardXP: 240, paintRewardID: nil),
-        DailyChallengeDefinition(id: "daily_reach_la", title: "Westbound Run", description: "Reach Los Angeles without quitting.", kind: .reachCity, target: 2, rewardCash: 360, rewardXP: 190, paintRewardID: nil),
+        DailyChallengeDefinition(id: "daily_reach_la", title: "Eastbound Run", description: "Reach New York without quitting.", kind: .reachCity, target: 2, rewardCash: 360, rewardXP: 190, paintRewardID: nil),
         DailyChallengeDefinition(id: "daily_cash_500", title: "Grab The Bag", description: "Earn 500 cash in one run.", kind: .earnCash, target: 500, rewardCash: 520, rewardXP: 230, paintRewardID: nil),
         DailyChallengeDefinition(id: "daily_clutch_3", title: "No Room Left", description: "Get 3 clutch saves.", kind: .clutchSaves, target: 3, rewardCash: 560, rewardXP: 280, paintRewardID: "matte_black"),
         DailyChallengeDefinition(id: "daily_distance_3000", title: "Long Road", description: "Drive 3,000 distance.", kind: .distance, target: 3_000, rewardCash: 620, rewardXP: 300, paintRewardID: "ocean_blue")

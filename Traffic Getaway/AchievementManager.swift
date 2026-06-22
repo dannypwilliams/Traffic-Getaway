@@ -60,7 +60,7 @@ final class AchievementManager {
         AchievementDefinition(id: "million_chase", name: "Million Dollar Chase", description: "Earn 1,000,000 lifetime score.", kind: .lifetimeScore, target: 1_000_000, rewardCash: 3_000, rewardXP: 1_500),
         AchievementDefinition(id: "score_hunter", name: "Score Hunter", description: "Earn 100,000 lifetime score.", kind: .lifetimeScore, target: 100_000, rewardCash: 900, rewardXP: 420),
         AchievementDefinition(id: "miami_nights", name: "Miami Nights", description: "Reach Miami.", kind: .reachCity, target: 3, rewardCash: 520, rewardXP: 280),
-        AchievementDefinition(id: "west_coast", name: "West Coast", description: "Reach Los Angeles.", kind: .reachCity, target: 2, rewardCash: 260, rewardXP: 140),
+        AchievementDefinition(id: "west_coast", name: "Empire Bound", description: "Reach New York.", kind: .reachCity, target: 2, rewardCash: 260, rewardXP: 140),
         AchievementDefinition(id: "collector", name: "Collector", description: "Unlock 10 cars.", kind: .unlockedCars, target: 10, rewardCash: 1_200, rewardXP: 650),
         AchievementDefinition(id: "full_garage", name: "Full Garage", description: "Unlock all cars.", kind: .unlockedCars, target: CarCatalog.carsOnly.count, rewardCash: 4_000, rewardXP: 2_000),
         AchievementDefinition(id: "paint_sampler", name: "Paint Sampler", description: "Unlock 5 paints.", kind: .unlockedPaints, target: 5, rewardCash: 500, rewardXP: 260),

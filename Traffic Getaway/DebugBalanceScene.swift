@@ -50,6 +50,7 @@ final class DebugBalanceScene: SKScene {
         }
 
         let actions: [(String, String)] = [
+            ("ART GALLERY", "debug.artGallery"),
             ("ADD $1,000", "debug.cash.1000"),
             ("ADD $10,000", "debug.cash.10000"),
             ("ADD XP", "debug.xp"),
@@ -80,14 +81,15 @@ final class DebugBalanceScene: SKScene {
             ("SHOT TRAFFIC", "debug.shotTraffic")
         ]
 
-        let buttonWidth = min((size.width - 54) / 2, 168)
+        let columns = 3
+        let buttonWidth = min((size.width - 58) / CGFloat(columns), 112)
         let startY = size.height - (report.isReady ? 188 : 204)
         for (index, action) in actions.enumerated() {
-            let column = index % 2
-            let row = index / 2
-            let x = size.width / 2 + (column == 0 ? -buttonWidth / 2 - 7 : buttonWidth / 2 + 7)
-            let y = startY - CGFloat(row) * 32
-            let button = UIHelpers.button(text: action.0, name: action.1, size: CGSize(width: buttonWidth, height: 28), fill: SKColor.white.withAlphaComponent(0.1), stroke: SKColor.magenta.withAlphaComponent(0.8))
+            let column = index % columns
+            let row = index / columns
+            let x = size.width / 2 + (CGFloat(column) - 1) * (buttonWidth + 8)
+            let y = startY - CGFloat(row) * 30
+            let button = UIHelpers.button(text: action.0, name: action.1, size: CGSize(width: buttonWidth, height: 26), fill: UITheme.Color.panelDeep.withAlphaComponent(0.92), stroke: UITheme.Color.orange.withAlphaComponent(0.82))
             button.position = CGPoint(x: x, y: y)
             contentNode.addChild(button)
         }
@@ -108,6 +110,9 @@ final class DebugBalanceScene: SKScene {
         case "debug.back":
             isTransitioning = true
             UIHelpers.present(MainMenuScene(size: size), from: self)
+        case "debug.artGallery":
+            isTransitioning = true
+            UIHelpers.present(ArtGalleryScene(size: size), from: self)
         case "debug.cash.1000":
             SaveManager.shared.addCash(1_000)
             buildDebug()

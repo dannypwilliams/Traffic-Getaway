@@ -77,7 +77,7 @@ final class MissionManager {
         MissionDefinition(id: "cash_1500", title: "Big Score", description: "Earn 1,500 cash.", kind: .earnCash, target: 1_500, rewardCash: 700, rewardXP: 330),
         MissionDefinition(id: "boost_5", title: "Quick Feet", description: "Use Dodge Boost 5 times.", kind: .dodgeBoosts, target: 5, rewardCash: 160, rewardXP: 100),
         MissionDefinition(id: "boost_15", title: "Boost Habit", description: "Use Dodge Boost 15 times.", kind: .dodgeBoosts, target: 15, rewardCash: 420, rewardXP: 220),
-        MissionDefinition(id: "city_la", title: "Westbound", description: "Reach Los Angeles.", kind: .reachCity, target: 2, rewardCash: 260, rewardXP: 150),
+        MissionDefinition(id: "city_la", title: "Empire Bound", description: "Reach New York.", kind: .reachCity, target: 2, rewardCash: 260, rewardXP: 150),
         MissionDefinition(id: "city_miami", title: "Neon Coast", description: "Reach Miami.", kind: .reachCity, target: 3, rewardCash: 520, rewardXP: 280),
         MissionDefinition(id: "runs_2", title: "Back Again", description: "Complete 2 runs.", kind: .completeRuns, target: 2, rewardCash: 130, rewardXP: 80),
         MissionDefinition(id: "runs_5", title: "Routine Work", description: "Complete 5 runs.", kind: .completeRuns, target: 5, rewardCash: 320, rewardXP: 170),
