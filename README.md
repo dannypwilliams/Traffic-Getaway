@@ -46,14 +46,14 @@ Run a full Level 1 simulation:
 
 ```powershell
 cd GameSim
-swift run GameSim --level ny_01 --vehicle starter_compact --runs 10000 --seed 12345
+swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345
 ```
 
 The same Level 1 command also accepts a readable level alias:
 
 ```powershell
 cd GameSim
-swift run GameSim --level brooklyn_warmup --vehicle starter_compact --runs 10000 --seed 12345
+swift run GameSim --level sunset_merge --vehicle starter_compact --runs 10000 --seed 12345
 ```
 
 ## Mac Validation Workflow

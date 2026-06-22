@@ -2,7 +2,7 @@ import Foundation
 import GameCore
 
 struct Options {
-    var levelID = "ny_01"
+    var levelID = "la_01"
     var vehicleID = "starter_compact"
     var runs = 10_000
     var seed: UInt64 = 12_345
@@ -56,11 +56,11 @@ func printHelp() {
     Traffic Getaway GameSim
 
     Usage:
-      swift run GameSim --level ny_01 --vehicle starter_compact --runs 10000 --seed 12345
-      swift run GameSim --level brooklyn_warmup --vehicle starter_compact --runs 10000 --seed 12345
+      swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345
+      swift run GameSim --level sunset_merge --vehicle starter_compact --runs 10000 --seed 12345
 
     Options:
-      --level <id|name|all>       Level to simulate. Default: ny_01
+      --level <id|name|all>       Level to simulate. Default: la_01
       --vehicle <id|name|all>     Vehicle to simulate. Default: starter_compact
       --runs <count>         Runs per level/vehicle configuration. Default: 10000
       --seed <number>        Base deterministic seed. Default: 12345
@@ -133,9 +133,9 @@ func balanceRecommendation(level: LevelDefinition, vehicle: VehicleDefinition, a
         return "Inspect traffic wave safety before tuning difficulty"
     }
 
-    if level.levelID == "ny_01" && vehicle.id == VehicleCatalog.starterCarID {
+    if level.levelID == "la_01" && vehicle.id == VehicleCatalog.starterCarID {
         if level.durationBeforeExit > 45 {
-            return "Move Brooklyn Warmup exit earlier into the 35-45s target"
+            return "Move Sunset Merge exit earlier into the 35-45s target"
         }
         if aggregate.firstCrashTime > 0 && aggregate.firstCrashTime < 30 {
             return "Level 1 is too punishing; lower early density or spawn pressure"

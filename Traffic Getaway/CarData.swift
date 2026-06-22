@@ -143,9 +143,9 @@ enum RunCity: String, Codable {
 
     var rank: Int {
         switch self {
-        case .newYork:
-            return 1
         case .losAngeles:
+            return 1
+        case .newYork:
             return 2
         case .miami:
             return 3

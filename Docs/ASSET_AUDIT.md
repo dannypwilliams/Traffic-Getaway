@@ -1,6 +1,6 @@
 # Traffic Getaway Asset Audit
 
-Art direction target: Sunlit California Arcade, simplified into a 32-bit low-detail mobile style.
+Art direction target: low-detail 32-bit arcade freeway chase, with city-specific palettes for Los Angeles, New York, and Miami.
 
 ## 1. Player Vehicles
 
@@ -74,6 +74,6 @@ Art direction target: Sunlit California Arcade, simplified into a 32-bit low-det
 
 ## New Art Foundation
 
-- Central system name: `SunlitCaliforniaArcade`.
+- Central system name: `LowDetailArcadeChase`.
 - Registry and fallback file: `Traffic Getaway/ArcadeArt.swift`.
 - Developer gallery: debug menu `ART GALLERY`, implemented by `Traffic Getaway/ArtGalleryScene.swift`.

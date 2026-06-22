@@ -90,21 +90,21 @@ Run the Level 1 starter car simulation:
 
 ```powershell
 cd GameSim
-swift run GameSim --level ny_01 --vehicle starter_compact --runs 10000 --seed 12345
+swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345
 ```
 
 Readable level names are supported:
 
 ```powershell
 cd GameSim
-swift run GameSim --level brooklyn_warmup --vehicle starter_compact --runs 10000 --seed 12345
+swift run GameSim --level sunset_merge --vehicle starter_compact --runs 10000 --seed 12345
 ```
 
 Compare every vehicle on Level 1:
 
 ```powershell
 cd GameSim
-swift run GameSim --level ny_01 --vehicle all --runs 10000 --seed 12345
+swift run GameSim --level la_01 --vehicle all --runs 10000 --seed 12345
 ```
 
 ## Mac Handoff

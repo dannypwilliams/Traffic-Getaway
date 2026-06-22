@@ -77,27 +77,75 @@ final class MainMenuScene: SKScene {
 
     private func buildSkyline(theme: WorldTheme) {
         let horizon = size.height * 0.67
-        for layer in 0..<2 {
-            let count = 10 + layer * 3
-            let alpha: CGFloat = layer == 0 ? 0.32 : 0.18
-            let yBase = horizon + CGFloat(layer) * 28
-            for index in 0..<count {
-                let width = size.width / CGFloat(count) * CGFloat.random(in: 0.74...1.08)
-                let height = CGFloat.random(in: 46...128) * (layer == 0 ? 1 : 0.72)
-                let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 2)
-                building.fillColor = SKColor(red: 0.025, green: 0.035, blue: 0.09, alpha: alpha)
-                building.strokeColor = (index.isMultiple(of: 2) ? theme.palette.accent : theme.palette.secondAccent).withAlphaComponent(0.16)
-                building.lineWidth = 1
-                building.position = CGPoint(x: CGFloat(index) / CGFloat(max(1, count - 1)) * size.width, y: yBase - height / 2)
+        switch theme.skylineStyle {
+        case .laLowRiseCoast:
+            let ocean = SKShapeNode(rect: CGRect(x: 0, y: horizon - 28, width: size.width, height: 34))
+            ocean.fillColor = theme.palette.secondAccent.withAlphaComponent(0.18)
+            ocean.strokeColor = .clear
+            backgroundNode.addChild(ocean)
+
+            for index in 0..<10 {
+                let width = size.width / 10 * CGFloat.random(in: 0.62...0.92)
+                let height = CGFloat.random(in: 26...62)
+                let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 3)
+                building.fillColor = ArcadeArt.Palette.cream.withAlphaComponent(0.18)
+                building.strokeColor = theme.palette.accent.withAlphaComponent(0.12)
+                building.position = CGPoint(x: CGFloat(index) / 9 * size.width, y: horizon - height / 2)
                 backgroundNode.addChild(building)
 
-                if layer == 0 && index.isMultiple(of: 2) {
-                    let antenna = SKShapeNode(rectOf: CGSize(width: 3, height: 24), cornerRadius: 1)
-                    antenna.fillColor = theme.palette.accent.withAlphaComponent(0.4)
-                    antenna.strokeColor = .clear
-                    antenna.position = CGPoint(x: building.position.x, y: building.position.y + height / 2 + 12)
-                    backgroundNode.addChild(antenna)
+                if index.isMultiple(of: 3) {
+                    let palm = ArcadeArt.makePalmProp(height: 46)
+                    palm.setScale(0.55)
+                    palm.position = CGPoint(x: building.position.x + width * 0.36, y: horizon + 6)
+                    backgroundNode.addChild(palm)
                 }
+            }
+
+        case .newYorkVertical:
+            for layer in 0..<2 {
+                let count = 10 + layer * 3
+                let alpha: CGFloat = layer == 0 ? 0.32 : 0.18
+                let yBase = horizon + CGFloat(layer) * 28
+                for index in 0..<count {
+                    let width = size.width / CGFloat(count) * CGFloat.random(in: 0.74...1.08)
+                    let height = CGFloat.random(in: 64...146) * (layer == 0 ? 1 : 0.72)
+                    let building = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 2)
+                    building.fillColor = SKColor(red: 0.025, green: 0.035, blue: 0.09, alpha: alpha)
+                    building.strokeColor = (index.isMultiple(of: 2) ? theme.palette.accent : theme.palette.secondAccent).withAlphaComponent(0.16)
+                    building.lineWidth = 1
+                    building.position = CGPoint(x: CGFloat(index) / CGFloat(max(1, count - 1)) * size.width, y: yBase - height / 2)
+                    backgroundNode.addChild(building)
+
+                    if layer == 0 && index.isMultiple(of: 2) {
+                        let antenna = SKShapeNode(rectOf: CGSize(width: 3, height: 24), cornerRadius: 1)
+                        antenna.fillColor = theme.palette.accent.withAlphaComponent(0.4)
+                        antenna.strokeColor = .clear
+                        antenna.position = CGPoint(x: building.position.x, y: building.position.y + height / 2 + 12)
+                        backgroundNode.addChild(antenna)
+                    }
+                }
+            }
+
+        case .miamiPastelCoast:
+            let water = SKShapeNode(rect: CGRect(x: 0, y: horizon - 34, width: size.width, height: 42))
+            water.fillColor = theme.palette.secondAccent.withAlphaComponent(0.22)
+            water.strokeColor = .clear
+            backgroundNode.addChild(water)
+
+            for index in 0..<11 {
+                let width = size.width / 11 * CGFloat.random(in: 0.66...1.04)
+                let height = CGFloat.random(in: 34...90)
+                let hotel = SKShapeNode(rectOf: CGSize(width: width, height: height), cornerRadius: 4)
+                hotel.fillColor = (index.isMultiple(of: 2) ? theme.palette.accent : ArcadeArt.Palette.cream).withAlphaComponent(0.2)
+                hotel.strokeColor = theme.palette.secondAccent.withAlphaComponent(0.18)
+                hotel.position = CGPoint(x: CGFloat(index) / 10 * size.width, y: horizon - height / 2)
+                backgroundNode.addChild(hotel)
+
+                let cap = SKShapeNode(rectOf: CGSize(width: width * 0.72, height: 4), cornerRadius: 2)
+                cap.fillColor = (index.isMultiple(of: 2) ? theme.palette.secondAccent : theme.palette.accent).withAlphaComponent(0.45)
+                cap.strokeColor = .clear
+                cap.position = CGPoint(x: hotel.position.x, y: hotel.position.y + height / 2 + 3)
+                backgroundNode.addChild(cap)
             }
         }
     }
@@ -262,7 +310,7 @@ final class MainMenuScene: SKScene {
         contentNode.addChild(rewards)
 
         let nextLevel = LevelCatalog.nextPlayableLevel(completedIDs: save.completedLevelIDs)
-        let chase = UIHelpers.bodyLabel("\(nextLevel.worldTheme.stageCode) \(nextLevel.worldTheme.shortName): \(nextLevel.name)", size: 11, color: UITheme.Color.green, width: 178)
+        let chase = UIHelpers.bodyLabel("\(nextLevel.worldTheme.stageCode) \(nextLevel.worldTheme.displayName): \(nextLevel.name)", size: 11, color: UITheme.Color.green, width: 178)
         chase.horizontalAlignmentMode = .left
         chase.position = CGPoint(x: panel.position.x - 22, y: panel.position.y - 68)
         contentNode.addChild(chase)

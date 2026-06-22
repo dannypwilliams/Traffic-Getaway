@@ -1,7 +1,7 @@
 import SpriteKit
 
 enum ArcadeArt {
-    static let systemName = "SunlitCaliforniaArcade"
+    static let systemName = "LowDetailArcadeChase"
 
     enum VehicleAsset: String, CaseIterable {
         case playerCruiser = "vehicle.player.sunset_cruiser"
@@ -141,7 +141,7 @@ enum ArcadeArt {
     }
 
     enum FallbackPolicy {
-        static let summary = "Use code-drawn Sunlit California Arcade shapes for missing work-in-progress art. Never show magenta debug boxes or raw missing-image text in gameplay."
+        static let summary = "Use code-drawn low-detail arcade chase shapes for missing work-in-progress art. Never show magenta debug boxes or raw missing-image text in gameplay."
 
         static func node(assetID: String, size: CGSize) -> SKNode {
             let node = SKNode()
@@ -170,46 +170,7 @@ enum ArcadeArt {
     }
 
     static func roadPalette(for city: CityTheme) -> RoadPalette {
-        switch city {
-        case .newYork:
-            return RoadPalette(
-                background: SKColor(red: 0.62, green: 0.82, blue: 0.94, alpha: 1),
-                road: Palette.asphalt,
-                shoulder: Palette.shoulder,
-                laneMarker: Palette.cream,
-                accent: Palette.gold,
-                secondAccent: SKColor(red: 0.18, green: 0.57, blue: 0.82, alpha: 1),
-                roadTexture: Palette.asphaltLight,
-                edgeLine: SKColor(red: 1.0, green: 0.86, blue: 0.38, alpha: 1),
-                panel: Palette.navyPanel
-            )
-
-        case .losAngeles:
-            return RoadPalette(
-                background: Palette.sky,
-                road: SKColor(red: 0.35, green: 0.36, blue: 0.36, alpha: 1),
-                shoulder: Palette.sand,
-                laneMarker: Palette.cream,
-                accent: Palette.orange,
-                secondAccent: SKColor(red: 0.16, green: 0.62, blue: 0.56, alpha: 1),
-                roadTexture: Palette.asphaltLight,
-                edgeLine: Palette.gold,
-                panel: Palette.navyPanel
-            )
-
-        case .miami:
-            return RoadPalette(
-                background: SKColor(red: 0.54, green: 0.88, blue: 0.94, alpha: 1),
-                road: SKColor(red: 0.32, green: 0.35, blue: 0.38, alpha: 1),
-                shoulder: SKColor(red: 0.75, green: 0.67, blue: 0.48, alpha: 1),
-                laneMarker: Palette.cream,
-                accent: SKColor(red: 0.98, green: 0.48, blue: 0.16, alpha: 1),
-                secondAccent: SKColor(red: 0.08, green: 0.68, blue: 0.86, alpha: 1),
-                roadTexture: Palette.asphaltLight,
-                edgeLine: SKColor(red: 1.0, green: 0.82, blue: 0.3, alpha: 1),
-                panel: Palette.navyPanel
-            )
-        }
+        WorldThemeCatalog.legacyTheme(for: city).palette
     }
 
     static func roadPalette(for world: WorldThemeID) -> RoadPalette {
@@ -239,16 +200,24 @@ enum ArcadeArt {
         case .sportCoupe:
             return VehicleSpec(asset: .trafficSportCoupe, size: CGSize(width: min(26, max(19, laneWidth * 0.66)), height: min(70, max(54, laneWidth * 1.72))), bodyColor: paint.body, strokeColor: paint.stroke, glowColor: paint.glow, frontInset: 0.24, rearInset: 0.16, wheelStyle: .sport, laneSpan: 1, speedOffset: 34, hitboxScale: HitboxScale(width: 0.82, height: 0.88))
         case .policeMoto:
-            return VehicleSpec(asset: .policeMotorcycle, size: CGSize(width: min(18, max(13, laneWidth * 0.42)), height: min(66, max(48, laneWidth * 1.55))), bodyColor: SKColor(white: 0.06, alpha: 1), strokeColor: Palette.cream.withAlphaComponent(0.9), glowColor: Palette.blue, frontInset: 0.34, rearInset: 0.26, wheelStyle: .motorcycle, laneSpan: 1, speedOffset: 54, hitboxScale: HitboxScale(width: 0.5, height: 0.82))
+            return VehicleSpec(asset: .policeMotorcycle, size: CGSize(width: min(18, max(13, laneWidth * 0.42)), height: min(66, max(48, laneWidth * 1.55))), bodyColor: world.policeBodyColor, strokeColor: world.policeAccentColor, glowColor: world.palette.secondAccent, frontInset: 0.34, rearInset: 0.26, wheelStyle: .motorcycle, laneSpan: 1, speedOffset: 54, hitboxScale: HitboxScale(width: 0.5, height: 0.82))
         }
     }
 
     static func policeCruiserSpec(laneWidth: CGFloat) -> VehicleSpec {
-        VehicleSpec(asset: .policeCruiser, size: CGSize(width: min(34, max(24, laneWidth * 0.9)), height: min(84, max(70, laneWidth * 2.05))), bodyColor: SKColor(red: 0.035, green: 0.04, blue: 0.05, alpha: 1), strokeColor: Palette.cream.withAlphaComponent(0.78), glowColor: Palette.blue, frontInset: 0.12, rearInset: 0.06, wheelStyle: .heavy, laneSpan: 1, speedOffset: 0, hitboxScale: HitboxScale(width: 0.92, height: 0.9))
+        policeCruiserSpec(laneWidth: laneWidth, world: WorldThemeCatalog.defaultTheme)
+    }
+
+    static func policeCruiserSpec(laneWidth: CGFloat, world: WorldTheme) -> VehicleSpec {
+        VehicleSpec(asset: .policeCruiser, size: CGSize(width: min(34, max(24, laneWidth * 0.9)), height: min(84, max(70, laneWidth * 2.05))), bodyColor: world.policeBodyColor, strokeColor: world.policeAccentColor, glowColor: world.palette.secondAccent, frontInset: 0.12, rearInset: 0.06, wheelStyle: .heavy, laneSpan: 1, speedOffset: 0, hitboxScale: HitboxScale(width: 0.92, height: 0.9))
     }
 
     static func policeSUVSpec(laneWidth: CGFloat) -> VehicleSpec {
-        VehicleSpec(asset: .policeSUV, size: CGSize(width: min(35, max(26, laneWidth * 0.94)), height: min(94, max(74, laneWidth * 2.24))), bodyColor: SKColor(red: 0.025, green: 0.03, blue: 0.04, alpha: 1), strokeColor: Palette.cream.withAlphaComponent(0.86), glowColor: Palette.red, frontInset: 0.08, rearInset: 0.04, wheelStyle: .heavy, laneSpan: 1, speedOffset: -4, hitboxScale: HitboxScale(width: 0.98, height: 0.92))
+        policeSUVSpec(laneWidth: laneWidth, world: WorldThemeCatalog.defaultTheme)
+    }
+
+    static func policeSUVSpec(laneWidth: CGFloat, world: WorldTheme) -> VehicleSpec {
+        VehicleSpec(asset: .policeSUV, size: CGSize(width: min(35, max(26, laneWidth * 0.94)), height: min(94, max(74, laneWidth * 2.24))), bodyColor: world.policeBodyColor, strokeColor: world.policeAccentColor.withAlphaComponent(0.96), glowColor: world.palette.accent, frontInset: 0.08, rearInset: 0.04, wheelStyle: .heavy, laneSpan: 1, speedOffset: -4, hitboxScale: HitboxScale(width: 0.98, height: 0.92))
     }
 
     static func assetID(for type: VehicleType) -> VehicleAsset {
@@ -375,7 +344,7 @@ enum ArcadeArt {
         }
 
         switch theme.roadStyle {
-        case .tunnel:
+        case .urbanExpressway:
             for x in [-size.width * 0.42, size.width * 0.42] {
                 let rail = SKShapeNode(rectOf: CGSize(width: 6, height: size.height * 0.88), cornerRadius: 3)
                 rail.fillColor = palette.accent.withAlphaComponent(0.36)
@@ -383,21 +352,13 @@ enum ArcadeArt {
                 rail.position = CGPoint(x: x, y: 0)
                 node.addChild(rail)
             }
-        case .boardwalk:
+        case .tropicalBoulevard:
             let ocean = SKShapeNode(rectOf: CGSize(width: size.width * 0.22, height: size.height), cornerRadius: 4)
             ocean.fillColor = palette.secondAccent.withAlphaComponent(0.28)
             ocean.strokeColor = .clear
             ocean.position = CGPoint(x: -size.width * 0.49, y: 0)
             node.addChild(ocean)
-        case .desertRun, .canyonPass:
-            for x in [-size.width * 0.48, size.width * 0.48] {
-                let dust = SKShapeNode(rectOf: CGSize(width: size.width * 0.12, height: size.height), cornerRadius: 4)
-                dust.fillColor = palette.shoulder.withAlphaComponent(0.5)
-                dust.strokeColor = .clear
-                dust.position = CGPoint(x: x, y: 0)
-                node.addChild(dust)
-            }
-        case .openFreeway, .downtownGrid:
+        case .openFreeway:
             break
         }
 

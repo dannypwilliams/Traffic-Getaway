@@ -11,10 +11,10 @@
 - The iOS app target still has app-local gameplay definitions in files such as `LevelData.swift`, `LaneManager.swift`, `LevelDifficultyConfig.swift`, `TrafficPatternGenerator.swift`, and `TrafficSafetyAnalyzer.swift`.
 - `GameCore` now mirrors the safest pure rules and includes collision, scoring, and progression helpers, but the iOS app has not yet been wired to import `GameCore`.
 - `GameSim` is a deterministic balance approximation. It does not reproduce SpriteKit physics, touch feel, visual occlusion, haptics, or audio.
-- Level 1 exit timing was moved from 48 seconds to 42 seconds to meet the Windows balance target. Mac should validate whether this feels better in real play.
+- Level 1 is now Los Angeles `Sunset Merge` with the 42-second starter exit target. Mac should validate whether this feels right in real play.
 
 ## Validation
 
 - iOS build validation still requires Mac/Xcode.
 - Simulator balance should be compared against real Mac/iPhone playtest notes before changing live level tuning.
-- Mac should validate the updated Brooklyn Warmup timing, HUD visibility around exit prompts, and whether first-time players can react naturally.
+- Mac should validate the updated Sunset Merge timing, HUD visibility around exit prompts, and whether first-time players can react naturally.

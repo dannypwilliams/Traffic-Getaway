@@ -2,35 +2,64 @@
 
 ## Last Session Summary
 
-Completed Traffic Getaway Art Pass 3 focused on world identity, level atmosphere, and production polish. Added a six-world theme catalog, routed gameplay/world-select/results/gallery surfaces through it, and documented the remaining art QA work.
+Implemented Traffic Getaway Art Pass 3B: Three-City World Identity Correction. The previous six-world theme catalog was replaced with exactly three city identities, story progression was corrected to Los Angeles -> New York -> Miami, and city select was upgraded from compact tabs to three identity cards.
 
 ## Files Changed
 
 - `Docs/ART_PASS_STATUS.md`
+- `Docs/ASSET_AUDIT.md`
 - `Docs/CODEX_HANDOFF.md`
-- `Traffic Getaway.xcodeproj/project.pbxproj`
+- `Docs/BALANCE_TARGETS.md`
+- `Docs/KNOWN_BUGS.md`
+- `Docs/NEXT_STEPS.md`
+- `Docs/PLAYTEST_NOTES.md`
+- `AGENTS.md`
+- `README.md`
+- `WINDOWS_DEVELOPMENT.md`
+- `GameCore/Sources/GameCore/GameModels.swift`
+- `GameCore/Tests/GameCoreTests/GameCoreTests.swift`
+- `GameSim/Sources/GameSim/main.swift`
 - `Traffic Getaway/ArcadeArt.swift`
+- `Traffic Getaway/AchievementManager.swift`
 - `Traffic Getaway/ArtGalleryScene.swift`
+- `Traffic Getaway/CarData.swift`
+- `Traffic Getaway/DailyChallengeManager.swift`
 - `Traffic Getaway/GameScene.swift`
 - `Traffic Getaway/LevelSelectScene.swift`
+- `Traffic Getaway/LevelData.swift`
 - `Traffic Getaway/MainMenuScene.swift`
+- `Traffic Getaway/MissionManager.swift`
 - `Traffic Getaway/ResultsScene.swift`
-- `Traffic Getaway/TrafficPatternGenerator.swift`
 - `Traffic Getaway/WorldTheme.swift`
 
 ## What Changed
 
-- Added `WorldTheme.swift` with six worlds: Sunset Coast Freeway, Downtown Heat, Canyon Run, Desert Straightaway, Night Tunnel Chase, and Boardwalk Blitz.
-- Mapped all existing story levels to world themes without changing level IDs, save IDs, or campaign progression order.
-- Extended `ArcadeArt` with world-aware road palettes, road samples, traffic paint, and traffic specs while preserving old city-based wrappers.
-- Updated `GameScene` to use the active world for road width, backdrop color, road markings, roadside props, traffic vehicle flavor, traffic speed flavor, police pressure flavor, and exit signage.
-- Added themed pre-exit anticipation signs shortly before story exits activate.
-- Updated endless mode to rotate through all six worlds by score instead of only the three legacy city themes.
-- Reworked `LevelSelectScene` into a six-world picker with compact stage tabs, world header copy, themed level cards, and responsive card height.
-- Added world identity to `ResultsScene`.
-- Retinted the main menu road/traffic background from the next playable level's world.
-- Added a `WORLD THEMES` page to the developer Art Gallery.
-- Added `Docs/ART_PASS_STATUS.md` with installed work, production status, gaps, and the next art QA task.
+- Rebuilt `WorldTheme.swift` around exactly three city themes: Los Angeles, New York, and Miami.
+- Added theme fields for short description, lane style, shoulder style, skyline style, prop set, signage style, traffic color set, police flavor, lighting mood, exit sign style, difficulty flavor, and unlock requirement.
+- Removed the old six-world level mapping so each story level now uses its own `RunCity` theme.
+- Updated New York so it no longer inherits Los Angeles/Sunlit California colors.
+- Updated Miami with tropical pastel/aqua/coral styling while keeping the shared low-detail arcade asset language.
+- Routed legacy city palette calls through `WorldThemeCatalog` so old call sites use the city-specific theme data.
+- Added city-colored police specs for cruisers, SUVs, and police motorcycles while keeping the existing procedural silhouettes.
+- Updated gameplay road layout, skyline/backdrop treatment, road markings, props, HUD city code, pre-run overlay, game-over overlay, exits, and city transition banners.
+- Updated level select into a three-city picker that opens on the next playable city.
+- Replaced compact city tabs with city cards showing city name, short identity text, difficulty flavor, road preview, palette strip, and select/locked state.
+- Reordered app and `GameCore` level catalogs so `la_01` / Sunset Merge is the first playable route.
+- Moved the starter 42-second exit target to Sunset Merge and made New York unlock after the Los Angeles routes.
+- Updated `RunCity.rank`, reach-city missions, daily challenge copy, achievements, and GameSim defaults for LA -> New York -> Miami progression.
+- Updated main menu skyline and next-chase copy to reflect the next playable city.
+- Updated results to show city and selected vehicle.
+- Updated in-game startup defaults so the first story scene initializes on the selected/current level's city instead of briefly defaulting to New York.
+- Updated the in-game settings/pause overlay to show the active city and use the active city accent.
+- Updated the results screen backdrop, panel/buttons, and next-city unlock summary to use the run city's theme.
+- Updated the developer art gallery city theme page.
+- Updated `Docs/ART_PASS_STATUS.md` with the required Three-City World Identity Pass audit.
+
+## Three-City Theme Notes
+
+- Los Angeles: bright Sunlit California palette, warm asphalt, cream/yellow markings, ocean/turquoise accents, palms, low-rise coastal backdrop, green freeway exits, highway patrol flavor.
+- New York: cool gray/navy/steel palette, taxi-yellow accents, tighter urban expressway feel, vertical block skyline, building/steam props, heavier urban police flavor, expressway/tunnel exits.
+- Miami: aqua/coral/pink pastel palette, bright coastal road treatment, hotel/neon/palm props, sportier tropical traffic colors, flashy police accents, beach-style exits.
 
 ## Tests Run
 
@@ -50,40 +79,40 @@ Result:
 - Swift checks were skipped.
 - Mac/Xcode build and simulator testing are still required.
 
-Additional source scans:
-
-- `rg -n "[^\x00-\x7F]" "Traffic Getaway" Docs` found no non-ASCII text.
-- Old traffic enum scan found no `.taxi`, `.truck`, `.bus`, or `.sports` cases.
-- Level select scan found no old city-tab wiring.
-- Merge-marker scan found no conflict markers.
-- Xcode project scan confirmed `WorldTheme.swift` is in the app target sources.
-
-## Simulation Commands Run
-
-No `GameSim` command was run in this session. The work changed iOS SpriteKit presentation and small iOS-side flavor values, not `GameCore` simulation rules.
-
-Attempted local tool checks:
+Additional checks:
 
 - `swift --version` failed because Swift is not on PATH.
 - `git --version` failed because Git is not on PATH.
+- `cd GameCore && swift test` was attempted and failed because Swift is not on PATH.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345` was attempted and failed because Swift is not on PATH.
+- `cd GameSim && swift run GameSim --level all --vehicle starter_compact --runs 10000 --seed 12345` was attempted and failed because Swift is not on PATH.
+- Merge-marker scan found no conflict markers.
+- Removed six-world enum/raw-value scan found no old six-world source identifiers.
+- Old six-world display-name scan found no remaining hits after this handoff rewrite.
+- Non-ASCII scan across `Traffic Getaway` and `Docs` found no hits.
+- Stale starter-route command/copy scan found no remaining hits.
+- City-select source check confirms `LevelSelectScene` builds city cards from the three-theme catalog with road previews, palette strips, and locked/select state.
+- UI source check confirms in-game settings shows the active city, results use `resultWorldTheme`, and newly crossed city unlocks are named in the results summary.
+- Source evidence confirms `la_01` is first in both app and `GameCore` catalogs, and `RunCity.rank` maps Los Angeles to 1, New York to 2, Miami to 3.
 
 ## Simulation Results
 
-No new simulation results.
+No simulation results are available. `GameSim` was attempted for `la_01` and for all starter-car levels, but both commands failed because Swift is not available on this Windows desktop.
 
 ## Known Issues
 
-- iOS build and simulator visual validation still require Mac/Xcode.
-- Windows still needs Swift on PATH before `swift test` or `swift run GameSim` can run locally.
-- Windows still needs Git on PATH before normal status/diff workflows are available.
-- World props are still procedural placeholder art, not final authored or generated bitmap assets.
-- Several menus outside gameplay, level select, results, and the main menu still need deeper art cleanup.
-- Police vehicles still share base art across worlds; this pass changes world pressure/flavor and surrounding presentation.
+- iOS build and Simulator visual validation still require Mac/Xcode.
+- Swift is not available on this Windows desktop, so `GameCore` tests and `GameSim` were not run.
+- Git is not available on this Windows desktop, so normal status/diff workflows were unavailable.
+- City props and skyline elements are still procedural placeholder shapes, not final authored bitmap assets.
+- Police variants are city-colored but still share base procedural silhouettes.
+- Store, main-menu settings, onboarding, and some deeper overlays still need a broader visual cleanup pass.
+- This pass changed story order and starter balance, so `GameCore` tests and `GameSim` remain required as soon as Swift is available.
 
 ## Highest-Priority Next Task
 
-Run the app on Mac/iOS Simulator and inspect each world through the level picker, one story exit, and one endless transition. Capture screenshots for road readability, traffic/police contrast, exit callout clarity, short-screen layout, and frame-rate/node-count health.
+On Mac, run `Tools/mac/verify_on_mac.sh`, launch the app in iOS Simulator, and inspect Los Angeles, New York, and Miami gameplay from the city picker. Verify city-card layout, road/lane readability, traffic/police contrast, prop placement outside lanes, exit event clarity, results layout, and frame-rate/node-count health.
 
 ## Suggested Next Prompt
 
-Read `Docs/CODEX_HANDOFF.md` and `Docs/ART_PASS_STATUS.md`. On Mac, run `Tools/mac/verify_on_mac.sh`, launch Traffic Getaway in Simulator, test each world from the level picker plus one endless transition, and report any readability, layout, or performance issues.
+Read `Docs/CODEX_HANDOFF.md` and `Docs/ART_PASS_STATUS.md`. On Mac, run `Tools/mac/verify_on_mac.sh`, launch Traffic Getaway in Simulator, test the three city-select cards, Los Angeles, New York, and Miami gameplay plus one endless transition, and report readability, layout, and performance issues.

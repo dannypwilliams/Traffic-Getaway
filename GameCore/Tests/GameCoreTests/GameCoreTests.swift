@@ -3,8 +3,10 @@ import XCTest
 
 final class GameCoreTests: XCTestCase {
     func testLevelOneMatchesCurrentAppBalance() throws {
-        let level = try XCTUnwrap(LevelCatalog.level(id: "ny_01"))
-        XCTAssertEqual(level.name, "Brooklyn Warmup")
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
+        XCTAssertEqual(level.name, "Sunset Merge")
+        XCTAssertEqual(LevelCatalog.all.first?.levelID, "la_01")
+        XCTAssertEqual(level.city, .losAngeles)
         XCTAssertEqual(level.durationBeforeExit, 42)
         XCTAssertEqual(level.exitWindowSeconds, 14)
         XCTAssertEqual(level.startingTrafficDensity, 0.2)
@@ -32,7 +34,7 @@ final class GameCoreTests: XCTestCase {
             vehicleClass: .car,
             density: 0.35,
             wantedLevel: 1,
-            city: .newYork,
+            city: .losAngeles,
             protectedLanes: [],
             protectedSlots: [],
             recentBlockedLanes: [],
@@ -49,7 +51,7 @@ final class GameCoreTests: XCTestCase {
     }
 
     func testSimulationIsDeterministic() throws {
-        let level = try XCTUnwrap(LevelCatalog.level(id: "ny_01"))
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
         let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
         let first = ChaseSimulator.simulate(level: level, vehicle: vehicle, seed: 12345)
         let second = ChaseSimulator.simulate(level: level, vehicle: vehicle, seed: 12345)
@@ -58,10 +60,10 @@ final class GameCoreTests: XCTestCase {
     }
 
     func testBatchSimulationCollectsExpectedMetrics() throws {
-        let level = try XCTUnwrap(LevelCatalog.level(id: "ny_01"))
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
         let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
         let aggregates = ChaseSimulator.runBatch(levels: [level], vehicles: [vehicle], runsPerConfiguration: 10, baseSeed: 12345)
-        let aggregate = try XCTUnwrap(aggregates["ny_01|starter_compact"])
+        let aggregate = try XCTUnwrap(aggregates["la_01|starter_compact"])
 
         XCTAssertEqual(aggregate.runs, 10)
         XCTAssertGreaterThan(aggregate.averageDuration, 0)
@@ -91,7 +93,7 @@ final class GameCoreTests: XCTestCase {
 
     func testScoringModelRewardsNearMissesAndFinalRuns() throws {
         let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
-        let level = try XCTUnwrap(LevelCatalog.level(id: "ny_01"))
+        let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
         let nearMiss = ScoringModel.nearMissReward(vehicle: vehicle, wantedLevel: 2, combo: 3)
         XCTAssertGreaterThan(nearMiss.score, 0)
         XCTAssertGreaterThan(nearMiss.cash, 0)
@@ -123,8 +125,8 @@ final class GameCoreTests: XCTestCase {
         XCTAssertTrue(result.state.unlockedVehicleIDs.contains(starterBike.id))
         XCTAssertEqual(result.state.totalCash, 0)
 
-        let levelTwo = try XCTUnwrap(LevelCatalog.level(id: "ny_02"))
+        let levelTwo = try XCTUnwrap(LevelCatalog.level(id: "la_02"))
         XCTAssertFalse(ProgressionModel.isLevelUnlocked(levelTwo, state: ProgressionState()))
-        XCTAssertTrue(ProgressionModel.isLevelUnlocked(levelTwo, state: ProgressionState(completedLevelIDs: ["ny_01"])))
+        XCTAssertTrue(ProgressionModel.isLevelUnlocked(levelTwo, state: ProgressionState(completedLevelIDs: ["la_01"])))
     }
 }

@@ -66,7 +66,7 @@ final class ArtGalleryScene: SKScene {
 
         switch pageIndex - playablePageCount {
         case 0:
-            addSectionTitle("WORLD THEMES", y: topY)
+            addSectionTitle("CITY THEMES", y: topY)
             addWorldGrid(topY: topY - 50)
         case 1:
             addSectionTitle("TRAFFIC AND POLICE", y: topY)
@@ -159,7 +159,7 @@ final class ArtGalleryScene: SKScene {
             contentNode.addChild(road)
 
             addSmallLabel(theme.worldSelectTitle, at: CGPoint(x: x, y: y - 30), width: cardWidth - 16)
-            addSmallLabel(theme.shortName.uppercased(), at: CGPoint(x: x, y: y - 46), width: cardWidth - 16)
+            addSmallLabel(theme.difficultyFlavor.uppercased(), at: CGPoint(x: x, y: y - 46), width: cardWidth - 16)
         }
     }
 

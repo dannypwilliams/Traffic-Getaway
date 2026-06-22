@@ -2,7 +2,7 @@
 
 Use these targets to interpret `GameSim` output. They are starting points, not permanent truth.
 
-## Level 1: Brooklyn Warmup
+## Level 1: Sunset Merge
 
 - Exit should appear around 35-45 seconds; the current target is 42 seconds.
 - Average first crash time should be at least 30 seconds.
@@ -34,8 +34,8 @@ Use these targets to interpret `GameSim` output. They are starting points, not p
 
 ## Early New York Levels
 
-- Level 2 should feel like a small step up, not a wall.
-- Level 3 can ask for cleaner exit positioning.
+- New York unlocks after the Los Angeles starter routes and should feel denser without becoming a wall.
+- The first New York route can ask for cleaner exit positioning than Los Angeles.
 - Emergency exits should help beginners recover, but should not be the normal success path.
 
 ## Vehicle Balance

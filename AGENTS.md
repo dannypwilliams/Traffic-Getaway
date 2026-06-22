@@ -42,7 +42,7 @@ Run chase simulation after installing Swift:
 
 ```bash
 cd GameSim
-swift run GameSim --level ny_01 --vehicle starter_compact --runs 10000 --seed 12345
+swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345
 ```
 
 Build the iOS app on Mac:

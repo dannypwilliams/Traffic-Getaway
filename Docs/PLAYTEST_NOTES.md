@@ -6,7 +6,7 @@ No Mac/iPhone validation has been recorded after the `GameCore` and `GameSim` se
 
 ## Pending Validation
 
-- Validate Brooklyn Warmup after the exit timing change from 48 seconds to 42 seconds.
+- Validate Sunset Merge after the starter exit timing change to 42 seconds.
 - Confirm first-time players can notice and reach the exit without the HUD or buddy dialogue blocking traffic.
 - Compare Simulator feel against a physical iPhone if available.
 
