@@ -7,9 +7,12 @@ xcuserdata/
 # Build output
 build/
 DerivedData/
+DerivedData*/
 *.ipa
 *.xcarchive
 *.dSYM
+*.resultbundle
+*.xcresult
 
 # Swift Package Manager
 .build/
@@ -18,3 +21,12 @@ DerivedData/
 # macOS
 .DS_Store
 
+# Windows editor/system files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.vscode/
+
+# Local handoff archives
+TrafficGetaway-Windows-Handoff-*.zip
+TrafficGetaway-uncommitted-*.patch

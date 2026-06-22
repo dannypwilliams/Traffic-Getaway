@@ -18,11 +18,13 @@ final class MainMenuScene: SKScene {
 
     override func didMove(to view: SKView) {
         anchorPoint = .zero
-        AudioManager.shared.configure()
         MissionManager.shared.ensureActiveMissions()
         _ = DailyChallengeManager.shared.currentCard()
         _ = AchievementManager.shared.updateStoredProgress()
         buildMenu()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            AudioManager.shared.configure()
+        }
     }
 
     override func didChangeSize(_ oldSize: CGSize) {

@@ -41,8 +41,8 @@ struct LevelDefinition {
 
 enum LevelCatalog {
     static let all: [LevelDefinition] = [
-        LevelDefinition(levelID: "ny_01", name: "Brooklyn Warmup", city: .newYork, durationBeforeExit: 52, exitSide: .right, exitWindowSeconds: 13, startingTrafficDensity: 0.26, maxTrafficDensity: 0.48, policeAggression: 0.85, rewardCash: 180, rewardXP: 80, allowsEmergencyExit: true),
-        LevelDefinition(levelID: "ny_02", name: "FDR Squeeze", city: .newYork, durationBeforeExit: 60, exitSide: .left, exitWindowSeconds: 12, startingTrafficDensity: 0.3, maxTrafficDensity: 0.54, policeAggression: 0.92, rewardCash: 220, rewardXP: 95, allowsEmergencyExit: true),
+        LevelDefinition(levelID: "ny_01", name: "Brooklyn Warmup", city: .newYork, durationBeforeExit: 48, exitSide: .right, exitWindowSeconds: 14, startingTrafficDensity: 0.2, maxTrafficDensity: 0.42, policeAggression: 0.72, rewardCash: 210, rewardXP: 90, allowsEmergencyExit: true),
+        LevelDefinition(levelID: "ny_02", name: "FDR Squeeze", city: .newYork, durationBeforeExit: 58, exitSide: .left, exitWindowSeconds: 13, startingTrafficDensity: 0.26, maxTrafficDensity: 0.5, policeAggression: 0.86, rewardCash: 240, rewardXP: 105, allowsEmergencyExit: true),
         LevelDefinition(levelID: "ny_03", name: "Midtown Split", city: .newYork, durationBeforeExit: 68, exitSide: .right, exitWindowSeconds: 11, startingTrafficDensity: 0.34, maxTrafficDensity: 0.6, policeAggression: 1.0, rewardCash: 280, rewardXP: 115, allowsEmergencyExit: true),
         LevelDefinition(levelID: "ny_04", name: "Queensboro Heat", city: .newYork, durationBeforeExit: 76, exitSide: .left, exitWindowSeconds: 10, startingTrafficDensity: 0.38, maxTrafficDensity: 0.66, policeAggression: 1.08, rewardCash: 340, rewardXP: 135, allowsEmergencyExit: false),
         LevelDefinition(levelID: "ny_05", name: "Tunnel Break", city: .newYork, durationBeforeExit: 84, exitSide: .right, exitWindowSeconds: 10, startingTrafficDensity: 0.42, maxTrafficDensity: 0.7, policeAggression: 1.16, rewardCash: 430, rewardXP: 160, allowsEmergencyExit: false),
@@ -54,10 +54,10 @@ enum LevelCatalog {
         LevelDefinition(levelID: "la_05", name: "Last Exit West", city: .losAngeles, durationBeforeExit: 104, exitSide: .right, exitWindowSeconds: 8, startingTrafficDensity: 0.52, maxTrafficDensity: 0.82, policeAggression: 1.36, rewardCash: 1_050, rewardXP: 310, allowsEmergencyExit: false),
 
         LevelDefinition(levelID: "mia_01", name: "Ocean Drive Run", city: .miami, durationBeforeExit: 76, exitSide: .left, exitWindowSeconds: 8, startingTrafficDensity: 0.48, maxTrafficDensity: 0.76, policeAggression: 1.25, rewardCash: 1_220, rewardXP: 340, allowsEmergencyExit: true),
-        LevelDefinition(levelID: "mia_02", name: "Neon Causeway", city: .miami, durationBeforeExit: 88, exitSide: .right, exitWindowSeconds: 7, startingTrafficDensity: 0.52, maxTrafficDensity: 0.82, policeAggression: 1.34, rewardCash: 1_420, rewardXP: 380, allowsEmergencyExit: false),
-        LevelDefinition(levelID: "mia_03", name: "Thunder Strip", city: .miami, durationBeforeExit: 98, exitSide: .left, exitWindowSeconds: 7, startingTrafficDensity: 0.56, maxTrafficDensity: 0.86, policeAggression: 1.44, rewardCash: 1_650, rewardXP: 425, allowsEmergencyExit: false),
-        LevelDefinition(levelID: "mia_04", name: "Vice Lockdown", city: .miami, durationBeforeExit: 108, exitSide: .right, exitWindowSeconds: 6, startingTrafficDensity: 0.6, maxTrafficDensity: 0.9, policeAggression: 1.55, rewardCash: 1_950, rewardXP: 475, allowsEmergencyExit: false),
-        LevelDefinition(levelID: "mia_05", name: "Crown Escape", city: .miami, durationBeforeExit: 118, exitSide: .left, exitWindowSeconds: 6, startingTrafficDensity: 0.64, maxTrafficDensity: 0.94, policeAggression: 1.68, rewardCash: 2_400, rewardXP: 560, allowsEmergencyExit: false)
+        LevelDefinition(levelID: "mia_02", name: "Neon Causeway", city: .miami, durationBeforeExit: 88, exitSide: .right, exitWindowSeconds: 8, startingTrafficDensity: 0.52, maxTrafficDensity: 0.8, policeAggression: 1.32, rewardCash: 1_420, rewardXP: 380, allowsEmergencyExit: false),
+        LevelDefinition(levelID: "mia_03", name: "Thunder Strip", city: .miami, durationBeforeExit: 98, exitSide: .left, exitWindowSeconds: 8, startingTrafficDensity: 0.55, maxTrafficDensity: 0.84, policeAggression: 1.4, rewardCash: 1_650, rewardXP: 425, allowsEmergencyExit: false),
+        LevelDefinition(levelID: "mia_04", name: "Vice Lockdown", city: .miami, durationBeforeExit: 108, exitSide: .right, exitWindowSeconds: 7, startingTrafficDensity: 0.58, maxTrafficDensity: 0.86, policeAggression: 1.5, rewardCash: 1_950, rewardXP: 475, allowsEmergencyExit: false),
+        LevelDefinition(levelID: "mia_05", name: "Crown Escape", city: .miami, durationBeforeExit: 118, exitSide: .left, exitWindowSeconds: 8, startingTrafficDensity: 0.6, maxTrafficDensity: 0.88, policeAggression: 1.58, rewardCash: 2_400, rewardXP: 560, allowsEmergencyExit: false)
     ]
 
     static func level(id: String) -> LevelDefinition? {

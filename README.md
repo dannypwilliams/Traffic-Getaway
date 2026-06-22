@@ -11,8 +11,35 @@ Canonical local project for the Traffic Getaway chase prototype.
 ## Local Verification
 
 ```sh
+Tools/mac/verify_on_mac.sh
+```
+
+For a direct Xcode build:
+
+```sh
 xcodebuild -project "Traffic Getaway.xcodeproj" -scheme "Traffic Getaway" -configuration Debug -destination generic/platform=iOS\ Simulator build
-xcodebuild -project "Traffic Getaway.xcodeproj" -scheme "Traffic Getaway" -configuration Release -destination generic/platform=iOS\ Simulator build
+```
+
+## Windows Development
+
+Windows can be used for editing, code review, balancing, and documentation. iOS builds, simulator testing, signing, archiving, and TestFlight upload still require macOS/Xcode.
+
+Start here:
+
+- `WINDOWS_DEVELOPMENT.md`
+- `Tools/windows/check_pc_handoff.ps1`
+- `Tools/mac/verify_on_mac.sh`
+
+Recommended Windows folder:
+
+```text
+C:\Dev\TrafficGetaway
+```
+
+On Windows, run:
+
+```powershell
+.\Tools\windows\check_pc_handoff.ps1 -OpenVSCode
 ```
 
 ## Xcode Cloud Starting Workflow
@@ -31,3 +58,4 @@ git remote add origin https://github.com/YOUR_USERNAME/traffic-getaway.git
 git push -u origin main
 ```
 
+The repo includes `.github/workflows/ios-simulator-build.yml`, so GitHub can run a macOS simulator build check after pushes once the project is hosted there.

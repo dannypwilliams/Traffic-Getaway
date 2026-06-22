@@ -26,11 +26,11 @@ final class BuddyManager {
     private var lastGlobalTime: TimeInterval = -100
     private var lastCategoryTime: [BuddyLineCategory: TimeInterval] = [:]
 
-    private let globalCooldown: TimeInterval = 2.1
+    private let globalCooldown: TimeInterval = 2.8
     private let categoryCooldowns: [BuddyLineCategory: TimeInterval] = [
         .levelStart: 8,
-        .trafficWarning: 7,
-        .policeWarning: 7,
+        .trafficWarning: 9,
+        .policeWarning: 9,
         .exitWarningLeft: 1,
         .exitWarningRight: 1,
         .exitCountdown: 3,
@@ -112,53 +112,57 @@ final class BuddyManager {
     private func makePopup(text: String, category: BuddyLineCategory) -> SKNode {
         let root = SKNode()
         root.zPosition = 132
-        root.position = CGPoint(x: 18, y: max(230, sceneSize.height - 190))
+        root.position = CGPoint(x: 14, y: max(218, sceneSize.height - 154))
         root.alpha = 0
 
         let accent = color(for: category)
-        let portraitSize = CGSize(width: 52, height: 52)
-        let portraitPanel = SKShapeNode(rectOf: portraitSize, cornerRadius: 9)
-        portraitPanel.position = CGPoint(x: 26, y: 0)
+        let importantExit = category == .exitWarningLeft || category == .exitWarningRight || category == .exitCountdown
+        let portraitSide: CGFloat = importantExit ? 46 : 40
+        let bubbleHeight: CGFloat = importantExit ? 44 : 38
+        let bubbleWidth = min(sceneSize.width - 80, importantExit ? 252 : 218)
+
+        let portraitPanel = SKShapeNode(rectOf: CGSize(width: portraitSide, height: portraitSide), cornerRadius: 8)
+        portraitPanel.position = CGPoint(x: portraitSide / 2, y: 0)
         portraitPanel.fillColor = SKColor(red: 0.035, green: 0.04, blue: 0.09, alpha: 0.94)
         portraitPanel.strokeColor = accent.withAlphaComponent(0.9)
         portraitPanel.lineWidth = 2
-        portraitPanel.glowWidth = 5
+        portraitPanel.glowWidth = importantExit ? 5 : 3
         root.addChild(portraitPanel)
 
-        let face = SKShapeNode(circleOfRadius: 16)
+        let face = SKShapeNode(circleOfRadius: portraitSide * 0.29)
         face.fillColor = SKColor(red: 0.96, green: 0.72, blue: 0.52, alpha: 1)
         face.strokeColor = SKColor.black.withAlphaComponent(0.35)
-        face.position = CGPoint(x: 26, y: 2)
+        face.position = CGPoint(x: portraitSide / 2, y: 1)
         root.addChild(face)
 
-        let visor = SKShapeNode(rectOf: CGSize(width: 30, height: 8), cornerRadius: 4)
+        let visor = SKShapeNode(rectOf: CGSize(width: portraitSide * 0.58, height: 6), cornerRadius: 3)
         visor.fillColor = accent
         visor.strokeColor = .clear
-        visor.position = CGPoint(x: 26, y: 9)
+        visor.position = CGPoint(x: portraitSide / 2, y: portraitSide * 0.17)
         root.addChild(visor)
 
-        let mic = SKShapeNode(rectOf: CGSize(width: 16, height: 4), cornerRadius: 2)
+        let mic = SKShapeNode(rectOf: CGSize(width: portraitSide * 0.3, height: 3), cornerRadius: 1.5)
         mic.fillColor = SKColor.black.withAlphaComponent(0.75)
         mic.strokeColor = .clear
-        mic.position = CGPoint(x: 36, y: -9)
+        mic.position = CGPoint(x: portraitSide * 0.68, y: -portraitSide * 0.17)
         root.addChild(mic)
 
-        let bubbleWidth = min(sceneSize.width - 92, 272)
-        let bubble = SKShapeNode(rectOf: CGSize(width: bubbleWidth, height: 54), cornerRadius: 10)
-        bubble.position = CGPoint(x: 66 + bubbleWidth / 2, y: 0)
-        bubble.fillColor = SKColor.black.withAlphaComponent(0.72)
+        let bubbleX = portraitSide + 10
+        let bubble = SKShapeNode(rectOf: CGSize(width: bubbleWidth, height: bubbleHeight), cornerRadius: 8)
+        bubble.position = CGPoint(x: bubbleX + bubbleWidth / 2, y: 0)
+        bubble.fillColor = SKColor.black.withAlphaComponent(0.62)
         bubble.strokeColor = accent.withAlphaComponent(0.75)
-        bubble.lineWidth = 1.6
-        bubble.glowWidth = 4
+        bubble.lineWidth = importantExit ? 1.6 : 1.25
+        bubble.glowWidth = importantExit ? 4 : 2
         root.addChild(bubble)
 
         let label = SKLabelNode(fontNamed: UITheme.Font.body)
         label.text = text
-        label.fontSize = 14
+        label.fontSize = importantExit ? 13 : 12
         label.fontColor = .white
         label.horizontalAlignmentMode = .left
         label.verticalAlignmentMode = .center
-        label.position = CGPoint(x: 76, y: 0)
+        label.position = CGPoint(x: bubbleX + 10, y: 0)
         fit(label, maxWidth: bubbleWidth - 18)
         root.addChild(label)
 
@@ -174,7 +178,7 @@ final class BuddyManager {
             .scale(to: 1, duration: 0.16)
         ])
         enter.timingMode = .easeOut
-        let hold = SKAction.wait(forDuration: 2.35)
+        let hold = SKAction.wait(forDuration: 1.65)
         let exit = SKAction.group([
             .fadeOut(withDuration: 0.18),
             .moveBy(x: -18, y: 0, duration: 0.18)

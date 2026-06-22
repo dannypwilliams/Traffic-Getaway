@@ -257,13 +257,15 @@ final class ResultsScene: SKScene {
     private func failureText(_ reason: String?) -> String {
         switch reason {
         case "traffic":
-            return "Crashed"
+            return "Traffic Collision"
         case "roadblock":
-            return "Roadblock"
-        case "police":
-            return "Caught"
+            return "Roadblock Hit"
+        case "police", "police_caught":
+            return "Caught by Police"
         case "missed_exit":
             return "Missed Exit"
+        case "collision":
+            return "Collision"
         default:
             return "Chase Failed"
         }

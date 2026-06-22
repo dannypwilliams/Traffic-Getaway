@@ -4,6 +4,7 @@ final class OnboardingScene: SKScene {
     private enum Interaction {
         case none
         case laneChange
+        case laneSplit
         case nearMiss
         case combo
         case policePressure
@@ -29,57 +30,67 @@ final class OnboardingScene: SKScene {
     private let steps: [Step] = [
         Step(
             title: "TRAFFIC GETAWAY",
-            subtitle: "Swipe through traffic. Outrun the cops. Survive the city.",
+            subtitle: "Weave across twelve freeway lanes. Hit the exit before the cops close in.",
             bullets: [],
             interaction: .none
         ),
         Step(
-            title: "CONTROLS",
-            subtitle: "Move one lane at a time.",
+            title: "FREEWAY CONTROLS",
+            subtitle: "Move fast. Do not crawl across the road.",
             bullets: [
-                "Swipe left or right to change lanes",
-                "Tap either side of the screen also works",
-                "Quick lane changes can save a run"
+                "Swipe left or right to move one lane",
+                "Fast swipes jump farther across traffic",
+                "Hold a side to carve lane after lane"
             ],
             interaction: .laneChange
         ),
         Step(
-            title: "NEAR MISSES",
-            subtitle: "Risky driving is rewarded.",
+            title: "MOTORCYCLES",
+            subtitle: "Bikes can use the gaps cars cannot.",
+            bullets: [
+                "Cars snap to lane centers",
+                "Motorcycles can split between lanes",
+                "Smaller hitboxes mean higher risk"
+            ],
+            interaction: .laneSplit
+        ),
+        Step(
+            title: "RISK DRIVING",
+            subtitle: "Close passes fuel the chase.",
             bullets: [
                 "Drive close to traffic for bonus points",
-                "Chain near misses to build combo",
+                "Lane splits and near misses build combo",
                 "Close calls trigger Dodge Boost"
             ],
             interaction: .nearMiss
         ),
         Step(
-            title: "COMBO",
-            subtitle: "Keep pressure on for bigger rewards.",
+            title: "EXIT RAMPS",
+            subtitle: "A chase is won by reaching the ramp.",
             bullets: [
-                "Hit close calls back to back",
-                "Combo boosts score",
-                "Dodge Boost rewards aggressive driving"
-            ],
-            interaction: .combo
-        ),
-        Step(
-            title: "POLICE PRESSURE",
-            subtitle: "The chase gets tighter over time.",
-            bullets: [
-                "Keep moving",
-                "Near misses push police back",
-                "Survive longer to reach new cities"
+                "Your buddy calls out left or right",
+                "Cross the freeway before time runs out",
+                "Missing the exit spikes police pressure"
             ],
             interaction: .policePressure
         ),
         Step(
-            title: "READY?",
-            subtitle: "Build your garage one escape at a time.",
+            title: "COMBO",
+            subtitle: "Aggressive driving pays.",
             bullets: [
-                "Earn cash and XP",
+                "Chain risky passes back to back",
+                "Higher combo means bigger rewards",
+                "Stay calm when traffic gets dense"
+            ],
+            interaction: .combo
+        ),
+        Step(
+            title: "READY?",
+            subtitle: "Escape levels, earn rewards, and build the garage.",
+            bullets: [
+                "Earn cash, XP, and stars",
                 "Complete missions",
-                "Unlock cars and paints"
+                "Unlock cars, motorcycles, and paints"
             ],
             interaction: .none
         )
@@ -87,8 +98,10 @@ final class OnboardingScene: SKScene {
 
     override func didMove(to view: SKView) {
         anchorPoint = .zero
-        AudioManager.shared.configure()
         buildStep()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            AudioManager.shared.configure()
+        }
     }
 
     override func didChangeSize(_ oldSize: CGSize) {
@@ -100,7 +113,7 @@ final class OnboardingScene: SKScene {
         removeAllChildren()
         contentNode.removeAllChildren()
         actionComplete = steps[stepIndex].interaction == .none
-        trainingLane = 1
+        trainingLane = 5
         trainingCombo = 0
         addChild(contentNode)
 
@@ -140,56 +153,77 @@ final class OnboardingScene: SKScene {
 
     private func buildIllustration(for index: Int) {
         let center = CGPoint(x: size.width / 2, y: size.height * 0.45)
-        let road = SKShapeNode(rectOf: CGSize(width: min(size.width * 0.62, 230), height: 168), cornerRadius: 12)
+        let roadWidth = trainingRoadWidth()
+        let road = SKShapeNode(rectOf: CGSize(width: roadWidth, height: 174), cornerRadius: 12)
         road.fillColor = SKColor(red: 0.05, green: 0.055, blue: 0.11, alpha: 1)
         road.strokeColor = SKColor.cyan.withAlphaComponent(0.55)
         road.lineWidth = 2
         road.position = center
         contentNode.addChild(road)
 
-        for offset in [-46, 0, 46] {
-            let marker = SKShapeNode(rectOf: CGSize(width: 5, height: 34), cornerRadius: 2)
-            marker.fillColor = SKColor.white.withAlphaComponent(0.5)
-            marker.strokeColor = .clear
-            marker.position = CGPoint(x: center.x, y: center.y + CGFloat(offset))
-            contentNode.addChild(marker)
+        let laneWidth = roadWidth / CGFloat(LaneManager.laneCount)
+        for separator in 1..<LaneManager.laneCount {
+            let x = center.x - roadWidth / 2 + CGFloat(separator) * laneWidth
+            for dash in 0..<3 {
+                let marker = SKShapeNode(rectOf: CGSize(width: 2.2, height: 26), cornerRadius: 1)
+                marker.fillColor = SKColor.white.withAlphaComponent(separator.isMultiple(of: 2) ? 0.38 : 0.22)
+                marker.strokeColor = .clear
+                marker.position = CGPoint(x: x, y: center.y - 58 + CGFloat(dash) * 56)
+                contentNode.addChild(marker)
+            }
         }
 
-        let player = UIHelpers.carPreview(car: CarCatalog.defaultCar, paint: CarCatalog.defaultPaint, size: CGSize(width: 54, height: 88))
-        player.position = CGPoint(x: center.x, y: center.y - 38)
+        let playerCar = index == 2 ? CarCatalog.car(id: CarCatalog.starterBikeID) : CarCatalog.defaultCar
+        let playerSize = index == 2 ? CGSize(width: 48, height: 88) : CGSize(width: 48, height: 82)
+        let player = UIHelpers.carPreview(car: playerCar, paint: CarCatalog.defaultPaint, size: playerSize)
+        player.position = CGPoint(x: xForTrainingLane(trainingLane), y: center.y - 38)
         trainingCar = player
         contentNode.addChild(player)
 
         if index >= 1 {
             let leftArrow = UIHelpers.label("<", size: 36, color: SKColor.cyan)
-            leftArrow.position = CGPoint(x: center.x - 88, y: center.y - 38)
+            leftArrow.position = CGPoint(x: center.x - roadWidth * 0.42, y: center.y - 38)
             contentNode.addChild(leftArrow)
             let rightArrow = UIHelpers.label(">", size: 36, color: SKColor.cyan)
-            rightArrow.position = CGPoint(x: center.x + 88, y: center.y - 38)
+            rightArrow.position = CGPoint(x: center.x + roadWidth * 0.42, y: center.y - 38)
             contentNode.addChild(rightArrow)
         }
 
         if index >= 2 {
             let traffic = UIHelpers.carPreview(car: CarCatalog.car(id: "yellow_cab"), paint: CarCatalog.defaultPaint, size: CGSize(width: 46, height: 76))
-            traffic.position = CGPoint(x: center.x + 48, y: center.y + 48)
+            traffic.position = CGPoint(x: xForTrainingLane(6), y: center.y + 48)
             contentNode.addChild(traffic)
             traffic.run(.repeatForever(.sequence([
                 .moveBy(x: 0, y: -92, duration: 1.2),
                 .moveBy(x: 0, y: 92, duration: 0)
             ])))
+            let secondTraffic = UIHelpers.carPreview(car: CarCatalog.car(id: "boxy_retro"), paint: CarCatalog.defaultPaint, size: CGSize(width: 46, height: 76))
+            secondTraffic.position = CGPoint(x: xForTrainingLane(4), y: center.y + 18)
+            contentNode.addChild(secondTraffic)
             let bonus = UIHelpers.label("+25", size: 22, color: SKColor.green)
-            bonus.position = CGPoint(x: center.x - 54, y: center.y + 48)
+            bonus.position = CGPoint(x: center.x - roadWidth * 0.31, y: center.y + 56)
             contentNode.addChild(bonus)
         }
 
         if index >= 3 {
-            let cash = UIHelpers.label("$", size: 34, color: SKColor(red: 1, green: 0.84, blue: 0.16, alpha: 1))
-            cash.position = CGPoint(x: center.x - 78, y: center.y + 48)
-            contentNode.addChild(cash)
-            let star = UIHelpers.label("*", size: 34, color: SKColor.magenta)
-            star.position = CGPoint(x: center.x + 78, y: center.y + 48)
-            contentNode.addChild(star)
+            let sign = UIHelpers.label(index == 4 ? "EXIT RIGHT" : "x3", size: index == 4 ? 18 : 28, color: index == 4 ? UITheme.Color.green : UITheme.Color.magenta, width: roadWidth - 22)
+            sign.position = CGPoint(x: center.x, y: center.y + 70)
+            contentNode.addChild(sign)
+            let arrow = UIHelpers.label(index == 4 ? ">>>" : "+50", size: 28, color: UITheme.Color.gold)
+            arrow.position = CGPoint(x: index == 4 ? center.x + roadWidth * 0.31 : center.x - roadWidth * 0.31, y: center.y + 42)
+            contentNode.addChild(arrow)
         }
+    }
+
+    private func trainingRoadWidth() -> CGFloat {
+        min(size.width * 0.78, 302)
+    }
+
+    private func xForTrainingLane(_ lane: Int) -> CGFloat {
+        let roadWidth = trainingRoadWidth()
+        let laneWidth = roadWidth / CGFloat(LaneManager.laneCount)
+        let clamped = max(0, min(LaneManager.laneCount - 1, lane))
+        return size.width / 2 - roadWidth / 2 + laneWidth * (CGFloat(clamped) + 0.5)
     }
 
     private func buildInteractionPrompt(for interaction: Interaction) {
@@ -198,13 +232,15 @@ final class OnboardingScene: SKScene {
         case .none:
             return
         case .laneChange:
-            text = "Try it: swipe or tap left/right"
+            text = "Try it: swipe, fast swipe, or tap a side"
+        case .laneSplit:
+            text = "Try it: tap to split the gap"
         case .nearMiss:
-            text = "Tap to slip past the taxi"
+            text = "Tap to skim past traffic"
         case .combo:
             text = "Tap twice to chain a combo"
         case .policePressure:
-            text = "Tap to dodge and push police back"
+            text = "Tap to commit to the exit"
         }
 
         let label = UIHelpers.label(text, size: 16, color: UITheme.Color.cyan, width: size.width - 46)
@@ -306,11 +342,21 @@ final class OnboardingScene: SKScene {
         case .laneChange:
             let start = touchStart ?? location
             let dx = location.x - start.x
-            let direction: CGFloat = abs(dx) > 24 ? (dx > 0 ? 1 : -1) : (location.x > size.width / 2 ? 1 : -1)
-            trainingLane = max(0, min(2, trainingLane + Int(direction)))
-            let targetX = size.width / 2 + CGFloat(trainingLane - 1) * 48
+            let direction = abs(dx) > 24 ? (dx > 0 ? 1 : -1) : (location.x > size.width / 2 ? 1 : -1)
+            let lanesMoved = abs(dx) > 86 ? 2 : 1
+            trainingLane = max(0, min(LaneManager.laneCount - 1, trainingLane + direction * lanesMoved))
+            let targetX = xForTrainingLane(trainingLane)
             trainingCar?.run(.moveTo(x: targetX, duration: 0.16))
-            completeAction(text: "LANE CHANGE")
+            completeAction(text: lanesMoved > 1 ? "FAST SWIPE" : "LANE CHANGE")
+            return true
+        case .laneSplit:
+            trainingCar?.run(.sequence([
+                .moveTo(x: (xForTrainingLane(5) + xForTrainingLane(6)) / 2, duration: 0.13),
+                .rotate(toAngle: 0.12, duration: 0.08),
+                .rotate(toAngle: 0, duration: 0.12)
+            ]))
+            showPop("LANE SPLIT +50", color: UITheme.Color.cyan)
+            completeAction(text: "THREAD THE GAP")
             return true
         case .nearMiss:
             trainingCar?.run(.sequence([.moveBy(x: -48, y: 0, duration: 0.14), .moveBy(x: 48, y: 0, duration: 0.18)]))
@@ -325,9 +371,10 @@ final class OnboardingScene: SKScene {
             }
             return true
         case .policePressure:
-            trainingCar?.run(.sequence([.scale(to: 1.1, duration: 0.08), .scale(to: 1, duration: 0.14)]))
-            showPop("POLICE PUSHED BACK", color: UITheme.Color.gold)
-            completeAction(text: "ESCAPE")
+            trainingLane = LaneManager.laneCount - 2
+            trainingCar?.run(.moveTo(x: xForTrainingLane(trainingLane), duration: 0.18))
+            showPop("EXIT COMMITTED", color: UITheme.Color.gold)
+            completeAction(text: "RAMP READY")
             return true
         case .none:
             return false

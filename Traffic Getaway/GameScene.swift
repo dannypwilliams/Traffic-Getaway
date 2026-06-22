@@ -171,6 +171,7 @@ final class GameScene: SKScene {
     private let speedLineNode = SKNode()
     private let eventNode = SKNode()
     private let exitNode = SKNode()
+    private let exitGuidanceNode = SKNode()
     private let trafficNode = SKNode()
     private let policeSupportNode = SKNode()
     private let effectsNode = SKNode()
@@ -184,6 +185,7 @@ final class GameScene: SKScene {
     private let wantedLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let distanceLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
     private let cashLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
+    private let performanceDebugLabel = SKLabelNode(fontNamed: "Menlo-Bold")
     private let scorePanel = SKShapeNode()
     private let comboMeterBack = SKShapeNode()
     private let comboMeterFill = SKShapeNode()
@@ -275,6 +277,9 @@ final class GameScene: SKScene {
     private var latestTrafficPlan: TrafficWavePlan?
     private var lastPoliceBuddyLevel = 1
     private var trafficSpawnSerial = 0
+    private var debugAutoplayTimer: TimeInterval = 0
+    private var performanceSampleTimer: TimeInterval = 0
+    private var performanceFrameCounter = 0
     private var awardedLaneSplitPairs: Set<String> = []
     private var primaryExitTriggered = false
     private var emergencyExitUsed = false
@@ -285,6 +290,7 @@ final class GameScene: SKScene {
     private var exitActivatedAt: TimeInterval = 0
     private var exitCountdownLabel: SKLabelNode?
     private var exitIsEmergency = false
+    private var exitGuidanceRefreshTimer: TimeInterval = 0
 
     private var touchStart: CGPoint?
     private var touchStartTime: TimeInterval = 0
@@ -934,6 +940,10 @@ final class GameScene: SKScene {
         return (1 + comboBonus + wantedBonus) * activeCar.scoreMultiplier
     }
 
+    private var passiveVehicleRewardScale: CGFloat {
+        activeCar.vehicleClass == .motorcycle ? 0.92 : 1.03
+    }
+
     // MARK: - Game Flow
 
     private func startGame() {
@@ -1000,6 +1010,9 @@ final class GameScene: SKScene {
         screenshotShowcaseSpawned = false
         latestTrafficPlan = nil
         trafficSpawnSerial = 0
+        debugAutoplayTimer = 0
+        performanceSampleTimer = 0
+        performanceFrameCounter = 0
         awardedLaneSplitPairs.removeAll()
         lastPoliceBuddyLevel = 1
         primaryExitTriggered = false
@@ -1011,6 +1024,7 @@ final class GameScene: SKScene {
         exitActivatedAt = 0
         exitCountdownLabel = nil
         exitIsEmergency = false
+        exitGuidanceRefreshTimer = 0
         activeHoldDirection = 0
         holdTimer = 0
         holdActivated = false
@@ -1095,12 +1109,13 @@ final class GameScene: SKScene {
         }
         buddy.say(.failure, force: true)
         AudioManager.shared.play(.gameOver, volume: 0.78, cooldown: 0.6)
+        showFailureReasonFlash(reason)
 
         let runStats = makeRunStats(crashes: 1, levelCompleted: false, failureReason: reason)
         let result = ProgressionManager.shared.processRun(runStats)
 
         run(.sequence([
-            .wait(forDuration: 0.8),
+            .wait(forDuration: 1.0),
             .run { [weak self] in
                 guard let self else { return }
                 UIHelpers.present(ResultsScene(size: self.size, result: result), from: self)
@@ -1139,7 +1154,7 @@ final class GameScene: SKScene {
     private func showReviveOverlay() {
         overlayNode.removeAllChildren()
         overlayNode.addChild(makeDimmer())
-        overlayNode.addChild(makeOverlayPanel(y: size.height * 0.5, height: 270))
+        overlayNode.addChild(makeOverlayPanel(y: size.height * 0.5, height: 292))
 
         let title = makeLabel("WRECKED", size: 36, y: size.height * 0.61)
         title.fontColor = SKColor.red
@@ -1150,9 +1165,80 @@ final class GameScene: SKScene {
         fitLabel(subtitle, maxWidth: size.width - 54)
         overlayNode.addChild(subtitle)
 
+        let reason = makeLabel(failureTitle(for: pendingCrashReason), size: 18, y: size.height * 0.515)
+        reason.fontColor = UITheme.Color.gold
+        fitLabel(reason, maxWidth: size.width - 64)
+        overlayNode.addChild(reason)
+
+        let advice = makeLabel(failureAdvice(for: pendingCrashReason), size: 13, y: size.height * 0.49)
+        advice.fontColor = SKColor(white: 0.78, alpha: 1)
+        fitLabel(advice, maxWidth: size.width - 72)
+        overlayNode.addChild(advice)
+
         let reviveTitle = MonetizationManager.shared.shouldPromptForRewardedAds ? "WATCH AD TO REVIVE" : "FREE REVIVE"
-        overlayNode.addChild(makeOverlayButton(text: reviveTitle, name: "revive.accept", y: size.height * 0.47, width: min(size.width - 84, 260)))
-        overlayNode.addChild(makeOverlayButton(text: "NO THANKS", name: "revive.decline", y: size.height * 0.39, width: 170))
+        overlayNode.addChild(makeOverlayButton(text: reviveTitle, name: "revive.accept", y: size.height * 0.435, width: min(size.width - 84, 260)))
+        overlayNode.addChild(makeOverlayButton(text: "NO THANKS", name: "revive.decline", y: size.height * 0.36, width: 170))
+    }
+
+    private func showFailureReasonFlash(_ reason: String) {
+        let panel = SKShapeNode(rectOf: CGSize(width: min(size.width - 48, 320), height: 92), cornerRadius: 10)
+        panel.position = CGPoint(x: size.width / 2, y: size.height * 0.56)
+        panel.fillColor = SKColor.black.withAlphaComponent(0.78)
+        panel.strokeColor = SKColor.red.withAlphaComponent(0.72)
+        panel.glowWidth = 8
+        panel.zPosition = 160
+        floatingTextNode.addChild(panel)
+
+        let title = makeLabel(failureTitle(for: reason), size: 23, y: panel.position.y + 12)
+        title.fontColor = SKColor.red
+        title.zPosition = 161
+        floatingTextNode.addChild(title)
+
+        let detail = makeLabel(failureAdvice(for: reason), size: 13, y: panel.position.y - 20)
+        detail.fontColor = SKColor(white: 0.86, alpha: 1)
+        detail.zPosition = 161
+        fitLabel(detail, maxWidth: min(size.width - 74, 292))
+        floatingTextNode.addChild(detail)
+
+        [panel, title, detail].forEach { node in
+            node.alpha = 0
+            node.run(.sequence([
+                .fadeIn(withDuration: 0.1),
+                .wait(forDuration: 0.72),
+                .fadeOut(withDuration: 0.16),
+                .removeFromParent()
+            ]))
+        }
+    }
+
+    private func failureTitle(for reason: String) -> String {
+        switch reason {
+        case "traffic", "collision":
+            return "TRAFFIC COLLISION"
+        case "roadblock":
+            return "ROADBLOCK HIT"
+        case "police_caught", "police":
+            return "POLICE CAUGHT YOU"
+        case "missed_exit":
+            return "EXIT MISSED"
+        default:
+            return "CHASE FAILED"
+        }
+    }
+
+    private func failureAdvice(for reason: String) -> String {
+        switch reason {
+        case "traffic", "collision":
+            return "The hitbox overlapped traffic. Commit to the gap earlier."
+        case "roadblock":
+            return "Roadblock lanes are dangerous. Watch the warning arrows."
+        case "police_caught", "police":
+            return "Police reached your bumper. Keep risk bonuses flowing."
+        case "missed_exit":
+            return "The ramp window closed. Cross over as soon as the buddy calls it."
+        default:
+            return "Check the results screen for the run breakdown."
+        }
     }
 
     private func acceptRevive() {
@@ -2164,6 +2250,8 @@ final class GameScene: SKScene {
         updateCameraJuice(deltaTime: deltaTime)
         applyScreenshotMode()
         pruneTransientNodes()
+        updateDebugAutoplay(deltaTime: TimeInterval(rawDeltaTime))
+        updatePerformanceDebug(deltaTime: TimeInterval(rawDeltaTime))
         checkCollisions()
     }
 
@@ -2176,10 +2264,117 @@ final class GameScene: SKScene {
     private func trimChildren(of node: SKNode, keeping maxCount: Int) {
         guard node.children.count > maxCount else { return }
         for child in node.children.prefix(node.children.count - maxCount) {
-            if child !== comboAuraNode {
+            if child !== comboAuraNode && child !== performanceDebugLabel {
                 child.removeFromParent()
             }
         }
+    }
+
+    private func updateDebugAutoplay(deltaTime: TimeInterval) {
+        guard AppConfig.debugMode, AppConfig.debugAutoplay, gameState == .playing else { return }
+        guard playerCar?.action(forKey: "laneChange") == nil else { return }
+
+        debugAutoplayTimer = max(0, debugAutoplayTimer - deltaTime)
+        guard debugAutoplayTimer <= 0 else { return }
+        debugAutoplayTimer = activeCar.vehicleClass == .motorcycle ? 0.105 : 0.13
+
+        let validSlots = Set(laneManager.validSlots(for: activeCar.vehicleClass))
+        var safeSlots: Set<Int>
+        if let latestTrafficPlan {
+            safeSlots = activeCar.vehicleClass == .motorcycle ? latestTrafficPlan.safeMotorcycleSlots : latestTrafficPlan.safeCarSlots
+            safeSlots = safeSlots.intersection(validSlots)
+        } else {
+            safeSlots = validSlots
+        }
+
+        if exitPhase == .active, let activeExitSide {
+            safeSlots.formUnion(laneManager.exitSlots(for: activeExitSide, vehicleClass: activeCar.vehicleClass))
+        }
+
+        guard !safeSlots.isEmpty else { return }
+
+        let maxStep: Int
+        if activeCar.vehicleClass == .motorcycle {
+            maxStep = dodgeBoostTimer > 0 ? 3 : 2
+        } else {
+            maxStep = dodgeBoostTimer > 0 ? 6 : 4
+        }
+
+        let reachable = safeSlots.filter { abs($0 - playerSlot) <= maxStep }
+        guard !reachable.isEmpty else { return }
+
+        let desiredSlot: Int
+        if exitPhase == .active, let activeExitSide {
+            let exitSlots = laneManager.exitSlots(for: activeExitSide, vehicleClass: activeCar.vehicleClass)
+            desiredSlot = activeExitSide == .left ? (exitSlots.min() ?? 0) : (exitSlots.max() ?? LaneManager.slotCount - 1)
+        } else {
+            desiredSlot = LaneManager.startSlot
+        }
+
+        guard let targetSlot = reachable.min(by: { lhs, rhs in
+            debugRouteScore(slot: lhs, desiredSlot: desiredSlot) < debugRouteScore(slot: rhs, desiredSlot: desiredSlot)
+        }) else { return }
+
+        let delta = targetSlot - playerSlot
+        guard delta != 0 else { return }
+
+        let moveDelta: Int
+        if activeCar.vehicleClass == .car {
+            moveDelta = max(-3, min(3, delta / 2))
+        } else {
+            moveDelta = max(-3, min(3, delta))
+        }
+        guard moveDelta != 0 else { return }
+
+        movePlayer(by: moveDelta, kind: abs(moveDelta) > 1 ? .fastSwipe : .swipe)
+    }
+
+    private func debugRouteScore(slot: Int, desiredSlot: Int) -> CGFloat {
+        let lane = laneManager.nearestLaneForSlot(slot)
+        var danger = hazardDanger(inLane: lane)
+        if activeCar.vehicleClass == .motorcycle, laneManager.isSplitSlot(slot) {
+            let leftLane = max(0, lane - 1)
+            danger = max(danger * 0.65, min(hazardDanger(inLane: leftLane), danger) * 0.45)
+        }
+
+        let exitUrgency: CGFloat = exitPhase == .active ? 1.55 : 1
+        let desiredCost = CGFloat(abs(slot - desiredSlot)) * exitUrgency
+        let movementCost = CGFloat(abs(slot - playerSlot)) * 0.26
+        return desiredCost + movementCost + danger * 8.5
+    }
+
+    private func updatePerformanceDebug(deltaTime: TimeInterval) {
+        guard AppConfig.debugMode else { return }
+        guard AppConfig.showPerformanceOverlay else {
+            performanceDebugLabel.removeFromParent()
+            performanceSampleTimer = 0
+            performanceFrameCounter = 0
+            return
+        }
+
+        if performanceDebugLabel.parent == nil {
+            performanceDebugLabel.fontSize = 10
+            performanceDebugLabel.horizontalAlignmentMode = .left
+            performanceDebugLabel.verticalAlignmentMode = .top
+            performanceDebugLabel.zPosition = 250
+            floatingTextNode.addChild(performanceDebugLabel)
+        }
+
+        performanceFrameCounter += 1
+        performanceSampleTimer += deltaTime
+        performanceDebugLabel.position = CGPoint(x: 12, y: size.height - 76)
+
+        guard performanceSampleTimer >= 0.5 else { return }
+        let fps = Int(round(Double(performanceFrameCounter) / max(0.001, performanceSampleTimer)))
+        let totalNodes = recursiveNodeCount(self)
+        performanceDebugLabel.fontColor = totalNodes > 560 ? UITheme.Color.gold : UITheme.Color.green
+        performanceDebugLabel.text = "FPS \(fps)  N \(totalNodes)  Traffic \(trafficNode.children.count)  FX \(effectsNode.children.count)  Text \(floatingTextNode.children.count)"
+        performanceSampleTimer = 0
+        performanceFrameCounter = 0
+    }
+
+    private func recursiveNodeCount(_ node: SKNode) -> Int {
+        1 + node.children.reduce(0) { $0 + recursiveNodeCount($1) }
     }
 
     // MARK: - Story Chase Levels and Exit Escapes
@@ -2204,6 +2399,7 @@ final class GameScene: SKScene {
         guard exitPhase == .active else { return }
         exitCountdown = max(0, exitCountdown - deltaTime)
         updateExitCountdownLabel()
+        updateExitGuidance(deltaTime: deltaTime)
         if exitCountdown <= 5, exitCountdown > 0 {
             buddy.say(.exitCountdown, detail: "Exit window closing!", force: false)
         }
@@ -2253,6 +2449,11 @@ final class GameScene: SKScene {
         exitNode.removeAllChildren()
         exitNode.alpha = 1
         exitCountdownLabel = nil
+        exitGuidanceNode.removeFromParent()
+        exitGuidanceNode.removeAllChildren()
+        exitGuidanceNode.zPosition = 14
+        exitNode.addChild(exitGuidanceNode)
+        exitGuidanceRefreshTimer = 0
         let palette = palette(for: currentCity)
         let exitLanes = laneManager.exitLanes(for: side)
         let rampWidth = laneWidth * 2.35
@@ -2317,11 +2518,76 @@ final class GameScene: SKScene {
         exitCountdownLabel = countdown
         exitNode.addChild(countdown)
         updateExitCountdownLabel()
+        rebuildExitGuidance(side: side)
     }
 
     private func updateExitCountdownLabel() {
         guard let activeExitSide, let exitCountdownLabel else { return }
         exitCountdownLabel.text = "EXIT \(activeExitSide.displayName)  \(String(format: "%.1f", exitCountdown))"
+    }
+
+    private func updateExitGuidance(deltaTime: TimeInterval) {
+        guard exitPhase == .active, let activeExitSide else { return }
+        exitGuidanceRefreshTimer = max(0, exitGuidanceRefreshTimer - deltaTime)
+        guard exitGuidanceRefreshTimer == 0 else { return }
+        exitGuidanceRefreshTimer = 0.16
+        rebuildExitGuidance(side: activeExitSide)
+    }
+
+    private func rebuildExitGuidance(side: ExitSide) {
+        exitGuidanceNode.removeAllChildren()
+
+        let validSlots = Set(laneManager.validSlots(for: activeCar.vehicleClass))
+        var safeSlots = validSlots
+        if let latestTrafficPlan {
+            safeSlots = activeCar.vehicleClass == .motorcycle ? latestTrafficPlan.safeMotorcycleSlots : latestTrafficPlan.safeCarSlots
+            safeSlots = safeSlots.intersection(validSlots)
+        }
+
+        let exitSlots = laneManager.exitSlots(for: side, vehicleClass: activeCar.vehicleClass)
+        safeSlots.formUnion(exitSlots)
+
+        let direction = side == .left ? -1 : 1
+        let pathSlots = safeSlots
+            .filter { direction < 0 ? $0 < playerSlot : $0 > playerSlot }
+            .sorted { lhs, rhs in
+                let lhsExit = exitSlots.map { abs($0 - lhs) }.min() ?? 0
+                let rhsExit = exitSlots.map { abs($0 - rhs) }.min() ?? 0
+                let lhsScore = abs(lhs - playerSlot) + lhsExit
+                let rhsScore = abs(rhs - playerSlot) + rhsExit
+                return lhsScore < rhsScore
+            }
+
+        let visibleSlots = Array(pathSlots.prefix(5))
+        guard !visibleSlots.isEmpty else { return }
+
+        let color = exitIsEmergency ? UITheme.Color.orange : UITheme.Color.green
+        for (index, slot) in visibleSlots.enumerated() where slotCenters.indices.contains(slot) {
+            let chevron = SKLabelNode(fontNamed: "AvenirNext-Heavy")
+            chevron.text = side == .left ? "<" : ">"
+            chevron.fontSize = 22
+            chevron.fontColor = color.withAlphaComponent(0.9 - CGFloat(index) * 0.08)
+            chevron.horizontalAlignmentMode = .center
+            chevron.verticalAlignmentMode = .center
+            chevron.position = CGPoint(
+                x: slotCenters[slot],
+                y: playerY + 62 + CGFloat(index) * 40
+            )
+            chevron.zPosition = 1
+            exitGuidanceNode.addChild(chevron)
+            chevron.run(.repeatForever(.sequence([
+                .scale(to: 1.18, duration: 0.12),
+                .scale(to: 0.96, duration: 0.16)
+            ])))
+
+            let glow = SKShapeNode(circleOfRadius: max(5, laneWidth * 0.16))
+            glow.position = chevron.position
+            glow.fillColor = color.withAlphaComponent(0.22)
+            glow.strokeColor = .clear
+            glow.glowWidth = 8
+            glow.zPosition = 0
+            exitGuidanceNode.addChild(glow)
+        }
     }
 
     private func clearExitApproach(side: ExitSide) {
@@ -2463,6 +2729,10 @@ final class GameScene: SKScene {
         if exitPhase == .active, let side = activeExitSide {
             protectedLanes.formUnion(laneManager.exitGuardLanes(for: side))
         }
+        var protectedSlots = Set(protectedLanes.map { $0 * 2 })
+        if exitPhase == .active, let side = activeExitSide {
+            protectedSlots.formUnion(laneManager.exitSlots(for: side, vehicleClass: activeCar.vehicleClass))
+        }
 
         let context = TrafficPatternContext(
             laneCount: laneCount,
@@ -2473,7 +2743,12 @@ final class GameScene: SKScene {
             wantedLevel: wantedLevel,
             city: currentCity,
             protectedLanes: protectedLanes,
-            recentBlockedLanes: recentBlockedLanes()
+            protectedSlots: protectedSlots,
+            recentBlockedLanes: recentBlockedLanes(),
+            recentHazards: recentTrafficHazards(),
+            exitActive: exitPhase == .active,
+            exitSide: activeExitSide,
+            dodgeBoostActive: dodgeBoostTimer > 0
         )
 
         guard let plan = TrafficPatternGenerator.generate(context: context) else {
@@ -2515,6 +2790,33 @@ final class GameScene: SKScene {
         return lanes
     }
 
+    private func recentTrafficHazards() -> [TrafficHazardSnapshot] {
+        trafficNode.children.compactMap { node in
+            guard let vehicle = node as? SKSpriteNode,
+                  let lane = vehicle.userData?["lane"] as? Int else {
+                return nil
+            }
+
+            guard vehicle.position.y > size.height - 360 else {
+                return nil
+            }
+
+            let typeName = vehicle.userData?["type"] as? String
+            let type = typeName.flatMap(VehicleType.init(rawValue:)) ?? .sedan
+            let span = vehicle.userData?["laneSpan"] as? Int ?? laneSpan(for: type)
+            let isRoadblock = vehicle.userData?["roadblock"] as? Bool == true
+
+            return TrafficHazardSnapshot(
+                lane: lane,
+                laneSpan: span,
+                type: type,
+                y: vehicle.position.y,
+                height: vehicle.size.height,
+                isRoadblock: isRoadblock
+            )
+        }
+    }
+
     private func showTrafficDebug(_ plan: TrafficWavePlan) {
         guard AppConfig.showTrafficSpawnHeatmap || AppConfig.showOpenLaneAnalysis else { return }
 
@@ -2539,7 +2841,7 @@ final class GameScene: SKScene {
         }
 
         if AppConfig.showOpenLaneAnalysis {
-            let label = UIHelpers.bodyLabel("\(plan.patternName)  open \(plan.openLanes.sorted())", size: 10, color: .white, width: size.width - 24)
+            let label = UIHelpers.bodyLabel("\(plan.patternName)  open \(plan.openLanes.sorted())  car \(plan.safeCarSlots.sorted())  moto \(plan.safeMotorcycleSlots.sorted())", size: 10, color: .white, width: size.width - 24)
             label.position = CGPoint(x: size.width / 2, y: size.height * 0.61)
             node.addChild(label)
         }
@@ -3355,8 +3657,8 @@ final class GameScene: SKScene {
 
     private func updateScore(deltaTime: CGFloat) {
         runDistance += roadSpeed * deltaTime * 0.1
-        scoreRemainder += roadSpeed * deltaTime * 0.1 * scoreMultiplier
-        cashRemainder += roadSpeed * deltaTime * 0.0035 * (1 + CGFloat(wantedLevel - 1) * 0.08)
+        scoreRemainder += roadSpeed * deltaTime * 0.1 * scoreMultiplier * passiveVehicleRewardScale
+        cashRemainder += roadSpeed * deltaTime * 0.0035 * (1 + CGFloat(wantedLevel - 1) * 0.08) * passiveVehicleRewardScale
 
         let gained = Int(scoreRemainder)
         let cashGained = Int(cashRemainder)
@@ -3495,8 +3797,8 @@ final class GameScene: SKScene {
         activateDodgeBoost()
         pushPoliceBack()
 
-        let scoreBonus = Int(CGFloat(50 + min(comboCount, 12) * 6) * scoreMultiplier * activeCar.nearMissMultiplier)
-        let cashBonus = 3 + min(comboCount, 10) / 2 + wantedLevel
+        let scoreBonus = Int(CGFloat(42 + min(comboCount, 12) * 5) * scoreMultiplier * activeCar.nearMissMultiplier)
+        let cashBonus = 2 + min(comboCount, 10) / 3 + wantedLevel
         score += scoreBonus
         runCash += cashBonus
         updateHUD()

@@ -92,6 +92,8 @@ enum AppConfig {
         static let showTrafficSpawnHeatmap = "TrafficGetaway.debug.showTrafficSpawnHeatmap"
         static let showOpenLaneAnalysis = "TrafficGetaway.debug.showOpenLaneAnalysis"
         static let printRejectedTrafficWaves = "TrafficGetaway.debug.printRejectedTrafficWaves"
+        static let debugAutoplay = "TrafficGetaway.debug.autoplay"
+        static let showPerformanceOverlay = "TrafficGetaway.debug.performanceOverlay"
     }
 
     static var forcedCity: DebugCityOverride {
@@ -137,6 +139,16 @@ enum AppConfig {
     static var printRejectedTrafficWaves: Bool {
         get { UserDefaults.standard.bool(forKey: DefaultsKey.printRejectedTrafficWaves) }
         set { UserDefaults.standard.set(newValue, forKey: DefaultsKey.printRejectedTrafficWaves) }
+    }
+
+    static var debugAutoplay: Bool {
+        get { UserDefaults.standard.bool(forKey: DefaultsKey.debugAutoplay) }
+        set { UserDefaults.standard.set(newValue, forKey: DefaultsKey.debugAutoplay) }
+    }
+
+    static var showPerformanceOverlay: Bool {
+        get { UserDefaults.standard.bool(forKey: DefaultsKey.showPerformanceOverlay) }
+        set { UserDefaults.standard.set(newValue, forKey: DefaultsKey.showPerformanceOverlay) }
     }
 
     static func cycleForcedLevel() {

@@ -17,7 +17,12 @@ struct TrafficPatternContext {
     let wantedLevel: Int
     let city: CityTheme
     let protectedLanes: Set<Int>
+    let protectedSlots: Set<Int>
     let recentBlockedLanes: Set<Int>
+    let recentHazards: [TrafficHazardSnapshot]
+    let exitActive: Bool
+    let exitSide: ExitSide?
+    let dodgeBoostActive: Bool
 }
 
 struct TrafficWavePlan {
@@ -25,6 +30,9 @@ struct TrafficWavePlan {
     let spawns: [TrafficSpawnRequest]
     let occupiedLanes: Set<Int>
     let openLanes: Set<Int>
+    let safeCarSlots: Set<Int>
+    let safeMotorcycleSlots: Set<Int>
+    let rejectionReason: String
 }
 
 enum TrafficPatternGenerator {
@@ -39,23 +47,31 @@ enum TrafficPatternGenerator {
     }
 
     static func generate(context: TrafficPatternContext) -> TrafficWavePlan? {
+        var lastRejection = "unknown"
         for attempt in 0..<10 {
             let pattern = choosePattern(context: context)
             let requests = makeRequests(pattern: pattern, context: context)
-            let validation = validate(requests: requests, context: context)
+            let validation = TrafficSafetyAnalyzer.validateWave(requests: requests, context: context)
 
             if validation.isValid {
                 return TrafficWavePlan(
                     patternName: String(describing: pattern),
                     spawns: requests,
-                    occupiedLanes: validation.occupied,
-                    openLanes: validation.open
+                    occupiedLanes: validation.occupiedLanes,
+                    openLanes: validation.openLanes,
+                    safeCarSlots: validation.safeCarSlots,
+                    safeMotorcycleSlots: validation.safeMotorcycleSlots,
+                    rejectionReason: validation.rejectionReason
                 )
-            } else if AppConfig.printRejectedTrafficWaves {
-                print("[TrafficPattern] rejected \(pattern) attempt=\(attempt) reason=\(validation.reason)")
+            } else {
+                lastRejection = validation.rejectionReason
+                if AppConfig.printRejectedTrafficWaves {
+                    print("[TrafficPattern] rejected \(pattern) attempt=\(attempt) reason=\(validation.rejectionReason)")
+                }
             }
         }
-        return nil
+
+        return recoveryWave(context: context, lastRejection: lastRejection)
     }
 
     private static func choosePattern(context: TrafficPatternContext) -> Pattern {
@@ -79,7 +95,7 @@ enum TrafficPatternGenerator {
 
         switch pattern {
         case .sparseLanes:
-            for lane in lanes.prefix(max(3, min(5, occupiedTarget))) {
+            for lane in lanes.prefix(min(5, occupiedTarget)) {
                 requests.append(request(lane: lane, type: randomCivilian(context), index: requests.count))
             }
 
@@ -125,41 +141,11 @@ enum TrafficPatternGenerator {
         return requests
     }
 
-    private static func validate(requests: [TrafficSpawnRequest], context: TrafficPatternContext) -> (isValid: Bool, occupied: Set<Int>, open: Set<Int>, reason: String) {
-        guard !requests.isEmpty else { return (false, [], [], "empty wave") }
-
-        var occupied: Set<Int> = []
-        for request in requests {
-            let lanes = occupiedLanes(for: request.lane, type: request.type, laneCount: context.laneCount)
-            if !lanes.isDisjoint(with: occupied) {
-                return (false, occupied, [], "overlap")
-            }
-            if !lanes.isDisjoint(with: context.protectedLanes) {
-                return (false, occupied, [], "protected exit lane")
-            }
-            occupied.formUnion(lanes)
-        }
-
-        let danger = occupied.union(context.recentBlockedLanes)
-        let allLanes = Set(0..<context.laneCount)
-        let open = allLanes.subtracting(danger)
-        let minOpen = context.vehicleClass == .motorcycle ? 1 : (context.density < 0.82 ? 2 : 1)
-        guard open.count >= minOpen else { return (false, occupied, open, "not enough open lanes") }
-
-        let reachableOpen: Bool
-        if context.vehicleClass == .motorcycle {
-            let openSlots = openSlots(fromOpenLanes: open, occupiedLanes: danger, laneCount: context.laneCount)
-            reachableOpen = openSlots.contains { abs($0 - context.playerSlot) <= 6 }
-        } else {
-            reachableOpen = open.contains { abs($0 - context.playerLane) <= 3 }
-        }
-        guard reachableOpen else { return (false, occupied, open, "no reachable gap") }
-
-        return (true, occupied, open, "ok")
-    }
-
     private static func occupiedLaneTarget(_ context: TrafficPatternContext) -> Int {
         let bikeBonus = context.vehicleClass == .motorcycle ? 1 : 0
+        if context.density < 0.28 {
+            return Int.random(in: (2 + bikeBonus)...(4 + bikeBonus))
+        }
         if context.density < 0.46 {
             return Int.random(in: (3 + bikeBonus)...(5 + bikeBonus))
         }
@@ -178,6 +164,45 @@ enum TrafficPatternGenerator {
     private static func openGap(width: Int, context: TrafficPatternContext) -> [Int] {
         let start = Int.random(in: 0...max(0, context.laneCount - width))
         return Array(start..<(start + width))
+    }
+
+    private static func recoveryWave(context: TrafficPatternContext, lastRejection: String) -> TrafficWavePlan? {
+        let laneOrder = Array(0..<context.laneCount)
+            .filter { lane in
+                !context.protectedLanes.contains(lane)
+                && !context.recentBlockedLanes.contains(lane)
+                && !context.protectedSlots.contains(lane * 2)
+                && abs((lane * 2) - context.playerSlot) > 4
+            }
+            .sorted { abs(($0 * 2) - context.playerSlot) > abs(($1 * 2) - context.playerSlot) }
+
+        let fallbackLanes = Array(laneOrder.prefix(3))
+        guard !fallbackLanes.isEmpty else { return nil }
+
+        let types: [VehicleType] = [.sedan, .taxi, .sports]
+        let requests = fallbackLanes.enumerated().map { index, lane in
+            TrafficSpawnRequest(
+                lane: lane,
+                type: types[index % types.count],
+                yOffset: CGFloat(index) * 68,
+                speedMultiplier: CGFloat.random(in: 0.88...0.98)
+            )
+        }
+        let validation = TrafficSafetyAnalyzer.validateWave(requests: requests, context: context)
+
+        if AppConfig.printRejectedTrafficWaves {
+            print("[TrafficPattern] recovery wave after rejection=\(lastRejection) validation=\(validation.rejectionReason)")
+        }
+
+        return TrafficWavePlan(
+            patternName: "recoveryWave",
+            spawns: requests,
+            occupiedLanes: validation.occupiedLanes,
+            openLanes: validation.openLanes,
+            safeCarSlots: validation.safeCarSlots,
+            safeMotorcycleSlots: validation.safeMotorcycleSlots,
+            rejectionReason: validation.isValid ? lastRejection : validation.rejectionReason
+        )
     }
 
     private static func request(lane: Int, type: VehicleType, index: Int, speed: CGFloat = 1) -> TrafficSpawnRequest {
@@ -214,11 +239,4 @@ enum TrafficPatternGenerator {
         return [max(0, min(laneCount - 1, lane)), max(0, min(laneCount - 1, sideLane))]
     }
 
-    private static func openSlots(fromOpenLanes openLanes: Set<Int>, occupiedLanes: Set<Int>, laneCount: Int) -> Set<Int> {
-        var slots = Set(openLanes.map { $0 * 2 })
-        for lane in 0..<(laneCount - 1) where !occupiedLanes.contains(lane) || !occupiedLanes.contains(lane + 1) {
-            slots.insert(lane * 2 + 1)
-        }
-        return slots
-    }
 }

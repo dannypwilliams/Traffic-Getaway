@@ -41,7 +41,8 @@ final class ProgressionManager {
         let levelStarRating = completedLevel.map { LevelDifficultyConfig.starRating(for: run, level: $0) } ?? 0
         let previousBestStars = completedLevel.map { saveBefore.levelStarRatings[$0.levelID] ?? 0 } ?? 0
         let baseCash = calculateBaseCash(run)
-        let finalCash = max(20, Int(CGFloat(baseCash) * car.cashMultiplier) + levelRewardCash)
+        let economyScale: CGFloat = run.selectedVehicleClass == .motorcycle ? 0.96 : 1.02
+        let finalCash = max(20, Int(CGFloat(baseCash) * car.cashMultiplier * economyScale) + levelRewardCash)
         let finalXP = max(12, calculateXP(run: run) + levelRewardXP)
         let levelBefore = saveBefore.playerLevel
         let xpBefore = saveBefore.totalXP
@@ -112,7 +113,7 @@ final class ProgressionManager {
         let distanceCash = run.distance / 180
         let wantedCash = run.wantedLevelReached * 18
         let nearMissCash = run.nearMisses * 5
-        let laneSplitCash = run.laneSplits * 10
+        let laneSplitCash = run.laneSplits * 7
         let clutchCash = run.clutchSaves * 22
         let comboCash = run.highestCombo * 6
         let survivalCash = Int(run.survivalTime / 6)
@@ -123,7 +124,7 @@ final class ProgressionManager {
         let scoreXP = run.score / 170
         let survivalXP = Int(run.survivalTime / 3)
         let distanceXP = run.distance / 240
-        let riskXP = run.nearMisses * 2 + run.laneSplits * 5 + run.clutchSaves * 10
+        let riskXP = run.nearMisses * 2 + run.laneSplits * 4 + run.clutchSaves * 10
         let heatXP = run.wantedLevelReached * 18
         let comboXP = run.highestCombo * 3
         return scoreXP + survivalXP + distanceXP + riskXP + heatXP + comboXP + run.xpEarned

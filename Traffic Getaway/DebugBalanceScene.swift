@@ -33,7 +33,7 @@ final class DebugBalanceScene: SKScene {
         contentNode.addChild(status)
 
         let forcedLevel = LevelCatalog.level(id: AppConfig.forcedLevelID)?.name ?? "AUTO"
-        let forced = UIHelpers.bodyLabel("City \(AppConfig.forcedCity.displayName)  Wanted \(AppConfig.forcedWantedLevel == 0 ? "AUTO" : "\(AppConfig.forcedWantedLevel)")  Level \(forcedLevel)", size: 12, color: SKColor.cyan, width: size.width - 34)
+        let forced = UIHelpers.bodyLabel("City \(AppConfig.forcedCity.displayName)  Wanted \(AppConfig.forcedWantedLevel == 0 ? "AUTO" : "\(AppConfig.forcedWantedLevel)")  Level \(forcedLevel)  Auto \(AppConfig.debugAutoplay ? "ON" : "OFF")  Perf \(AppConfig.showPerformanceOverlay ? "ON" : "OFF")", size: 12, color: SKColor.cyan, width: size.width - 34)
         forced.position = CGPoint(x: size.width / 2, y: size.height - 118)
         contentNode.addChild(forced)
 
@@ -67,6 +67,8 @@ final class DebugBalanceScene: SKScene {
             ("HEATMAP", "debug.heatmap"),
             ("OPEN PATHS", "debug.openPaths"),
             ("SPAWN LOG", "debug.spawnLog"),
+            ("AUTOPLAY", "debug.autoplay"),
+            ("PERF HUD", "debug.performance"),
             ("TEST HAPTICS", "debug.haptics"),
             ("TEST AUDIO", "debug.audio"),
             ("CHECK RELEASE", "debug.releaseCheck"),
@@ -159,6 +161,12 @@ final class DebugBalanceScene: SKScene {
             buildDebug()
         case "debug.spawnLog":
             AppConfig.printRejectedTrafficWaves.toggle()
+            buildDebug()
+        case "debug.autoplay":
+            AppConfig.debugAutoplay.toggle()
+            buildDebug()
+        case "debug.performance":
+            AppConfig.showPerformanceOverlay.toggle()
             buildDebug()
         case "debug.haptics":
             if AudioManager.shared.isHapticsEnabled {
