@@ -195,7 +195,7 @@
 				2A6D06D92C21A00100A00001 /* Sources */,
 				2A6D06DA2C21A00100A00001 /* Frameworks */,
 				2A6D06DB2C21A00100A00001 /* Resources */,
-				2A6D0E002C21A00100A00001 /* Strip Signing Metadata */,
+				2A6D9E002C21A00100A00001 /* Strip Signing Metadata */,
 			);
 			buildRules = (
 			);
@@ -251,7 +251,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2A6D0E002C21A00100A00001 /* Strip Signing Metadata */ = {
+		2A6D9E002C21A00100A00001 /* Strip Signing Metadata */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
