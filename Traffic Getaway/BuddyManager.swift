@@ -112,14 +112,14 @@ final class BuddyManager {
     private func makePopup(text: String, category: BuddyLineCategory) -> SKNode {
         let root = SKNode()
         root.zPosition = 132
-        root.position = CGPoint(x: 14, y: max(218, sceneSize.height - 154))
+        let importantExit = category == .exitWarningLeft || category == .exitWarningRight || category == .exitCountdown
+        root.position = CGPoint(x: 12, y: importantExit ? max(154, sceneSize.height - 132) : 82)
         root.alpha = 0
 
         let accent = color(for: category)
-        let importantExit = category == .exitWarningLeft || category == .exitWarningRight || category == .exitCountdown
-        let portraitSide: CGFloat = importantExit ? 46 : 40
-        let bubbleHeight: CGFloat = importantExit ? 44 : 38
-        let bubbleWidth = min(sceneSize.width - 80, importantExit ? 252 : 218)
+        let portraitSide: CGFloat = importantExit ? 42 : 34
+        let bubbleHeight: CGFloat = importantExit ? 40 : 32
+        let bubbleWidth = min(sceneSize.width - 86, importantExit ? 232 : 182)
 
         let portraitPanel = SKShapeNode(rectOf: CGSize(width: portraitSide, height: portraitSide), cornerRadius: 8)
         portraitPanel.position = CGPoint(x: portraitSide / 2, y: 0)
@@ -178,7 +178,7 @@ final class BuddyManager {
             .scale(to: 1, duration: 0.16)
         ])
         enter.timingMode = .easeOut
-        let hold = SKAction.wait(forDuration: 1.65)
+        let hold = SKAction.wait(forDuration: 1.35)
         let exit = SKAction.group([
             .fadeOut(withDuration: 0.18),
             .moveBy(x: -18, y: 0, duration: 0.18)

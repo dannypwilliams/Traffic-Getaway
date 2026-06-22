@@ -316,12 +316,16 @@ final class MainMenuScene: SKScene {
         achievements.position = CGPoint(x: size.width / 2 + width * 0.26, y: y - 22)
         contentNode.addChild(achievements)
 
-        let store = UIHelpers.button(text: "STORE", name: "menu.store", size: CGSize(width: width * 0.48, height: 38), fill: SKColor(red: 1, green: 0.45, blue: 0.16, alpha: 0.18), stroke: SKColor(red: 1, green: 0.45, blue: 0.16, alpha: 1))
-        store.position = CGPoint(x: size.width / 2 - width * 0.26, y: y - 70)
-        contentNode.addChild(store)
+        if AppConfig.showStoreButton {
+            let store = UIHelpers.button(text: "STORE", name: "menu.store", size: CGSize(width: width * 0.48, height: 38), fill: SKColor(red: 1, green: 0.45, blue: 0.16, alpha: 0.18), stroke: SKColor(red: 1, green: 0.45, blue: 0.16, alpha: 1))
+            store.position = CGPoint(x: size.width / 2 - width * 0.26, y: y - 70)
+            contentNode.addChild(store)
+        }
 
-        let settings = UIHelpers.button(text: "SETTINGS", name: "menu.settings", size: CGSize(width: width * 0.48, height: 38), fill: SKColor.white.withAlphaComponent(0.1), stroke: SKColor.white.withAlphaComponent(0.72))
-        settings.position = CGPoint(x: size.width / 2 + width * 0.26, y: y - 70)
+        let settingsWidth = AppConfig.showStoreButton ? width * 0.48 : width
+        let settingsX = AppConfig.showStoreButton ? size.width / 2 + width * 0.26 : size.width / 2
+        let settings = UIHelpers.button(text: "SETTINGS", name: "menu.settings", size: CGSize(width: settingsWidth, height: 38), fill: SKColor.white.withAlphaComponent(0.1), stroke: SKColor.white.withAlphaComponent(0.72))
+        settings.position = CGPoint(x: settingsX, y: y - 70)
         contentNode.addChild(settings)
     }
 
@@ -495,6 +499,7 @@ final class MainMenuScene: SKScene {
         case "menu.achievements":
             showAchievementsOverlay()
         case "menu.store":
+            guard AppConfig.showStoreButton else { return }
             isTransitioning = true
             UIHelpers.present(StoreScene(size: size), from: self)
         case "menu.settings":

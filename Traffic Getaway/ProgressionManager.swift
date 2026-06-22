@@ -81,6 +81,7 @@ final class ProgressionManager {
 
         SaveManager.shared.addCash(finalCash)
         let levelChange = SaveManager.shared.addXP(finalXP)
+        unlockStarterBikeIfEarned(completedLevel: completedLevel)
         let missionUpdates = MissionManager.shared.updateProgress(with: run, cashEarned: finalCash)
         let dailyUpdate = DailyChallengeManager.shared.updateProgress(with: run, cashEarned: finalCash)
         let achievementUpdates = AchievementManager.shared.updateStoredProgress()
@@ -128,5 +129,18 @@ final class ProgressionManager {
         let heatXP = run.wantedLevelReached * 18
         let comboXP = run.highestCombo * 3
         return scoreXP + survivalXP + distanceXP + riskXP + heatXP + comboXP + run.xpEarned
+    }
+
+    private func unlockStarterBikeIfEarned(completedLevel: LevelDefinition?) {
+        let save = SaveManager.shared.data
+        guard !save.unlockedCarIDs.contains(CarCatalog.starterBikeID) else { return }
+
+        let clearedFirstLevel = completedLevel?.levelID == "ny_01" || save.completedLevelIDs.contains("ny_01")
+        let earnedEnoughCash = save.lifetimeCashEarned >= 500
+        let threadedEnoughTraffic = save.totalNearMisses >= 10
+
+        guard clearedFirstLevel || earnedEnoughCash || threadedEnoughTraffic else { return }
+        SaveManager.shared.unlockCar(CarCatalog.starterBikeID)
+        AnalyticsManager.shared.carUnlocked(id: CarCatalog.starterBikeID)
     }
 }

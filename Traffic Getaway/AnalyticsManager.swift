@@ -31,6 +31,18 @@ final class AnalyticsManager {
         log("onboarding_completed")
     }
 
+    func tutorialStarted() {
+        log("tutorial_started")
+    }
+
+    func tutorialCompleted(skipped: Bool) {
+        log(skipped ? "tutorial_skipped" : "tutorial_completed")
+    }
+
+    func firstInput(time: TimeInterval) {
+        log("first_input", parameters: ["time": String(format: "%.2f", time)])
+    }
+
     func runStarted(carID: String, paintID: String) {
         log("run_started", parameters: [
             "car": carID,
@@ -53,12 +65,25 @@ final class AnalyticsManager {
         ])
     }
 
-    func crash(reason: String, score: Int, distance: Int) {
+    func crash(reason: String, score: Int, distance: Int, timeSurvived: TimeInterval = 0) {
         log("crash", parameters: [
             "reason": reason,
             "score": score,
-            "distance": distance
+            "distance": distance,
+            "time": String(format: "%.1f", timeSurvived)
         ])
+    }
+
+    func exitAppeared(levelID: String?, side: ExitSide, emergency: Bool) {
+        log("exit_appeared", parameters: ["level": levelID ?? "endless", "side": side.rawValue, "emergency": emergency])
+    }
+
+    func exitReached(levelID: String?, time: TimeInterval) {
+        log("exit_reached", parameters: ["level": levelID ?? "endless", "time": String(format: "%.1f", time)])
+    }
+
+    func exitMissed(levelID: String?, time: TimeInterval) {
+        log("exit_missed", parameters: ["level": levelID ?? "endless", "time": String(format: "%.1f", time)])
     }
 
     func carSelected(id: String) {
