@@ -6,7 +6,7 @@ Evidence-based Traffic Getaway playtest pass for responsiveness, understandabili
 
 This directory is the authoritative artifact root for the full recorded playtest requested on 2026-06-23. Do not mark a matrix row complete unless matching video, telemetry, summary, screenshots, and written observations exist.
 
-Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete; the broader all-city/all-device playtest remains incomplete.
+Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete, failure/retry has recorded evidence, and one iPhone 17 Pro Dynamic Island active sample has been captured. The broader all-city/all-device playtest remains incomplete.
 
 ## Starting State
 
@@ -39,6 +39,8 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - Six valid active-input LA01 Starter Compact runs are recorded; five have complete screenshot evidence and one supplemental run is missing the result screenshot.
 - Three complete-evidence active-input LA01 Starter Bike runs are recorded in Runs 03, 04, and 05. A prior Bike Run 02 has telemetry/result evidence but is rejected from the complete-evidence count because the start screenshot and video are missing.
 - Failure-and-retry functional coverage is recorded in `videos/progression/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01.mp4`.
+- Dynamic Island-class coverage is recorded in `videos/dynamic-island/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02.mp4`, but the safe-area check failed because the Dynamic Island overlaps the top HUD. See `FTG-P2-001`.
+- The iPhone 17 Pro Dynamic Island capture also exposed a vehicle identity mismatch: the run requested Starter Bike, telemetry reported `starter_compact`, and visible UI/result labels showed Sunset Cruiser. See `FTG-P2-002`. Treat the sample as valid for Dynamic Island safe-area evidence, but only partial for vehicle-specific control coverage.
 
 ## Artifact Structure
 

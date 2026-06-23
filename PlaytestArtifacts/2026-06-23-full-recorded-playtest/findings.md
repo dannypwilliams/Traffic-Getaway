@@ -4,11 +4,11 @@
 
 Status: `partial`.
 
-The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, the Los Angeles Starter Bike slice has three complete-evidence active-input runs, and failure/retry now has a recorded functional session. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
+The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, the Los Angeles Starter Bike slice has three complete-evidence active-input runs, failure/retry now has a recorded functional session, and one iPhone 17 Pro Dynamic Island active sample has been captured. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The iPhone 17 Pro sample failed the Dynamic Island safe-area check and exposed a vehicle identity mismatch. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
 
 ## Control Feel
 
-Partial. Tap steering produced lane changes in ten valid active-input runs, with 32 lane-change events across the counted Starter Compact/Starter Bike slices and the retry functional session. This proves the default `SWIPE + TAP` path can accept tap input for both car and motorcycle handling, but it does not validate precision, consistency, frame-rate behavior, or every materially different control mode.
+Partial. Tap steering produced lane changes in eleven valid active-input runs, with 34 lane-change events across the counted Starter Compact/Starter Bike slices, the retry functional session, and the Dynamic Island active sample. This proves the default `SWIPE + TAP` path can accept tap input on both sampled simulator classes, but it does not validate precision, consistency, frame-rate behavior, or every materially different control mode. The iPhone 17 Pro sample is partial for vehicle-specific coverage because the requested, visible, and telemetry vehicle identities did not agree.
 
 ## First-Minute Experience
 
@@ -20,7 +20,7 @@ Partial. Automated all-level simulations were captured for Starter Compact and S
 
 ## Procedural Fairness
 
-Partial. The counted LA01 runs captured collision analysis, active traffic context, lane-change probes, and terminal reasons. Starter Compact aggregate telemetry shows 6/6 collision analyses, 27 lane-change probes, and 4 unsafe-path probes. Starter Bike counted telemetry shows 3/3 collision analyses, 43 lane-change probes, 0 lane-change intersection probes, and terminal reasons `traffic` twice and `roadblock` once. The failure/retry functional session adds one more active collision-analysis sample. Broader fairness is still unproven.
+Partial. The counted LA01 runs captured collision analysis, active traffic context, lane-change probes, and terminal reasons. Starter Compact aggregate telemetry shows 6/6 collision analyses, 27 lane-change probes, and 4 unsafe-path probes. Starter Bike counted telemetry shows 3/3 collision analyses, 43 lane-change probes, 0 lane-change intersection probes, and terminal reasons `traffic` twice and `roadblock` once. The failure/retry functional session and Dynamic Island active sample each add one more active collision-analysis sample. Broader fairness is still unproven.
 
 ## City Differentiation
 
@@ -32,8 +32,8 @@ Partial result-screen evidence only. Starter Bike Runs 04 and 05 showed XP/progr
 
 ## Performance
 
-Partial. The Mac/iOS Simulator build passed and ten valid active-input recordings succeeded while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet.
+Partial. The Mac/iOS Simulator build passed and eleven valid active-input recordings succeeded while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet. The required Dynamic Island-class sample revealed top-HUD clipping under the Dynamic Island.
 
 ## Release Readiness
 
-Not release-ready. Required human-play evidence, all-city coverage, full tutorial coverage, progression coverage, Dynamic Island active coverage, and final matrix documentation are incomplete. The current LA01 Starter Compact and Starter Bike evidence also raises P1 first-level completion and first-minute concerns.
+Not release-ready. Required human-play evidence, all-city coverage, full tutorial coverage, progression coverage, and final matrix documentation are incomplete. The current LA01 Starter Compact and Starter Bike evidence raises P1 first-level completion and first-minute concerns, and the iPhone 17 Pro Dynamic Island sample adds a P2 top-HUD safe-area defect.

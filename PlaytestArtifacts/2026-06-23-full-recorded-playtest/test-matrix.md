@@ -6,12 +6,12 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 
 - Planned tests: 73
 - Passed: 17
-- Failed: 0
-- Partial: 1
+- Failed: 1
+- Partial: 2
 - Blocked: 0
-- Invalid: 1
-- Not tested: 55
-- Valid active-input runs in this artifact set: 10
+- Invalid: 2
+- Not tested: 53
+- Valid active-input runs in this artifact set: 11
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 - Valid complete-evidence runs counted for LA Starter Bike requirement: 3
 
@@ -27,7 +27,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | AUTO-03 | `git diff --check` | pass | `build-validation/git-diff-check.log` | Empty log with zero exit means whitespace check passed. |
 | AUTO-04 | GameCore tests | pass | `build-validation/gamecore-swift-test.log` | 22 tests, 0 failures. |
 | AUTO-05 | Mac/iOS Simulator build verification | pass | `build-validation/verify-on-mac.log` | Build succeeded. |
-| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01-summary.md` | Summaries generated from raw telemetry. |
+| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01-summary.md`, `telemetry/summaries/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02-summary.md` | Summaries generated from raw telemetry. |
 | AUTO-07 | Representative GameSim runs for all levels with starter vehicle | pass | `build-validation/gamesim-all-levels-starter-compact.log` | 15 levels x 1,000 runs. |
 | AUTO-08 | Representative GameSim runs for all levels with Starter Bike | pass | `build-validation/gamesim-all-levels-starter-bike.log` | 15 levels x 1,000 runs. |
 | AUTO-09 | Traffic stress/procedural fairness validation | pass | `build-validation/gamecore-swift-test.log`, `build-validation/gamesim-all-levels-starter-compact.log`, `build-validation/gamesim-all-levels-starter-bike.log` | Automated stress/fairness signals exist; manual fairness remains unproven. |
@@ -48,7 +48,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | FUNC-09 | Completion screen and reward screen | iPhone 17e | not tested | | | |
 | FUNC-10 | Background and relaunch restoration | iPhone 17e | not tested | | | |
 | FUNC-11 | Existing-save progression restoration | iPhone 17e | not tested | | | |
-| FUNC-12 | Dynamic Island safe-area/control obstruction check | iPhone 17 Pro | not tested | | | |
+| FUNC-12 | Dynamic Island safe-area/control obstruction check | iPhone 17 Pro | fail | `videos/dynamic-island/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02.mp4` | `telemetry/raw/01-2026-06-23_09-51-27-la_01-starter_compact-17033032432948438445.jsonl` | Test performed. Dynamic Island overlaps/clips top HUD; logged as `FTG-P2-001`. |
 
 ## Control Mode Coverage
 
@@ -57,7 +57,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | CTRL-01 | SWIPE + TAP | iPhone 17e | la_01 | starter_compact | pass | `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run02.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run04.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run05.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run06.mp4`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md` |
 | CTRL-02 | SWIPE ONLY | iPhone 17e | la_01 | starter_compact | not tested | |
 | CTRL-03 | TAP ONLY | iPhone 17e | la_01 | starter_compact | not tested | |
-| CTRL-04 | SWIPE + TAP | iPhone 17 Pro | la_01 | starter_compact | not tested | |
+| CTRL-04 | SWIPE + TAP | iPhone 17 Pro | la_01 | starter_compact | partial | `videos/dynamic-island/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02.mp4`, `telemetry/summaries/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02-summary.md` | Active input was recorded on iPhone 17 Pro, but vehicle identity is inconsistent: requested Starter Bike, telemetry `starter_compact`, UI/result Sunset Cruiser. Logged as `FTG-P2-002`. |
 | CTRL-05 | SWIPE ONLY | iPhone 17 Pro | la_01 | starter_compact | not tested | |
 | CTRL-06 | TAP ONLY | iPhone 17 Pro | la_01 | starter_compact | not tested | |
 
@@ -105,3 +105,5 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 Starter Compact Run 03 is valid active telemetry/video evidence but is excluded from the five complete-evidence Starter Compact count because the result screenshot is missing.
 
 Starter Bike Run 02 is rejected from the complete-evidence Starter Bike count because only telemetry and a result screenshot remain in the artifact directory; the start screenshot and video are missing. The valid complete-evidence Starter Bike set is Runs 03, 04, and 05.
+
+Dynamic Island Run 01 is rejected from active-input coverage because telemetry recorded 0 lane changes. It remains useful visual reference for the top-HUD safe-area issue and vehicle-label mismatch.

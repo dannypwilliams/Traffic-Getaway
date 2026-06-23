@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session and one Dynamic Island-class active sample. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -43,17 +43,26 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Functional read: `RETRY LEVEL` returned to the Los Angeles Starter Bike start screen.
 - Balance use: supplemental only; this validates retry flow and adds one active bike sample, but it is not part of the three-run LA Starter Bike requirement.
 
+## Supplemental Dynamic Island Sample
+
+- Device: iPhone 17 Pro simulator, Dynamic Island-class.
+- Level/requested vehicle: `la_01`; requested Starter Bike, telemetry reported Starter Compact, visible UI/result label showed Sunset Cruiser.
+- Result: traffic collision at 23.7s, 5 near misses, 2 lane changes, 49 cash, wanted level 3, 0 autoplay decisions.
+- Functional read: active input was recorded and controls remained usable, but the Dynamic Island overlaps the top HUD.
+- Balance use: supplemental only. This is valid for safe-area/device evidence, but the vehicle identity mismatch means it should not drive vehicle-specific balance conclusions.
+
 ## Simulation Comparison
 
 - Default GameSim previously reported LA01 Starter Compact completion around 99% with high near misses and high cash.
 - Recorded iPhone 17e active Starter Compact play now shows 0/6 completion and sub-10-second traffic terminals.
 - Recorded iPhone 17e active Starter Bike play shows 0/3 completion in the counted complete-evidence set, with one run reaching the exit countdown at 50.2s before traffic collision.
+- Recorded iPhone 17 Pro Dynamic Island active play shows 0/1 completion in the supplemental sample, with a traffic collision at 23.7s and a vehicle identity mismatch.
 - Interpretation: sim/live/manual difficulty are not reconciled. Do not tune from simulation alone.
 
 ## Required Next Evidence
 
 - Start-gated active iPhone 17e runs for every city.
-- Start-gated Dynamic Island-class control/safe-area coverage.
+- Additional start-gated Dynamic Island-class coverage after the top-HUD overlap and vehicle identity mismatch are understood.
 - Starter Compact and Starter Bike runs with complete video, telemetry, summary, and observations.
 - City progression attempts that show whether rewards/unlocks are understandable and whether grinding is required.
 

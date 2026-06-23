@@ -4,7 +4,7 @@
 
 PARTIAL.
 
-The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, and failure/retry has recorded functional evidence. The required all-city/all-device recorded active-play matrix is not complete.
+The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, and one iPhone 17 Pro Dynamic Island active sample has been captured. The required all-city/all-device recorded active-play matrix is not complete.
 
 ## Commit Range
 
@@ -15,33 +15,33 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 
 - Planned tests: 73
 - Passed: 17
-- Failed: 0
-- Partial: 1
+- Failed: 1
+- Partial: 2
 - Blocked: 0
-- Invalid: 1
-- Not tested: 55
-- Valid active-input runs: 10
+- Invalid: 2
+- Not tested: 53
+- Valid active-input runs: 11
 - Valid complete-evidence runs counted for LA Starter Compact: 5
 - Valid complete-evidence runs counted for LA Starter Bike: 3
 
 ## Coverage
 
-- Device coverage: iPhone 17e has two completed recorded active-run slices plus one recorded retry functional session; iPhone 17 Pro has build/debug-default validation only; no physical hardware.
+- Device coverage: iPhone 17e has two completed recorded active-run slices plus one recorded retry functional session; iPhone 17 Pro has one Dynamic Island active sample that failed the safe-area check; no physical hardware.
 - City coverage: Los Angeles has completed Starter Compact and Starter Bike active-run slices for `la_01`; New York and Miami have automated simulation only.
 - Vehicle coverage: Starter Compact and Starter Bike each have one completed iPhone 17e Los Angeles city slice.
 - Tutorial result: not tested.
 - First-minute result: fail/partial signal; six valid active Starter Compact LA01 runs all crashed before 10 seconds, and three complete-evidence Starter Bike LA01 runs all failed before completion.
-- Control-feel result: partial; tap steering produced lane changes in ten valid active-input runs, but other control modes are untested.
+- Control-feel result: partial; tap steering produced lane changes in eleven valid active-input runs, but other control modes are untested and the iPhone 17 Pro vehicle-specific sample is weakened by a vehicle identity mismatch.
 - Difficulty-progression result: partial automated simulation only; manual progression not validated.
-- Procedural-fairness result: partial; ten collision analysis samples exist, but broader levels/cities/vehicles are untested.
+- Procedural-fairness result: partial; eleven active samples exist and the Dynamic Island active sample includes collision analysis, but broader levels/cities/vehicles are untested.
 - City-differentiation result: not tested.
-- Performance result: partial; build and one recorded run succeeded, but frame pacing was not measured.
+- Performance result: partial; build and multiple recorded runs succeeded, but frame pacing was not measured. Dynamic Island HUD layout failed on iPhone 17 Pro.
 
 ## Issue Counts
 
 - P0: 0 confirmed in this artifact set.
 - P1: 2 confirmed in this artifact set.
-- P2: 0 confirmed in this artifact set.
+- P2: 2 confirmed in this artifact set.
 - P3: 0 confirmed in this artifact set.
 
 ## Artifact Paths
@@ -54,7 +54,7 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 
 ## Exact Next Recommended Task
 
-Capture the Los Angeles progression attempt next, then continue Dynamic Island active coverage and New York/Miami starter-vehicle coverage.
+Capture the Los Angeles progression attempt next. Separately investigate the Dynamic Island HUD overlap and iPhone 17 Pro vehicle identity mismatch before relying on more iPhone 17 Pro vehicle-specific rows.
 
 ## Remote Alignment
 
