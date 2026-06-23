@@ -54,6 +54,7 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `scripts/capture_live_telemetry.py`: added a repeatable simulator capture loop for debug autoplay live-run matrices, with flushed progress output, a working empty `--app ''` skip-install path, and direct plist debug-default writes to avoid flaky simulator `defaults write` hangs.
 - `scripts/capture_live_telemetry.py`: added `--manual` mode so the same direct-start telemetry loop can capture human-controlled runs with debug autoplay disabled.
 - `scripts/capture_live_telemetry.py`: hardened debug-default cleanup by restarting simulator `cfprefsd` and raising if debug keys remain after capture.
+- `scripts/capture_live_telemetry.py`: further hardened debug-default cleanup by stopping simulator `cfprefsd` before and after preference writes, preventing cached debug direct-start keys from reappearing after manual captures.
 - Captured passive no-input manual matrices on iPhone 17e and iPhone 17 Pro, both with zero autoplay decisions and collision analysis in every terminal sample.
 - `Traffic Getaway/GameScene.swift`: increased passive police catch-up while the player stays idle and added an explicit passive capture threshold after max passive pressure has been ignored, so no-input play resolves as `police_caught` before traffic or roadblocks can hide the failure reason.
 - Captured post-fix passive no-input manual matrices on iPhone 17e and iPhone 17 Pro; both produced 5/5 `police_caught` terminals at 9.0s with zero autoplay decisions.
@@ -145,6 +146,7 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/telemetry`: passed.
 - `python3 -u scripts/capture_live_telemetry.py --device 90D3514A-BDE2-412C-8238-8ECC17BD86B6 --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/telemetry --timeout 120`: passed.
 - `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/telemetry`: passed.
+- Direct plist verification confirmed iPhone 17e and iPhone 17 Pro debug defaults were cleared after the passive police-capture matrices.
 
 ## Simulator/device evidence
 
