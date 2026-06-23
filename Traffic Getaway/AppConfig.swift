@@ -83,6 +83,9 @@ enum AppConfig {
     static let startingCashForTesting = 0
     static let forceOnboarding = false
     static let enableInterstitialAds = false
+    static let rewardedRevivesEnabled = false
+    static let rewardedCashDoublesEnabled = false
+    static let liveRunTelemetryEnabled = debugMode
 
     private enum DefaultsKey {
         static let forcedCity = "TrafficGetaway.debug.forcedCity"

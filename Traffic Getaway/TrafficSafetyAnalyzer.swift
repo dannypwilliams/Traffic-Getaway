@@ -87,16 +87,7 @@ enum TrafficSafetyAnalyzer {
         }
 
         if context.exitActive, let side = context.exitSide {
-            let exitRoute = reachableSafeSlots.contains { slot in
-                switch side {
-                case .left:
-                    return slot <= context.playerSlot && slot <= 8
-                case .right:
-                    return slot >= context.playerSlot && slot >= slotCount - 9
-                }
-            }
-
-            guard exitRoute else {
+            guard preservesExitRoute(from: context.playerSlot, reachableSafeSlots: reachableSafeSlots, side: side) else {
                 return rejected("no reachable exit-side route", occupied: occupiedLanes, open: open, carSlots: safeCarSlots, motorcycleSlots: safeMotorcycleSlots)
             }
         }
@@ -140,6 +131,29 @@ enum TrafficSafetyAnalyzer {
             base = context.exitActive ? 8 : 6
         }
         return context.dodgeBoostActive ? base + 2 : base
+    }
+
+    private static func preservesExitRoute(from playerSlot: Int, reachableSafeSlots: Set<Int>, side: ExitSide) -> Bool {
+        let exitThreshold: Int
+        let isExitSideSlot: (Int) -> Bool
+        let movesTowardExit: (Int) -> Bool
+
+        switch side {
+        case .left:
+            exitThreshold = 8
+            isExitSideSlot = { $0 <= exitThreshold }
+            movesTowardExit = { $0 < playerSlot }
+        case .right:
+            exitThreshold = slotCount - 9
+            isExitSideSlot = { $0 >= exitThreshold }
+            movesTowardExit = { $0 > playerSlot }
+        }
+
+        if isExitSideSlot(playerSlot) {
+            return reachableSafeSlots.contains(where: isExitSideSlot)
+        }
+
+        return reachableSafeSlots.contains(where: movesTowardExit)
     }
 
     private static func carSlots(context: TrafficPatternContext) -> Set<Int> {

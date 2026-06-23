@@ -108,7 +108,6 @@ enum TrafficPatternGenerator {
     }
 
     static func generate(context: TrafficPatternContext, rng: inout AppSeededRNG) -> TrafficWavePlan? {
-        var lastRejection = "unknown"
         for attempt in 0..<10 {
             let pattern = choosePattern(context: context, rng: &rng)
             let requests = makeRequests(pattern: pattern, context: context, rng: &rng)
@@ -125,14 +124,13 @@ enum TrafficPatternGenerator {
                     rejectionReason: validation.rejectionReason
                 )
             } else {
-                lastRejection = validation.rejectionReason
                 if AppConfig.printRejectedTrafficWaves {
                     print("[TrafficPattern] rejected \(pattern) attempt=\(attempt) reason=\(validation.rejectionReason)")
                 }
             }
         }
 
-        return recoveryWave(context: context, lastRejection: lastRejection, rng: &rng)
+        return recoveryWave(context: context, rng: &rng)
     }
 
     private static func choosePattern(context: TrafficPatternContext, rng: inout AppSeededRNG) -> Pattern {
@@ -227,7 +225,7 @@ enum TrafficPatternGenerator {
         return Array(start..<(start + width))
     }
 
-    private static func recoveryWave(context: TrafficPatternContext, lastRejection: String, rng: inout AppSeededRNG) -> TrafficWavePlan? {
+    private static func recoveryWave(context: TrafficPatternContext, rng: inout AppSeededRNG) -> TrafficWavePlan? {
         let laneOrder = Array(0..<context.laneCount)
             .filter { lane in
                 !context.protectedLanes.contains(lane)
@@ -250,10 +248,7 @@ enum TrafficPatternGenerator {
             )
         }
         let validation = TrafficSafetyAnalyzer.validateWave(requests: requests, context: context)
-
-        if AppConfig.printRejectedTrafficWaves {
-            print("[TrafficPattern] recovery wave after rejection=\(lastRejection) validation=\(validation.rejectionReason)")
-        }
+        guard validation.isValid else { return nil }
 
         return TrafficWavePlan(
             patternName: "recoveryWave",
@@ -262,7 +257,7 @@ enum TrafficPatternGenerator {
             openLanes: validation.openLanes,
             safeCarSlots: validation.safeCarSlots,
             safeMotorcycleSlots: validation.safeMotorcycleSlots,
-            rejectionReason: validation.isValid ? lastRejection : validation.rejectionReason
+            rejectionReason: validation.rejectionReason
         )
     }
 

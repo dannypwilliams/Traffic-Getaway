@@ -170,6 +170,7 @@ final class GameScene: SKScene {
     private let vehicleNode = SKNode()
     private let floatingTextNode = SKNode()
     private let warningPulseNode = SKNode()
+    private let diagnosticOverlayNode = SKNode()
     private let overlayNode = SKNode()
     private let comboAuraNode = SKNode()
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
@@ -389,10 +390,11 @@ final class GameScene: SKScene {
         vehicleNode.zPosition = 20
         floatingTextNode.zPosition = 120
         warningPulseNode.zPosition = 85
+        diagnosticOverlayNode.zPosition = 92
         overlayNode.zPosition = 100
 
         // Feel effects live on separate layers so restarts can clear gameplay nodes without fighting overlays.
-        [sceneryNode, roadNode, markerNode, speedLineNode, eventNode, exitNode, trafficNode, policeSupportNode, effectsNode, vehicleNode, floatingTextNode, warningPulseNode, overlayNode].forEach { node in
+        [sceneryNode, roadNode, markerNode, speedLineNode, eventNode, exitNode, trafficNode, policeSupportNode, effectsNode, vehicleNode, floatingTextNode, warningPulseNode, diagnosticOverlayNode, overlayNode].forEach { node in
             if node.parent == nil {
                 addChild(node)
             }
@@ -712,6 +714,7 @@ final class GameScene: SKScene {
         warningPulseNode.removeAllChildren()
         warningPulseNode.removeAllActions()
         warningPulseNode.alpha = 0
+        diagnosticOverlayNode.removeAllChildren()
         warningPulseActive = false
 
         let reduced = SaveManager.shared.data.reducedFlashingEnabled
@@ -1148,6 +1151,7 @@ final class GameScene: SKScene {
         currentWorld = currentLevel?.worldTheme ?? WorldThemeCatalog.endlessTheme(score: score)
         currentCity = currentWorld.audioCity.cityTheme
         configureRunSeed()
+        RunTelemetryRecorder.shared.startRun(seed: runSeed, levelID: currentLevel?.levelID ?? "endless", vehicleID: activeCar.id)
         setPlayerSlot(laneManager.clampSlot(LaneManager.startSlot, for: activeCar.vehicleClass))
 
         AudioManager.shared.updateTheme(currentCity.audioTheme, crossfadeDuration: 0)
@@ -1173,6 +1177,7 @@ final class GameScene: SKScene {
         applyDebugOverrides()
         applyScreenshotMode()
         AnalyticsManager.shared.runStarted(carID: activeCar.id, paintID: activePaint.id)
+        recordTelemetry(event: "run_started")
     }
 
     private func endGame(crashPoint: CGPoint? = nil, reason: String = "collision") {
@@ -1181,7 +1186,7 @@ final class GameScene: SKScene {
 
         AnalyticsManager.shared.crash(reason: reason, score: score, distance: Int(runDistance))
 
-        if reason != "missed_exit", !reviveUsed {
+        if AppConfig.rewardedRevivesEnabled, reason != "missed_exit", !reviveUsed {
             showReviveOffer(crashPoint: crashPoint, reason: reason)
             return
         }
@@ -1229,6 +1234,8 @@ final class GameScene: SKScene {
         showFailureReasonFlash(reason)
 
         let runStats = makeRunStats(crashes: 1, levelCompleted: false, failureReason: reason)
+        recordTelemetry(event: "run_ended", terminalReason: reason, levelCompleted: false)
+        RunTelemetryRecorder.shared.close()
         let result = ProgressionManager.shared.processRun(runStats)
 
         run(.sequence([
@@ -1266,6 +1273,87 @@ final class GameScene: SKScene {
             failureReason: failureReason,
             usedRevive: reviveUsed
         )
+    }
+
+    private func recordTelemetry(
+        event: String,
+        plan: TrafficWavePlan? = nil,
+        terminalReason: String? = nil,
+        levelCompleted: Bool? = nil,
+        collisionVehicle: SKSpriteNode? = nil,
+        playerRect: CGRect? = nil,
+        trafficRect: CGRect? = nil
+    ) {
+        guard RunTelemetryRecorder.shared.isEnabled else { return }
+
+        let exitSide = activeExitSide?.displayName
+        let spawns = plan?.spawns.map {
+            RunTelemetryEvent.TrafficSpawn(
+                lane: $0.lane,
+                type: $0.type.rawValue,
+                yOffset: Double($0.yOffset),
+                speedMultiplier: Double($0.speedMultiplier)
+            )
+        }
+        let vehicleType = collisionVehicle?.userData?["type"] as? String
+        let vehicleID = collisionVehicle?.userData?["spawnID"] as? Int
+
+        RunTelemetryRecorder.shared.record(RunTelemetryEvent(
+            event: event,
+            build: appBuildIdentifier,
+            tuningVersion: "app-local-2026-06-22",
+            seed: runSeed,
+            mode: gameMode.rawValue,
+            levelID: currentLevel?.levelID ?? "endless",
+            vehicleID: activeCar.id,
+            vehicleClass: activeCar.vehicleClass.rawValue,
+            time: runTime,
+            playerLane: playerLane,
+            playerSlot: playerSlot,
+            score: score,
+            cash: runCash,
+            distance: Int(runDistance),
+            nearMisses: nearMissCount,
+            laneSplits: laneSplitCount,
+            combo: comboCount,
+            wantedLevel: wantedLevel,
+            policeGap: Double(policeGap),
+            exitPhase: telemetryExitPhase,
+            exitSide: exitSide,
+            exitCountdown: exitCountdown,
+            patternID: plan?.patternName,
+            occupiedLanes: plan?.occupiedLanes.sorted(),
+            openLanes: plan?.openLanes.sorted(),
+            safeCarSlots: plan?.safeCarSlots.sorted(),
+            safeMotorcycleSlots: plan?.safeMotorcycleSlots.sorted(),
+            rejectionReason: plan?.rejectionReason,
+            spawns: spawns,
+            collisionPlayerRect: playerRect.map(RunTelemetryEvent.RectValue.init),
+            collisionTrafficRect: trafficRect.map(RunTelemetryEvent.RectValue.init),
+            collisionVehicleID: vehicleID,
+            collisionVehicleType: vehicleType,
+            terminalReason: terminalReason,
+            levelCompleted: levelCompleted
+        ))
+    }
+
+    private var appBuildIdentifier: String {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"
+        return "\(version)-\(build)"
+    }
+
+    private var telemetryExitPhase: String {
+        switch exitPhase {
+        case .inactive:
+            return "inactive"
+        case .active:
+            return "active"
+        case .missed:
+            return "missed"
+        case .completed:
+            return "completed"
+        }
     }
 
     private func showReviveOverlay() {
@@ -2035,6 +2123,7 @@ final class GameScene: SKScene {
         if activeCar.vehicleClass == .motorcycle, laneManager.isSplitSlot(previousSlot) != laneManager.isSplitSlot(playerSlot) {
             emitBikeSlotStreak(direction: readableDelta > 0 ? 1 : -1)
         }
+        recordTelemetry(event: "lane_changed")
     }
 
     private func readableSlotDelta(for slotDelta: Int, kind: LaneMoveKind) -> Int {
@@ -2388,6 +2477,7 @@ final class GameScene: SKScene {
         pruneTransientNodes()
         updateDebugAutoplay(deltaTime: TimeInterval(rawDeltaTime))
         updatePerformanceDebug(deltaTime: TimeInterval(rawDeltaTime))
+        updateTrafficDiagnostics()
         checkCollisions()
     }
 
@@ -2513,6 +2603,119 @@ final class GameScene: SKScene {
         1 + node.children.reduce(0) { $0 + recursiveNodeCount($1) }
     }
 
+    private func updateTrafficDiagnostics() {
+        guard AppConfig.debugMode, AppConfig.showOpenLaneAnalysis, gameState == .playing else {
+            diagnosticOverlayNode.removeAllChildren()
+            return
+        }
+
+        diagnosticOverlayNode.removeAllChildren()
+        drawDiagnosticRoadGuides()
+        drawDiagnosticExitCorridor()
+        drawDiagnosticSafeSlots()
+        drawDiagnosticHitboxes()
+        drawDiagnosticHeader()
+    }
+
+    private func drawDiagnosticRoadGuides() {
+        for lane in 0..<laneCenters.count {
+            let guide = SKShapeNode(rect: CGRect(x: laneCenters[lane] - 0.75, y: 0, width: 1.5, height: size.height))
+            guide.fillColor = SKColor.cyan.withAlphaComponent(0.18)
+            guide.strokeColor = .clear
+            diagnosticOverlayNode.addChild(guide)
+        }
+
+        for slot in 0..<slotCenters.count {
+            let guide = SKShapeNode(rect: CGRect(x: slotCenters[slot] - 0.5, y: 0, width: 1, height: size.height))
+            guide.fillColor = SKColor.white.withAlphaComponent(laneManager.isSplitSlot(slot) ? 0.18 : 0.08)
+            guide.strokeColor = .clear
+            diagnosticOverlayNode.addChild(guide)
+        }
+    }
+
+    private func drawDiagnosticExitCorridor() {
+        guard exitPhase == .active, let activeExitSide else { return }
+
+        for lane in laneManager.exitGuardLanes(for: activeExitSide) where laneCenters.indices.contains(lane) {
+            let laneRect = CGRect(
+                x: laneCenters[lane] - laneWidth / 2,
+                y: 0,
+                width: laneWidth,
+                height: size.height
+            )
+            let corridor = SKShapeNode(rect: laneRect)
+            corridor.fillColor = UITheme.Color.gold.withAlphaComponent(0.12)
+            corridor.strokeColor = UITheme.Color.gold.withAlphaComponent(0.52)
+            corridor.lineWidth = 1.5
+            diagnosticOverlayNode.addChild(corridor)
+        }
+    }
+
+    private func drawDiagnosticSafeSlots() {
+        let validSlots = Set(laneManager.validSlots(for: activeCar.vehicleClass))
+        let planSlots: Set<Int>
+        if let latestTrafficPlan {
+            planSlots = activeCar.vehicleClass == .motorcycle ? latestTrafficPlan.safeMotorcycleSlots : latestTrafficPlan.safeCarSlots
+        } else {
+            planSlots = validSlots
+        }
+
+        let safeSlots = planSlots.intersection(validSlots)
+        let maxStep = activeCar.vehicleClass == .motorcycle ? (dodgeBoostTimer > 0 ? 3 : 2) : (dodgeBoostTimer > 0 ? 6 : 4)
+        let reachableSlots = safeSlots.filter { abs($0 - playerSlot) <= maxStep }
+
+        for slot in safeSlots.sorted() where slotCenters.indices.contains(slot) {
+            let isReachable = reachableSlots.contains(slot)
+            let marker = SKShapeNode(rectOf: CGSize(width: max(8, laneWidth * 0.2), height: size.height * 0.72), cornerRadius: 3)
+            marker.position = CGPoint(x: slotCenters[slot], y: size.height * 0.48)
+            marker.fillColor = UITheme.Color.green.withAlphaComponent(isReachable ? 0.2 : 0.08)
+            marker.strokeColor = UITheme.Color.green.withAlphaComponent(isReachable ? 0.72 : 0.28)
+            marker.lineWidth = isReachable ? 2 : 1
+            diagnosticOverlayNode.addChild(marker)
+        }
+    }
+
+    private func drawDiagnosticHitboxes() {
+        let nearMissHeight = (playerCar?.size.height ?? 72) * 1.72
+        let nearMissBand = SKShapeNode(rect: CGRect(x: roadLeft, y: playerY - nearMissHeight / 2, width: roadWidth, height: nearMissHeight))
+        nearMissBand.fillColor = SKColor.cyan.withAlphaComponent(0.06)
+        nearMissBand.strokeColor = SKColor.cyan.withAlphaComponent(0.38)
+        nearMissBand.lineWidth = 1
+        diagnosticOverlayNode.addChild(nearMissBand)
+
+        let playerRect = playerHitboxRect()
+        if !playerRect.isNull {
+            diagnosticOverlayNode.addChild(diagnosticRect(playerRect, color: UITheme.Color.green, alpha: 0.82, lineWidth: 2))
+        }
+
+        for node in trafficNode.children {
+            guard let vehicle = node as? SKSpriteNode else { continue }
+            let isRoadblock = vehicle.userData?["roadblock"] as? Bool == true
+            diagnosticOverlayNode.addChild(diagnosticRect(trafficHitboxRect(for: vehicle), color: isRoadblock ? UITheme.Color.gold : SKColor.red, alpha: 0.74, lineWidth: isRoadblock ? 2 : 1.5))
+        }
+    }
+
+    private func diagnosticRect(_ rect: CGRect, color: SKColor, alpha: CGFloat, lineWidth: CGFloat) -> SKShapeNode {
+        let node = SKShapeNode(rect: rect)
+        node.fillColor = color.withAlphaComponent(0.08)
+        node.strokeColor = color.withAlphaComponent(alpha)
+        node.lineWidth = lineWidth
+        return node
+    }
+
+    private func drawDiagnosticHeader() {
+        let label = SKLabelNode(fontNamed: "Menlo-Bold")
+        label.fontSize = 10
+        label.fontColor = SKColor.white.withAlphaComponent(0.92)
+        label.horizontalAlignmentMode = .left
+        label.verticalAlignmentMode = .top
+        label.position = CGPoint(x: roadLeft + 8, y: size.height - 112)
+        let pattern = latestTrafficPlan?.patternName ?? "none"
+        let exitText = activeExitSide.map { " exit \($0.displayName)" } ?? ""
+        label.text = "seed \(runSeed)  wave \(pattern)  slot \(playerSlot)\(exitText)"
+        diagnosticOverlayNode.addChild(label)
+    }
+
     // MARK: - Story Chase Levels and Exit Escapes
 
     private func updateStoryChase(deltaTime: TimeInterval) {
@@ -2584,6 +2787,7 @@ final class GameScene: SKScene {
             warningHaptic.prepare()
         }
         shakeCamera(intensity: 5, duration: 0.16)
+        recordTelemetry(event: isEmergency ? "emergency_exit_activated" : "exit_activated")
     }
 
     private func showExitAnticipation(side: ExitSide) {
@@ -2786,6 +2990,7 @@ final class GameScene: SKScene {
         policeClosingSpeed += 1.4
         rebuildPoliceSupport()
         updateHUD()
+        recordTelemetry(event: "exit_missed", terminalReason: "missed_exit", levelCompleted: false)
         AudioManager.shared.play(.wantedIncrease, volume: 0.95, cooldown: 0.2)
 
         if let currentLevel, currentLevel.allowsEmergencyExit, !emergencyExitUsed {
@@ -2832,6 +3037,8 @@ final class GameScene: SKScene {
             }
         ]))
 
+        recordTelemetry(event: "run_ended", terminalReason: "escaped", levelCompleted: true)
+        RunTelemetryRecorder.shared.close()
         let result = ProgressionManager.shared.processRun(makeRunStats(crashes: 0, levelCompleted: true, failureReason: nil))
         run(.sequence([
             .wait(forDuration: 0.9),
@@ -2926,6 +3133,7 @@ final class GameScene: SKScene {
         }
 
         latestTrafficPlan = plan
+        recordTelemetry(event: "traffic_wave", plan: plan)
         if plan.occupiedLanes.count >= 7 {
             buddy.say(.trafficWarning, force: false)
         }
@@ -4160,7 +4368,16 @@ final class GameScene: SKScene {
         for node in trafficNode.children {
             guard let vehicle = node as? SKSpriteNode else { continue }
 
-            if trafficHitboxRect(for: vehicle).intersects(playerRect) {
+            let trafficRect = trafficHitboxRect(for: vehicle)
+            if trafficRect.intersects(playerRect) {
+                recordTelemetry(
+                    event: "collision",
+                    terminalReason: (vehicle.userData?["roadblock"] as? Bool) == true ? "roadblock" : "traffic",
+                    levelCompleted: false,
+                    collisionVehicle: vehicle,
+                    playerRect: playerRect,
+                    trafficRect: trafficRect
+                )
                 endGame(crashPoint: CGPoint(
                     x: (vehicle.position.x + playerCar.position.x) / 2,
                     y: (vehicle.position.y + playerCar.position.y) / 2

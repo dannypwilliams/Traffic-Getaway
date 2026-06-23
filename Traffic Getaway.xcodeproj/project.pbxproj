@@ -43,6 +43,7 @@
 		2A6D09042C21A00100A00001 /* SettingsScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09142C21A00100A00001 /* SettingsScene.swift */; };
 		2A6D09052C21A00100A00001 /* StoreScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09152C21A00100A00001 /* StoreScene.swift */; };
 		2A6D09062C21A00100A00001 /* DebugBalanceScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */; };
+		2A6D0F002C21A00100A00001 /* RunTelemetryRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0F102C21A00100A00001 /* RunTelemetryRecorder.swift */; };
 		2A6D0A002C21A00100A00001 /* UITheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0A102C21A00100A00001 /* UITheme.swift */; };
 		2A6D0A012C21A00100A00001 /* ReleaseReadinessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0A112C21A00100A00001 /* ReleaseReadinessManager.swift */; };
 		2A6D0A022C21A00100A00001 /* ScreenshotMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6D0A122C21A00100A00001 /* ScreenshotMode.swift */; };
@@ -88,6 +89,7 @@
 		2A6D09142C21A00100A00001 /* SettingsScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScene.swift; sourceTree = "<group>"; };
 		2A6D09152C21A00100A00001 /* StoreScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreScene.swift; sourceTree = "<group>"; };
 		2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugBalanceScene.swift; sourceTree = "<group>"; };
+		2A6D0F102C21A00100A00001 /* RunTelemetryRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunTelemetryRecorder.swift; sourceTree = "<group>"; };
 		2A6D0A102C21A00100A00001 /* UITheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITheme.swift; sourceTree = "<group>"; };
 		2A6D0A112C21A00100A00001 /* ReleaseReadinessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReleaseReadinessManager.swift; sourceTree = "<group>"; };
 		2A6D0A122C21A00100A00001 /* ScreenshotMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotMode.swift; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 				2A6D09142C21A00100A00001 /* SettingsScene.swift */,
 				2A6D09152C21A00100A00001 /* StoreScene.swift */,
 				2A6D09162C21A00100A00001 /* DebugBalanceScene.swift */,
+				2A6D0F102C21A00100A00001 /* RunTelemetryRecorder.swift */,
 			);
 			path = "Traffic Getaway";
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 				2A6D09042C21A00100A00001 /* SettingsScene.swift in Sources */,
 				2A6D09052C21A00100A00001 /* StoreScene.swift in Sources */,
 				2A6D09062C21A00100A00001 /* DebugBalanceScene.swift in Sources */,
+				2A6D0F002C21A00100A00001 /* RunTelemetryRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

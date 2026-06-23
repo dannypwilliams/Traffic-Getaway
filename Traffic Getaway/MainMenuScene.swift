@@ -236,7 +236,13 @@ final class MainMenuScene: SKScene {
             .scale(to: 1, duration: 1.3)
         ])))
 
+        let finalCashText = "$\(save.totalCash)   BEST \(save.bestScore)"
+        let finalCashAccessibility = "Cash \(save.totalCash), best score \(save.bestScore)"
         let cash = UIHelpers.bodyLabel("$0   BEST \(save.bestScore)", size: 16, color: UITheme.Color.text, width: size.width - 32)
+        cash.name = "menu.cash"
+        cash.isAccessibilityElement = true
+        cash.accessibilityLabel = finalCashAccessibility
+        cash.accessibilityValue = finalCashText
         cash.position = CGPoint(x: size.width / 2, y: size.height - 114)
         contentNode.addChild(cash)
         cash.run(.customAction(withDuration: 0.7) { node, elapsed in
@@ -244,7 +250,9 @@ final class MainMenuScene: SKScene {
             let progress = min(1, elapsed / 0.7)
             label.text = "$\(Int(CGFloat(save.totalCash) * progress))   BEST \(save.bestScore)"
         }) {
-            cash.text = "$\(save.totalCash)   BEST \(save.bestScore)"
+            cash.text = finalCashText
+            cash.accessibilityLabel = finalCashAccessibility
+            cash.accessibilityValue = finalCashText
         }
 
         let level = UIHelpers.bodyLabel("LEVEL \(save.playerLevel)", size: 14, color: UITheme.Color.green)

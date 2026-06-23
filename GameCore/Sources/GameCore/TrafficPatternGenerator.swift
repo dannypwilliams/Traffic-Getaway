@@ -12,7 +12,6 @@ public enum TrafficPatternGenerator {
     }
 
     public static func generate(context: TrafficPatternContext, rng: inout SeededRNG) -> TrafficWavePlan? {
-        var lastRejection = "unknown"
         for _ in 0..<10 {
             let pattern = choosePattern(context: context, rng: &rng)
             let requests = makeRequests(pattern: pattern, context: context, rng: &rng)
@@ -28,12 +27,10 @@ public enum TrafficPatternGenerator {
                     safeMotorcycleSlots: validation.safeMotorcycleSlots,
                     rejectionReason: validation.rejectionReason
                 )
-            } else {
-                lastRejection = validation.rejectionReason
             }
         }
 
-        return recoveryWave(context: context, lastRejection: lastRejection, rng: &rng)
+        return recoveryWave(context: context, rng: &rng)
     }
 
     private static func choosePattern(context: TrafficPatternContext, rng: inout SeededRNG) -> Pattern {
@@ -129,7 +126,7 @@ public enum TrafficPatternGenerator {
         return Array(start..<(start + width))
     }
 
-    private static func recoveryWave(context: TrafficPatternContext, lastRejection: String, rng: inout SeededRNG) -> TrafficWavePlan? {
+    private static func recoveryWave(context: TrafficPatternContext, rng: inout SeededRNG) -> TrafficWavePlan? {
         let laneOrder = Array(0..<context.laneCount)
             .filter { lane in
                 !context.protectedLanes.contains(lane)
@@ -153,6 +150,7 @@ public enum TrafficPatternGenerator {
             ))
         }
         let validation = TrafficSafetyAnalyzer.validateWave(requests: requests, context: context)
+        guard validation.isValid else { return nil }
 
         return TrafficWavePlan(
             patternName: "recoveryWave",
@@ -161,7 +159,7 @@ public enum TrafficPatternGenerator {
             openLanes: validation.openLanes,
             safeCarSlots: validation.safeCarSlots,
             safeMotorcycleSlots: validation.safeMotorcycleSlots,
-            rejectionReason: validation.isValid ? lastRejection : validation.rejectionReason
+            rejectionReason: validation.rejectionReason
         )
     }
 

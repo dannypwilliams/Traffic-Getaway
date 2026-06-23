@@ -1,0 +1,630 @@
+Timestamp               Ty Process[PID:TID]
+2026-06-22 18:41:18.369 Df Traffic Getaway[92994:4c34d] [com.apple.xpc:connection] [0x105c062b0] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-06-22 18:41:18.371 A  Traffic Getaway[92994:4c34d] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-06-22 18:41:18.377 Df Traffic Getaway[92994:4c34e] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-06-22 18:41:18.377 Df Traffic Getaway[92994:4c34e] [com.apple.xpc:connection] [0x105c0de40] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-06-22 18:41:18.377 Df Traffic Getaway[92994:4c338] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34c] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34c] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34c] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x105c0eda0>
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34c] [com.apple.runningboard:connection] Initializing connection
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34c] [com.apple.runningboard:process] Removing all cached process handles
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34e] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34e] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-06-22 18:41:18.386 Df Traffic Getaway[92994:4c34e] [com.apple.xpc:connection] [0x10614c280] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-06-22 18:41:18.387 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-06-22 18:41:18.387 A  Traffic Getaway[92994:4c34d] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:41:18.388 Df Traffic Getaway[92994:4c338] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-06-22 18:41:18.390 Df Traffic Getaway[92994:4c34e] [com.apple.runningboard:connection] Handshake succeeded
+2026-06-22 18:41:18.390 Df Traffic Getaway[92994:4c34e] [com.apple.runningboard:connection] Identity resolved as app<com.danielwilliams.TrafficGetaway((null))>
+2026-06-22 18:41:18.390 Df Traffic Getaway[92994:4c34c] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x105c0eda0>
+2026-06-22 18:41:18.390 Df Traffic Getaway[92994:4c34c] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x106070a40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 6945 (elapsed = 0).
+2026-06-22 18:41:18.390 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-06-22 18:41:18.391 Df Traffic Getaway[92994:4c338] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-06-22 18:41:18.392 Df Traffic Getaway[92994:4c338] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-06-22 18:41:18.400 Df Traffic Getaway[92994:4c338] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x106100a80; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-06-22 18:41:18.400 Df Traffic Getaway[92994:4c338] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x1060b85a0 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-06-22 18:41:18.400 Df Traffic Getaway[92994:4c338] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x1060b85a0 com.apple.frontboard.systemappservices> sent handshake
+2026-06-22 18:41:18.400 Df Traffic Getaway[92994:4c338] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x1061010a0>
+2026-06-22 18:41:18.402 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-06-22 18:41:18.404 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-06-22 18:41:18.404 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-06-22 18:41:18.404 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x10614c500> for initial
+2026-06-22 18:41:18.406 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x10614c500> for CADisplay KVO
+2026-06-22 18:41:18.406 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-06-22 18:41:18.408 Df Traffic Getaway[92994:4c338] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-06-22 18:41:18.408 Df Traffic Getaway[92994:4c338] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-06-22 18:41:18.410 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-06-22 18:41:18.412 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-06-22 18:41:18.412 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-06-22 18:41:18.413 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-06-22 18:41:18.413 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-06-22 18:41:18.413 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-06-22 18:41:18.413 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-06-22 18:41:18.413 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-06-22 18:41:18.413 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-06-22 18:41:18.413 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-06-22 18:41:18.414 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-06-22 18:41:18.415 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-06-22 18:41:18.416 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-06-22 18:41:18.417 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-06-22 18:41:18.417 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-06-22 18:41:18.418 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-06-22 18:41:18.418 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-06-22 18:41:18.418 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-06-22 18:41:18.418 Df Traffic Getaway[92994:4c34c] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-06-22 18:41:18.419 Df Traffic Getaway[92994:4c34e] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-06-22 18:41:18.422 Df Traffic Getaway[92994:4c34e] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-06-22 18:41:18.432 Df Traffic Getaway[92994:4c34e] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-06-22 18:41:18.432 Df Traffic Getaway[92994:4c34e] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-06-22 18:41:18.432 Df Traffic Getaway[92994:4c34e] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-06-22 18:41:19.322 A  Traffic Getaway[92994:4c34e] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-06-22 18:41:19.345 Df Traffic Getaway[92994:4c338] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-06-22 18:41:19.345 Df Traffic Getaway[92994:4c338] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-06-22 18:41:19.345 Df Traffic Getaway[92994:4c338] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-06-22 18:41:19.345 Df Traffic Getaway[92994:4c338] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-06-22 18:41:19.347 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1024 -> 3072; animating application lifecycle event: 0
+2026-06-22 18:41:19.349 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3072 -> 2048; animating application lifecycle event: 0
+2026-06-22 18:41:19.356 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-06-22 18:41:19.392 Df Traffic Getaway[92994:4c351] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-06-22 18:41:19.429 Df Traffic Getaway[92994:4c351] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x106070a40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 6945 (elapsed = 1), _expireHandler: (null)
+2026-06-22 18:41:19.429 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-06-22 18:41:19.429 Df Traffic Getaway[92994:4c351] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x105c0eda0> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x106070a40>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 6945 (elapsed = 1))
+2026-06-22 18:41:19.430 Df Traffic Getaway[92994:4c351] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x105c0eda0> for task identifier: 1
+2026-06-22 18:41:19.430 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-06-22 18:41:19.439 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x10614cdc0] activating connection: mach=true listener=false peer=false name=com.apple.lsd.mapdb
+2026-06-22 18:41:19.506 Df Traffic Getaway[92994:4c338] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-06-22 18:41:19.506 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x10614c8c0] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-06-22 18:41:19.509 Df Traffic Getaway[92994:4c34c] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-06-22 18:41:19.511 Df Traffic Getaway[92994:4c338] [com.apple.app_launch_measurement:ApplicationLaunch] alm_acquire_pageins_recording_assertion: acquired pageins recording assertion!
+2026-06-22 18:41:19.513 A  Traffic Getaway[92994:4c34c] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:41:19.518 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:BackgroundTask] Will add backgroundTask with taskName: Persistent SceneSession Map Update, expirationHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-06-22 18:41:19.519 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-06-22 18:41:19.519 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-06-22 18:41:19.519 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x1063829e0>
+2026-06-22 18:41:19.520 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x1063829e0>
+2026-06-22 18:41:19.520 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x109c6e680>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 6947 (elapsed = 0).
+2026-06-22 18:41:19.521 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 2048 -> 2080; animating application lifecycle event: 1
+2026-06-22 18:41:19.521 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.526 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.527 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x109cea0d0>; with scene: <UIWindowScene: 0x109c9bc00>
+2026-06-22 18:41:19.527 Df Traffic Getaway[92994:4c338] [com.apple.BacklightServices:scenes] 0x109d1b6c0 setDelegate:<0x109d1b480 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:com.danielwilliams.TrafficGetaway-default
+2026-06-22 18:41:19.530 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.530 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:EventDeferring] [0x109cea300] Initialized with scene: <UIWindowScene: 0x109c9bc00>; behavior: <_UIEventDeferringBehavior_iOS: 0x109c966a0>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c34d] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x106049e60; process scope; status: target> was:none
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x109c9bc00; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:EventDeferring] [0x109cea300] Scene target of event deferring environments did update: scene: 0x109c9bc00; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x109c9bc00; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x109d1b930: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x109c9bc00; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x109c9bc00: Window scene became target of keyboard environment
+2026-06-22 18:41:19.532 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.533 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.534 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.558 E  Traffic Getaway[92994:4c338] [com.apple.UIKit:UIFocus] SKView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-06-22 18:41:19.604 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x10614e6c0] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-06-22 18:41:19.607 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x10614e800] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-06-22 18:41:19.607 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x10614e940] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-06-22 18:41:19.648 Df Traffic Getaway[92994:4c351] [com.apple.xpc:connection] [0x10614ed00] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-06-22 18:41:19.712 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Orientation] <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088) Scene updated orientation preferences: none -> ( Pu )
+2026-06-22 18:41:19.719 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-06-22 18:41:19.719 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x109c9bc00: Window became key in scene: UIWindow: 0x106168800; contextId: 0xBE7912DD: reason: UIWindowScene: 0x109c9bc00: Window requested to become key in scene: 0x106168800
+2026-06-22 18:41:19.719 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x109c9bc00; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x106168800; reason: UIWindowScene: 0x109c9bc00: Window requested to become key in scene: 0x106168800
+2026-06-22 18:41:19.719 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x106168800; contextId: 0xBE7912DD; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:41:19.719 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:EventDeferring] [0x109cea300] Begin local event deferring requested for token: 0x106048d20; environments: 1; reason: UIWindowScene: 0x109c9bc00: Begin event deferring in keyboardFocus for window: 0x106168800
+2026-06-22 18:41:19.721 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.721 Df Traffic Getaway[92994:4c351] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x106049e60; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default; status: ancestor> was:target
+2026-06-22 18:41:19.723 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:41:19.723 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-06-22 18:41:19.723 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-06-22 18:41:19.723 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-06-22 18:41:19.723 Df Traffic Getaway[92994:4c338] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-06-22 18:41:19.731 Df Traffic Getaway[92994:4c34d] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-06-22 18:41:19.732 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:19.732 Df Traffic Getaway[92994:4c34d] [com.apple.xpc:session] [0x106382710] Session created.
+2026-06-22 18:41:19.732 Df Traffic Getaway[92994:4c34d] [com.apple.xpc:session] [0x106382710] Session created from connection [0x109e64000]
+2026-06-22 18:41:19.732 Df Traffic Getaway[92994:4c34d] [com.apple.xpc:connection] [0x109e64000] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-06-22 18:41:19.732 Df Traffic Getaway[92994:4c34d] [com.apple.xpc:session] [0x106382710] Session activated
+2026-06-22 18:41:19.734 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x109e648c0] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-06-22 18:41:19.762 E  Traffic Getaway[92994:4c338] (libCoreFSCache.dylib) fopen failed for data file: errno = 2 (No such file or directory)
+2026-06-22 18:41:19.762 Df Traffic Getaway[92994:4c338] (libCoreFSCache.dylib) Invalidating cache
+2026-06-22 18:41:19.762 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x109e64a00] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-06-22 18:41:19.821 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x109e64b40] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-06-22 18:41:19.821 A  Traffic Getaway[92994:4c34c] (Metal) Metal Compiling Shader
+2026-06-22 18:41:20.041 Df Traffic Getaway[92994:4c34d] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-06-22 18:41:20.041 Df Traffic Getaway[92994:4c34d] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x109c6e680>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 6947 (elapsed = 0), _expireHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-06-22 18:41:20.041 Df Traffic Getaway[92994:4c34d] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x1063829e0> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x109c6e680>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 6947 (elapsed = 0))
+2026-06-22 18:41:20.041 Df Traffic Getaway[92994:4c34d] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x1063829e0> for task identifier: 2
+2026-06-22 18:41:20.135 A  Traffic Getaway[92994:4c34c] (Metal) Metal Compiling Shader
+2026-06-22 18:41:20.143 A  Traffic Getaway[92994:4c34c] (Metal) Metal Compiling Shader
+2026-06-22 18:41:20.160 A  Traffic Getaway[92994:4c34c] (Metal) Metal Compiling Shader
+2026-06-22 18:41:20.174 A  Traffic Getaway[92994:4c34d] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:41:20.176 Df Traffic Getaway[92994:4c338] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [6024CEEF-C5C5-45A6-81B8-3A242AE6D4A3] (reporting strategy default)>
+2026-06-22 18:41:20.176 Df Traffic Getaway[92994:4c338] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [0B59EAA6-C3A6-48F9-8AB2-3DC650124052] (reporting strategy default)>
+2026-06-22 18:41:20.176 Df Traffic Getaway[92994:4c338] [com.apple.network:activity] Set activity <nw_activity 50:1 [6024CEEF-C5C5-45A6-81B8-3A242AE6D4A3] (reporting strategy default)> as the global parent
+2026-06-22 18:41:20.176 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-06-22 18:41:20.177 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:41:20.177 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:20.182 A  Traffic Getaway[92994:4c34c] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:41:20.223 Df Traffic Getaway[92994:4c338] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-06-22 18:41:20.269 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:EventDeferring] [0x109cea300] Scene target of event deferring environments did update: scene: 0x109c9bc00; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-06-22 18:41:20.269 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x109c9bc00; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:41:20.270 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:20.270 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:41:20.270 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-06-22 18:41:20.270 Df Traffic Getaway[92994:4c338] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-06-22 18:41:20.270 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-06-22 18:41:20.271 Df Traffic Getaway[92994:4c338] [com.apple.KeyboardArbiter:Client] startConnection
+2026-06-22 18:41:20.272 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x109e643c0] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-06-22 18:41:20.273 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:41:20.287 Df Traffic Getaway[92994:4c338] [com.apple.FrontBoard:SceneExtension] Realizing settings extension SBUISecureRenderingSettingsExtension on FBSSceneSettings
+2026-06-22 18:41:20.287 A  Traffic Getaway[92994:4c34c] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:41:20.291 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c9bc00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:41:20.298 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:41:20.314 Df Traffic Getaway[92994:4c338] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-06-22 18:41:20.325 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyboardSceneDelegate] forceReloadInputViews
+2026-06-22 18:41:20.333 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyboardSceneDelegate] Reloading input views for key-window scene responder: <(null): 0x0; > force:Y
+2026-06-22 18:41:20.333 Df Traffic Getaway[92994:4c338] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-06-22 18:41:20.439 Df Traffic Getaway[92994:4c338] [com.apple.network:activity] <nw_activity 50:1 [6024CEEF-C5C5-45A6-81B8-3A242AE6D4A3] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2966ms
+2026-06-22 18:41:20.444 Df Traffic Getaway[92994:4c338] [com.apple.network:activity] <nw_activity 50:2 [0B59EAA6-C3A6-48F9-8AB2-3DC650124052] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2971ms
+2026-06-22 18:41:20.444 Df Traffic Getaway[92994:4c338] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [6024CEEF-C5C5-45A6-81B8-3A242AE6D4A3] (global parent) (reporting strategy default) complete (reason success)>
+2026-06-22 18:41:20.444 Df Traffic Getaway[92994:4c338] [com.apple.network:activity] Unset the global parent activity
+2026-06-22 18:41:20.444 Df Traffic Getaway[92994:4c338] [com.apple.app_launch_measurement:ApplicationLaunch] alm_release_pageins_recording_assertion: releasing pageins recording assertion
+2026-06-22 18:41:21.009 Df Traffic Getaway[92994:4c338] [com.apple.BackBoard:Display] [FBSDisplaySource 1-1] silently connecting raw configuration: <FBSDisplayConfiguration: 0x1060bd100; Main; mode: "390x844@3x 60Hz p3 SDR">
+2026-06-22 18:41:21.840 Df Traffic Getaway[92994:4c338] [com.apple.extensionkit:NSExtension] Class EXGetExtensionClass(void) returning EXConcreteExtension
+2026-06-22 18:41:21.841 Df Traffic Getaway[92994:4c338] [com.apple.xpc:connection] [0x109e64780] activating connection: mach=true listener=false peer=false name=com.apple.pluginkit.pkd
+2026-06-22 18:41:21.841 A  Traffic Getaway[92994:4c338] (PlugInKit) continuous-discovery
+2026-06-22 18:41:21.841 Df Traffic Getaway[92994:4c338] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106048ea0> created discovery driver
+2026-06-22 18:41:21.841 Df Traffic Getaway[92994:4c338] [com.apple.PlugInKit:discovery] [d 56C54563-1C99-4BDD-A877-62B35714B4AA] <PKHost:0x106071980> Beginning discovery for flags: 0, point: com.apple.AudioUnit
+2026-06-22 18:41:21.848 Df Traffic Getaway[92994:4c34d] [com.apple.PlugInKit:discovery] [d 56C54563-1C99-4BDD-A877-62B35714B4AA] <PKHost:0x106071980> Completed discovery. Final # of matches: 0
+2026-06-22 18:41:21.848 Df Traffic Getaway[92994:4c3a3] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106048ea0> delivering update to host (0 plugins)
+2026-06-22 18:41:21.848 A  Traffic Getaway[92994:4c3a3] (ExtensionFoundation) discovering extensions
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c3a3] [com.apple.extensionkit:NSExtension] discovered extensions: attributes {
+    NSExtensionPointName = "com.apple.AudioUnit";
+}, extensionSet {(
+)}
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c3a3] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106048ea0> installing watchers for continuous discovery
+2026-06-22 18:41:21.849 A  Traffic Getaway[92994:4c338] (PlugInKit) continuous-discovery
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c338] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x10604a700> created discovery driver
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c338] [com.apple.PlugInKit:discovery] [d 4CC895F4-3782-459B-A90B-7E5EABBE513E] <PKHost:0x106071980> Beginning discovery for flags: 0, point: com.apple.AudioUnit-UI
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c3a3] [com.apple.launchservices:appinstallation] registering for distributed notification com.apple.LaunchServices.pluginsregistered in this process
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c3a3] [com.apple.xpc:connection] [0x109e65a40] activating connection: mach=true listener=false peer=false name=com.apple.distributed_notifications@1v3
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c3a3] [com.apple.launchservices:appinstallation] registering for distributed notification com.apple.LaunchServices.pluginsunregistered in this process
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c34d] [com.apple.PlugInKit:discovery] [d 4CC895F4-3782-459B-A90B-7E5EABBE513E] <PKHost:0x106071980> Completed discovery. Final # of matches: 0
+2026-06-22 18:41:21.849 Df Traffic Getaway[92994:4c34e] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x10604a700> delivering update to host (0 plugins)
+2026-06-22 18:41:21.849 A  Traffic Getaway[92994:4c34e] (ExtensionFoundation) discovering extensions
+2026-06-22 18:41:21.850 Df Traffic Getaway[92994:4c34e] [com.apple.extensionkit:NSExtension] discovered extensions: attributes {
+    NSExtensionPointName = "com.apple.AudioUnit-UI";
+}, extensionSet {(
+)}
+2026-06-22 18:41:21.850 Df Traffic Getaway[92994:4c34e] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x10604a700> installing watchers for continuous discovery
+2026-06-22 18:41:21.850 A  Traffic Getaway[92994:4c338] (PlugInKit) continuous-discovery
+2026-06-22 18:41:21.850 Df Traffic Getaway[92994:4c338] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x10604b420> created discovery driver
+2026-06-22 18:41:21.850 Df Traffic Getaway[92994:4c338] [com.apple.PlugInKit:discovery] [d 50C4FF51-A246-477E-B75E-8FF4F0A0DCB5] <PKHost:0x106071980> Beginning discovery for flags: 0, point: com.apple.AudioUnit-Speech
+2026-06-22 18:41:21.850 Df Traffic Getaway[92994:4c3a3] [com.apple.launchservices:progress] Establishing xpc connection to lsd
+2026-06-22 18:41:21.850 Df Traffic Getaway[92994:4c3a3] [com.apple.xpc:connection] [0x109e65f40] activating connection: mach=true listener=false peer=false name=com.apple.lsd.xpc
+2026-06-22 18:41:21.852 Df Traffic Getaway[92994:4c34d] [com.apple.PlugInKit:discovery] [d 50C4FF51-A246-477E-B75E-8FF4F0A0DCB5] <PKHost:0x106071980> Completed discovery. Final # of matches: 4
+2026-06-22 18:41:21.852 Df Traffic Getaway[92994:4c34e] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x10604b420> delivering update to host (4 plugins)
+2026-06-22 18:41:21.852 A  Traffic Getaway[92994:4c34e] (ExtensionFoundation) discovering extensions
+2026-06-22 18:41:21.852 Df Traffic Getaway[92994:4c34d] [com.apple.launchservices:progress] Received LSWorkspaceObserverPing, xpc connection established
+2026-06-22 18:41:21.854 Df Traffic Getaway[92994:4c34e] [com.apple.extensionkit:NSExtension] discovered extensions: attributes {
+    NSExtensionPointName = "com.apple.AudioUnit-Speech";
+}, extensionSet {(
+    <EXConcreteExtension: 0x109d7eca0> {id = com.apple.texttospeech.SiriAUSP},
+    <EXConcreteExtension: 0x109d7ee60> {id = com.apple.speech.MacinTalkFramework.MacinTalkAUSP},
+    <EXConcreteExtension: 0x109d7ef40> {id = com.apple.ax.KonaTTSSupport.KonaSynthesizer},
+    <EXConcreteExtension: 0x109d7f020> {id = com.apple.ax.MauiTTSSupport.MauiAUSP}
+)}
+2026-06-22 18:41:21.854 Df Traffic Getaway[92994:4c34e] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x10604b420> installing watchers for continuous discovery
+2026-06-22 18:41:21.857 Df Traffic Getaway[92994:4c351] (libAudioDSP.dylib) cannot migrate AudioUnit assets for current process
+2026-06-22 18:41:21.859 Df Traffic Getaway[92994:4c338] [com.apple.audio.caulk:alloc] Registered notify signal com.apple.caulk.alloc.rtdump (0)
+2026-06-22 18:41:21.955 Df Traffic Getaway[92994:4c338] (CoreAudio)   HALPlugInManagement.cpp:443    HALPlugInManagement::RegisterPlugIns: loading in-process plug-ins
+2026-06-22 18:41:21.957 E  Traffic Getaway[92994:4c338] [com.apple.CFBundle:plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x10c46eba0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-06-22 18:41:21.990 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:as_client] AVAudioSessionImpl_Simulator.mm:111   Set volume on device 85 to 0.60
+2026-06-22 18:41:21.990 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:as_client] AVAudioSessionImpl_Simulator.mm:111   Set volume on device 85 to 0.60
+2026-06-22 18:41:21.993 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:ddagg]        AggregateDevice.mm:887   Creating DefaultDeviceAggregate
+2026-06-22 18:41:22.005 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:ddagg]        AggregateDevice.mm:688   Built valid aggregate 125
+2026-06-22 18:41:22.005 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:ddagg]        AggregateDevice.mm:1008  PrimarySessionActiveWithInputEnabled 0 -> 0
+2026-06-22 18:41:22.026 Df Traffic Getaway[92994:4c338] [com.apple.avfaudio:avae]      AVAudioIONodeImpl.mm:235   Engine@0x109ca5980: associating with audio session (0x0), error -10879
+2026-06-22 18:41:22.027 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x1060d8c40: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x0, 0 channel descriptions [], err = 0
+2026-06-22 18:41:22.029 Df Traffic Getaway[92994:4c34e] [com.apple.coreaudio:aqme]           AQMixEngine.cpp:735   AQMEDevice (0x10c4bc358) has neither a defaultOutStreamClient nor a defaultInStreamClient
+2026-06-22 18:41:22.030 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x10c4b1200(@0x10c4b1418); output; [92994]> is NOT Now Playing eligible
+2026-06-22 18:41:22.030 Df Traffic Getaway[92994:4c34e] [com.apple.coreaudio:EnhanceDialogueProcessor] EnhanceDialogueProcessor.cpp:244   EnhanceDialogueProcessor() - Product does not support Enhance Dialogue
+2026-06-22 18:41:22.030 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x10c4b1418 spatialization disabled.  layout = tag=0x0, 0 channel descriptions [], format =  2 ch,      0 Hz, Float32, deinterleaved
+2026-06-22 18:41:22.030 Df Traffic Getaway[92994:4c34e] [com.apple.coreaudio:EnhanceDialogueProcessor] EnhanceDialogueProcessor.cpp:244   EnhanceDialogueProcessor() - Product does not support Enhance Dialogue
+2026-06-22 18:41:22.031 Df Traffic Getaway[92994:4c34e] [com.apple.coreaudio:AudioConverter]        ACv2Workarounds.mm:51    com.danielwilliams.TrafficGetaway: fix84702776_86723525_86479548_89800354_SinglePacketDesc: false
+2026-06-22 18:41:22.032 Df Traffic Getaway[92994:4c34e] [com.apple.audio.caulk:alloc] Registered notify signal com.apple.caulk.alloc.audiodump (0)
+2026-06-22 18:41:22.032 Df Traffic Getaway[92994:4c34e] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1077  Created a new in process converter -> 0x109ccc060, from  2 ch,  48000 Hz, Float32, deinterleaved to  2 ch,  48000 Hz, Float32, interleaved
+2026-06-22 18:41:22.039 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x10c4b1200 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:41:22.040 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:41:22.040 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:41:22.040 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:41:22.040 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:41:22.040 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:41:22.040 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1077  Created a new in process converter -> 0x109cce2b0, from  2 ch,      0 Hz, Float32, deinterleaved to  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x109cce2b0: The in-process GetProperty call returned 1886547824 for property 1936876385 with size 4.
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x109cce2b0: The in-process GetProperty call returned 1886547824 for property 1936876401 with size 4.
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x109cce2b0: The in-process GetProperty call returned 1886547824 for property 1886546285 with size 8.
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c46f] [com.apple.coreaudio:AudioConverter] AudioConverter -> 0x109cce2b0: The in-process SetProperty call returned 1886547824 for property 1886547309 with size 4.
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1741  Stopping AURemoteIO(0x1060d8c40)
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:SpatialMgr] SpatializationManager.cpp:1461  Could not load preset file, invalid model/product name!
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]        MEMixerChannel.cpp:3273  2-channel audiovisual content is NOT eligible for spatialization
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]  MEDeviceStreamClient.cpp:245   AQME Default-InputOutput: client starting: <CA_UISoundClientBase@0x10c4a1180>; running count now 1
+2026-06-22 18:41:22.041 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]            AQMEIO_HAL.cpp:2857  FetchAndLogFrameSize starting IO deviceID=125, frame size is 512
+2026-06-22 18:41:22.079 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]            AQMEIO_HAL.cpp:2826  aqmeio@0x1060d9818, device 125 (iOSSimulatorAudioDevice-92994-0), AudioDeviceStart (err 0)
+2026-06-22 18:41:22.123 E  Traffic Getaway[92994:4c471] [com.apple.coreaudio:AMCP]          HALC_ProxyIOContext.cpp:1623  HALC_ProxyIOContext::IOWorkLoop: skipping cycle due to overload
+2026-06-22 18:41:22.925 Df Traffic Getaway[92994:4c338] [com.apple.avfaudio:avae]          AVAudioEngine.mm:1182  Engine@0x106211a90: start, was running 0
+2026-06-22 18:41:22.925 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x1060d8c40: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x650002, err = 0
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x10c4b1200(@0x10c4b1418); output; [92994]> is NOT Now Playing eligible
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x10c4b1418 spatialization disabled.  layout = tag=0x650002, format =  2 ch,  44100 Hz, Float32, deinterleaved
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x10c4b1200 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:41:22.926 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:41:22.927 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1077  Created a new in process converter -> 0x10c408db0, from  2 ch,  44100 Hz, Float32, deinterleaved to  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:41:22.927 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x10c408db0: The in-process GetProperty call returned 1886547824 for property 1936876385 with size 4.
+2026-06-22 18:41:22.927 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1741  Stopping AURemoteIO(0x1060d8c40)
+2026-06-22 18:41:22.927 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x1060d8c40: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x650002, err = 0
+2026-06-22 18:41:22.927 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x10c4b1200(@0x10c4b1418); output; [92994]> is NOT Now Playing eligible
+2026-06-22 18:41:22.927 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x10c4b1418 spatialization disabled.  layout = tag=0x650002, format =  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:41:22.927 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x10c4b1200 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1741  Stopping AURemoteIO(0x1060d8c40)
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x1060d8c40: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x650002, err = 0
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x10c4b1200(@0x10c4b1418); output; [92994]> is NOT Now Playing eligible
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x10c4b1418 spatialization disabled.  layout = tag=0x650002, format =  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x10c4b1200 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:41:22.928 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:41:22.929 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1666  Starting AURemoteIO(0x1060d8c40)
+output client:  2 ch,  48000 Hz, Float32, deinterleaved, output HW:  2 ch,  48000 Hz, Float32, deinterleaved
+input client:   2 ch,      0 Hz, Float32, deinterleaved, input HW:   2 ch,      0 Hz, Float32, deinterleaved
+2026-06-22 18:41:22.929 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]            AQMEIO_HAL.cpp:1087  fetched workgroup 0x109c6c240
+2026-06-22 18:41:22.929 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:30    AUOOPWorkgroupManager: AddRemoteIOWorkgroup called with token 380903430.
+2026-06-22 18:41:22.930 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:66    AUOOPWorkgroupManager: mutating workgroups.
+2026-06-22 18:41:22.930 Df Traffic Getaway[92994:4c338] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1727  workgroup port 0x13703
+2026-06-22 18:41:22.930 Df Traffic Getaway[92994:4c5a5] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:30    AUOOPWorkgroupManager: AddRemoteIOWorkgroup called with token 380903429.
+2026-06-22 18:41:22.930 Df Traffic Getaway[92994:4c5a5] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:66    AUOOPWorkgroupManager: mutating workgroups.
+2026-06-22 18:41:22.930 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x10c4b1200(@0x10c4b1418); output; [92994]> is NOT Now Playing eligible
+2026-06-22 18:41:22.930 Df Traffic Getaway[92994:4c351] [com.apple.coreaudio:aqme]  MEDeviceStreamClient.cpp:245   AQME Default-InputOutput: client starting: <RemoteIOClient@0x10c4b1200(@0x10c4b1418); output; [92994]>; running count now 2
+2026-06-22 18:48:09.834 Df Traffic Getaway[4486:51e56] [com.apple.xpc:connection] [0x105d40400] activating connection: mach=true listener=false peer=false name=com.apple.cfprefsd.daemon
+2026-06-22 18:48:09.837 Df Traffic Getaway[4486:51e4b] (libMobileGestalt.dylib) No persisted cache on this platform.
+2026-06-22 18:48:09.839 A  Traffic Getaway[4486:51e56] (CoreFoundation) Loading Preferences From User Session CFPrefsD
+2026-06-22 18:48:09.844 Df Traffic Getaway[4486:51e57] [com.apple.BoardServices:XPCErrors] [C:1] Alloc com.apple.frontboard.systemappservices
+2026-06-22 18:48:09.845 Df Traffic Getaway[4486:51e57] [com.apple.xpc:connection] [0x10653c140] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-06-22 18:48:09.855 Df Traffic Getaway[4486:51e55] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-06-22 18:48:09.860 Df Traffic Getaway[4486:51e55] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-06-22 18:48:09.861 Df Traffic Getaway[4486:51e55] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x105d43e00>
+2026-06-22 18:48:09.861 Df Traffic Getaway[4486:51e55] [com.apple.runningboard:connection] Initializing connection
+2026-06-22 18:48:09.861 Df Traffic Getaway[4486:51e55] [com.apple.runningboard:process] Removing all cached process handles
+2026-06-22 18:48:09.861 Df Traffic Getaway[4486:51e58] [com.apple.runningboard:connection] Sending handshake request attempt #1 to server
+2026-06-22 18:48:09.862 Df Traffic Getaway[4486:51e58] [com.apple.runningboard:connection] Creating connection to com.apple.runningboard
+2026-06-22 18:48:09.862 Df Traffic Getaway[4486:51e58] [com.apple.xpc:connection] [0x10653c280] activating connection: mach=true listener=false peer=false name=com.apple.runningboard
+2026-06-22 18:48:09.863 A  Traffic Getaway[4486:51e56] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:48:09.864 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason added: 10; deactivation reasons: 0 -> 1024; animating application lifecycle event: 0
+2026-06-22 18:48:09.864 Df Traffic Getaway[4486:51e4b] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.open
+2026-06-22 18:48:09.865 Df Traffic Getaway[4486:51e4b] [com.apple.BoardServices:Injection] activating monitor for service com.apple.frontboard.workspace-service
+2026-06-22 18:48:09.865 Df Traffic Getaway[4486:51e58] [com.apple.runningboard:connection] Handshake succeeded
+2026-06-22 18:48:09.865 Df Traffic Getaway[4486:51e58] [com.apple.runningboard:connection] Identity resolved as app<com.danielwilliams.TrafficGetaway((null))>
+2026-06-22 18:48:09.866 Df Traffic Getaway[4486:51e55] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x105d43e00>
+2026-06-22 18:48:09.866 Df Traffic Getaway[4486:51e55] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x106478900>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 7357 (elapsed = 0).
+2026-06-22 18:48:09.866 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UIApplicationSceneKeyboardSettings on FBSSceneSettings
+2026-06-22 18:48:09.868 Df Traffic Getaway[4486:51e4b] [com.apple.FrontBoard:Common] FBSWorkspace registering source: com.apple.frontboard.systemappservices
+2026-06-22 18:48:09.879 Df Traffic Getaway[4486:51e4b] [com.apple.FrontBoard:Common] FBSWorkspace connected to endpoint : <BSServiceConnectionEndpoint: 0x106518980; target: com.apple.frontboard.systemappservices; service: com.apple.frontboard.workspace-service>
+2026-06-22 18:48:09.880 Df Traffic Getaway[4486:51e4b] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x1064d0aa0 com.apple.frontboard.systemappservices> attempting immediate handshake from activate
+2026-06-22 18:48:09.880 Df Traffic Getaway[4486:51e4b] [com.apple.FrontBoard:Common] <FBSWorkspaceScenesClient:0x1064d0aa0 com.apple.frontboard.systemappservices> sent handshake
+2026-06-22 18:48:09.880 Df Traffic Getaway[4486:51e4b] [com.apple.runningboard:general] Added observer for process assertions expiration warning: <_RBSExpirationWarningClient: 0x106519160>
+2026-06-22 18:48:09.883 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneOcclusionSettings> on FBSSceneSettings
+2026-06-22 18:48:09.884 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x10653c500> for initial
+2026-06-22 18:48:09.885 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneInterfaceProtectionSettings> on FBSSceneSettings
+2026-06-22 18:48:09.885 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:UIScreen] Evaluated capturing state as 0 on <UIScreen: 0x10653c500> for CADisplay KVO
+2026-06-22 18:48:09.886 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferencesHostSettingsExtension on FBSSceneSettings
+2026-06-22 18:48:09.889 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneSafeAreaSettingsExtension on FBSSceneSettings
+2026-06-22 18:48:09.892 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneLayoutPreferenceClientSettingsExtension on FBSSceneClientSettings
+2026-06-22 18:48:09.893 Df Traffic Getaway[4486:51e4b] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 1, category name = (null)
+2026-06-22 18:48:09.893 Df Traffic Getaway[4486:51e4b] [com.apple.Accessibility:AXSupportCommon] Read CategoryName: per-app = 0, category name = (null)
+2026-06-22 18:48:09.893 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UIHomeAffordanceHostSceneSettings> on FBSSceneSettings
+2026-06-22 18:48:09.895 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISystemShellSceneHostingEnvironmentSettings on FBSSceneSettings
+2026-06-22 18:48:09.895 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneRenderingEnvironmentSettings on FBSSceneSettings
+2026-06-22 18:48:09.896 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneRenderingEnvironmentClientSettings> on FBSSceneClientSettings
+2026-06-22 18:48:09.896 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneTransitioningHostSettings> on FBSSceneSettings
+2026-06-22 18:48:09.897 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneFocusSystemSettings> on FBSSceneSettings
+2026-06-22 18:48:09.897 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationSettingsExtension on FBSSceneSettings
+2026-06-22 18:48:09.898 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneOrientationClientSettingsExtension on FBSSceneClientSettings
+2026-06-22 18:48:09.898 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneWindowingControlClientSettings on FBSSceneClientSettings
+2026-06-22 18:48:09.899 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingContentSizePreferenceClientSettings> on FBSSceneClientSettings
+2026-06-22 18:48:09.899 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension _UISceneHostingTraitCollectionPropagationSettings on FBSSceneSettings
+2026-06-22 18:48:09.901 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationSettings> on FBSSceneSettings
+2026-06-22 18:48:09.902 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingSheetPresentationClientSettings> on FBSSceneClientSettings
+2026-06-22 18:48:09.903 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingEventDeferringSettings> on FBSSceneSettings
+2026-06-22 18:48:09.903 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneSettings
+2026-06-22 18:48:09.904 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <UIKit__UITypedKeyValueSceneSettings> on FBSSceneClientSettings
+2026-06-22 18:48:09.905 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneHostingViewControllerPreferencePropagationClientSettings> on FBSSceneClientSettings
+2026-06-22 18:48:09.905 Df Traffic Getaway[4486:51e55] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneZoomTransitionSettings> on FBSSceneSettings
+2026-06-22 18:48:09.905 Df Traffic Getaway[4486:51e58] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneSettingsCore on FBSSceneSettings
+2026-06-22 18:48:09.909 Df Traffic Getaway[4486:51e58] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneClientSettingsCore on FBSSceneClientSettings
+2026-06-22 18:48:09.937 Df Traffic Getaway[4486:51e58] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneSettings setting counterpart class: UIApplicationSceneSettings
+2026-06-22 18:48:09.938 Df Traffic Getaway[4486:51e58] [com.apple.FrontBoard:SceneExtension] UIMutableApplicationSceneClientSettings setting counterpart class: UIApplicationSceneClientSettings
+2026-06-22 18:48:09.938 Df Traffic Getaway[4486:51e58] [com.apple.FrontBoard:SceneExtension] Realizing settings extension FBSSceneTransitionContextCore on FBSSceneTransitionContext
+2026-06-22 18:48:10.881 Df Traffic Getaway[4486:51e5b] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 1
+2026-06-22 18:48:10.881 Df Traffic Getaway[4486:51e5b] [com.apple.UIKit:BackgroundTask] Ending task with identifier 1 and description: <_UIBackgroundTaskInfo: 0x106478900>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 7357 (elapsed = 1), _expireHandler: (null)
+2026-06-22 18:48:10.881 Df Traffic Getaway[4486:51e5b] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x105d43e00> (used by background task with identifier 1: <_UIBackgroundTaskInfo: 0x106478900>: taskID = 1, taskName = Launch Background Task for Coalescing, creationTime = 7357 (elapsed = 1))
+2026-06-22 18:48:10.881 Df Traffic Getaway[4486:51e5b] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x105d43e00> for task identifier: 1
+2026-06-22 18:48:10.990 A  Traffic Getaway[4486:51e57] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:48:11.045 A  Traffic Getaway[4486:51e5b] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-06-22 18:48:11.068 Df Traffic Getaway[4486:51e4b] [com.apple.dt.xctest:Default] Registering for test daemon availability notify post.
+2026-06-22 18:48:11.068 Df Traffic Getaway[4486:51e4b] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-06-22 18:48:11.068 Df Traffic Getaway[4486:51e4b] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-06-22 18:48:11.068 Df Traffic Getaway[4486:51e4b] [com.apple.dt.xctest:Default] notify_get_state check indicated test daemon not ready.
+2026-06-22 18:48:11.069 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason added: 11; deactivation reasons: 1024 -> 3072; animating application lifecycle event: 0
+2026-06-22 18:48:11.071 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason removed: 10; deactivation reasons: 3072 -> 2048; animating application lifecycle event: 0
+2026-06-22 18:48:11.074 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventBus] Event Timing Profile for Touch: not found, path="/System/Library/EventTimingProfiles/Sim.Touch.plist"
+2026-06-22 18:48:11.106 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventBus] Event Timing Profile for Pencil: not found, path="/System/Library/EventTimingProfiles/Sim.Pencil.plist"
+2026-06-22 18:48:11.107 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:UpdateScheduler] Selected display: name=LCD (PurpleMain), id=1
+2026-06-22 18:48:11.115 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x10653cdc0] activating connection: mach=true listener=false peer=false name=com.apple.lsd.mapdb
+2026-06-22 18:48:11.176 Df Traffic Getaway[4486:51e4b] [com.apple.BoardServices:XPCErrors] [C:2] Alloc com.apple.backboard.hid-services.xpc
+2026-06-22 18:48:11.176 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x10653c8c0] activating connection: mach=false listener=false peer=false name=(anonymous)
+2026-06-22 18:48:11.179 Df Traffic Getaway[4486:51e5b] [com.apple.BackBoard:EventDelivery] BKSHIDEventDeliveryManager - connection activation
+2026-06-22 18:48:11.180 Df Traffic Getaway[4486:51e4b] [com.apple.app_launch_measurement:ApplicationLaunch] alm_acquire_pageins_recording_assertion: acquired pageins recording assertion!
+2026-06-22 18:48:11.183 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:BackgroundTask] Will add backgroundTask with taskName: Persistent SceneSession Map Update, expirationHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-06-22 18:48:11.183 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:BackgroundTask] Creating new assertion because there is no existing background assertion.
+2026-06-22 18:48:11.183 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:BackgroundTask] Creating new background assertion
+2026-06-22 18:48:11.183 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:BackgroundTask] Created new background assertion <BKSProcessAssertion: 0x106776a30>
+2026-06-22 18:48:11.184 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:BackgroundTask] Incrementing reference count for background assertion <BKSProcessAssertion: 0x106776a30>
+2026-06-22 18:48:11.184 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:BackgroundTask] Created background task <_UIBackgroundTaskInfo: 0x10661ecc0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 7358 (elapsed = 0).
+2026-06-22 18:48:11.184 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason added: 5; deactivation reasons: 2048 -> 2080; animating application lifecycle event: 1
+2026-06-22 18:48:11.184 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Should send trait collection or coordinate space update, interface style 1 -> 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.185 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.185 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:HomeAffordanceObservation] Initializing: <_UIHomeAffordanceSceneNotifier: 0x109cfd180>; with scene: <UIWindowScene: 0x109c97c00>
+2026-06-22 18:48:11.186 Df Traffic Getaway[4486:51e4b] [com.apple.BacklightServices:scenes] 0x109d3f360 setDelegate:<0x109d3f450 _UIBacklightEnvironment> hasDelegate:YES for environment:sceneID:com.danielwilliams.TrafficGetaway-default
+2026-06-22 18:48:11.186 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.186 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDeferring] [0x109cfd7a0] Initialized with scene: <UIWindowScene: 0x109c97c00>; behavior: <_UIEventDeferringBehavior_iOS: 0x109c9a640>; availableForProcess: 1, systemShellManagesKeyboardFocus: 1
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e5b] [com.apple.BackBoard:EventDelivery] BKSHIDEventObserver - connection activation
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x1064485a0; process scope; status: target> was:none
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to LastOneWins
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Scene target of keyboard event deferring environment did change: 1; scene: UIWindowScene: 0x109c97c00; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDeferring] [0x109cfd7a0] Scene target of event deferring environments did update: scene: 0x109c97c00; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x109c97c00; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Stack[KeyWindow] 0x109d3f9f0: Taking no further action for migration from LastOneWins -> SystemShellManaged as there are no scenes
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Setting default evaluation strategy for UIUserInterfaceIdiomPhone to SystemShellManaged
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Key window needs update: 0; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x109c97c00; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x0; reason: UIWindowScene: 0x109c97c00: Window scene became target of keyboard environment
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.188 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.189 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.209 E  Traffic Getaway[4486:51e4b] [com.apple.UIKit:UIFocus] SKView implements focusItemsInRect: - caching for linear focus movement is limited as long as this view is on screen.
+2026-06-22 18:48:11.248 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x10653e6c0] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-06-22 18:48:11.250 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x10653e800] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-06-22 18:48:11.251 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x10653e940] activating connection: mach=true listener=false peer=false name=com.apple.metal.simulator
+2026-06-22 18:48:11.285 Df Traffic Getaway[4486:51e57] [com.apple.xpc:connection] [0x10653ed00] activating connection: mach=true listener=false peer=false name=com.apple.fontservicesd
+2026-06-22 18:48:11.335 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Orientation] <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088) Scene updated orientation preferences: none -> ( Pu )
+2026-06-22 18:48:11.342 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Key window API is scene-level: YES
+2026-06-22 18:48:11.342 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] UIWindowScene: 0x109c97c00: Window became key in scene: UIWindow: 0x10658c400; contextId: 0xD5143DDF: reason: UIWindowScene: 0x109c97c00: Window requested to become key in scene: 0x10658c400
+2026-06-22 18:48:11.342 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Key window needs update: 1; currentKeyWindowScene: 0x0; evaluatedKeyWindowScene: 0x109c97c00; currentApplicationKeyWindow: 0x0; evaluatedApplicationKeyWindow: 0x10658c400; reason: UIWindowScene: 0x109c97c00: Window requested to become key in scene: 0x10658c400
+2026-06-22 18:48:11.342 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Window did become application key: UIWindow: 0x10658c400; contextId: 0xD5143DDF; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:48:11.342 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDeferring] [0x109cfd7a0] Begin local event deferring requested for token: 0x106449bc0; environments: 1; reason: UIWindowScene: 0x109c97c00: Begin event deferring in keyboardFocus for window: 0x10658c400
+2026-06-22 18:48:11.346 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.349 Df Traffic Getaway[4486:51e5b] [com.apple.BackBoard:EventDelivery] policyStatus:<BKSHIDEventDeliveryPolicyObserver: 0x1064485a0; token: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default; status: ancestor> was:target
+2026-06-22 18:48:11.350 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:48:11.350 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Ignoring already applied deactivation reason: 5; deactivation reasons: 2080
+2026-06-22 18:48:11.350 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason added: 12; deactivation reasons: 2080 -> 6176; animating application lifecycle event: 1
+2026-06-22 18:48:11.350 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason removed: 11; deactivation reasons: 6176 -> 4128; animating application lifecycle event: 1
+2026-06-22 18:48:11.351 Df Traffic Getaway[4486:51e4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension <_UISceneIntelligenceSupportSettings> on FBSSceneSettings
+2026-06-22 18:48:11.360 Df Traffic Getaway[4486:51e5b] [com.apple.UIIntelligenceSupport:xpc] establishing connection to agent
+2026-06-22 18:48:11.361 Df Traffic Getaway[4486:51e5b] [com.apple.xpc:session] [0x106777430] Session created.
+2026-06-22 18:48:11.361 Df Traffic Getaway[4486:51e5b] [com.apple.xpc:session] [0x106777430] Session created from connection [0x109e85400]
+2026-06-22 18:48:11.361 Df Traffic Getaway[4486:51e5b] [com.apple.xpc:connection] [0x109e85400] activating connection: mach=true listener=false peer=false name=com.apple.uiintelligencesupport.agent
+2026-06-22 18:48:11.361 Df Traffic Getaway[4486:51e5b] [com.apple.xpc:session] [0x106777430] Session activated
+2026-06-22 18:48:11.374 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.386 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x109e84780] activating connection: mach=true listener=false peer=false name=com.apple.IOSurface.Remote
+2026-06-22 18:48:11.425 E  Traffic Getaway[4486:51e4b] (libCoreFSCache.dylib) fopen failed for data file: errno = 2 (No such file or directory)
+2026-06-22 18:48:11.425 Df Traffic Getaway[4486:51e4b] (libCoreFSCache.dylib) Invalidating cache
+2026-06-22 18:48:11.427 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x109e848c0] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-06-22 18:48:11.488 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x109e84a00] activating connection: mach=false listener=false peer=false name=com.apple.MTLCompilerService
+2026-06-22 18:48:11.488 A  Traffic Getaway[4486:51e57] (Metal) Metal Compiling Shader
+2026-06-22 18:48:11.708 Df Traffic Getaway[4486:51e58] [com.apple.UIKit:BackgroundTask] Ending background task with UIBackgroundTaskIdentifier: 2
+2026-06-22 18:48:11.708 Df Traffic Getaway[4486:51e58] [com.apple.UIKit:BackgroundTask] Ending task with identifier 2 and description: <_UIBackgroundTaskInfo: 0x10661ecc0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 7358 (elapsed = 1), _expireHandler: <__NSGlobalBlock__: 0x1e78c84e8>
+2026-06-22 18:48:11.708 Df Traffic Getaway[4486:51e58] [com.apple.UIKit:BackgroundTask] Decrementing reference count for assertion <BKSProcessAssertion: 0x106776a30> (used by background task with identifier 2: <_UIBackgroundTaskInfo: 0x10661ecc0>: taskID = 2, taskName = Persistent SceneSession Map Update, creationTime = 7358 (elapsed = 1))
+2026-06-22 18:48:11.708 Df Traffic Getaway[4486:51e58] [com.apple.UIKit:BackgroundTask] Will invalidate assertion: <BKSProcessAssertion: 0x106776a30> for task identifier: 2
+2026-06-22 18:48:11.833 A  Traffic Getaway[4486:51e57] (Metal) Metal Compiling Shader
+2026-06-22 18:48:11.844 A  Traffic Getaway[4486:51e57] (Metal) Metal Compiling Shader
+2026-06-22 18:48:11.861 A  Traffic Getaway[4486:51e57] (Metal) Metal Compiling Shader
+2026-06-22 18:48:11.874 Df Traffic Getaway[4486:51e4b] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:1 [45E9395F-CA98-4972-A3E6-B1B41825333C] (reporting strategy default)>
+2026-06-22 18:48:11.874 Df Traffic Getaway[4486:51e4b] [com.apple.network:activity] Create activity from XPC object <nw_activity 50:2 [9A17E62B-FA56-4480-9F3A-45C49C57FF06] (reporting strategy default)>
+2026-06-22 18:48:11.874 Df Traffic Getaway[4486:51e4b] [com.apple.network:activity] Set activity <nw_activity 50:1 [45E9395F-CA98-4972-A3E6-B1B41825333C] (reporting strategy default)> as the global parent
+2026-06-22 18:48:11.874 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:UpdateScheduler] Target list changed: <CADisplay:LCD PurpleMain>
+2026-06-22 18:48:11.874 A  Traffic Getaway[4486:51e57] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:48:11.874 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:48:11.875 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.884 A  Traffic Getaway[4486:51e58] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:48:11.918 Df Traffic Getaway[4486:51e4b] [com.apple.Accessibility:AXCommon] Read Per-App on Init: Smart invert = (null)
+2026-06-22 18:48:11.960 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDeferring] [0x109cfd7a0] Scene target of event deferring environments did update: scene: 0x109c97c00; current systemShellManagesKeyboardFocus: 1; systemShellManagesKeyboardFocusForScene: 1; eligibleForRecordRemoval: 1;
+2026-06-22 18:48:11.960 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyWindow] Scene became target of keyboard event deferring environment: UIWindowScene: 0x109c97c00; scene identity: com.apple.frontboard.systemappservices/FBSceneManager:sceneID%3Acom.danielwilliams.TrafficGetaway-default
+2026-06-22 18:48:11.961 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.961 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:48:11.961 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason removed: 12; deactivation reasons: 4128 -> 32; animating application lifecycle event: 1
+2026-06-22 18:48:11.961 Df Traffic Getaway[4486:51e4b] [com.apple.KeyboardArbiter:Client] Send setDeactivating: N (-DeactivationReason:SuspendedEventsOnly)
+2026-06-22 18:48:11.962 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Application] Deactivation reason removed: 5; deactivation reasons: 32 -> 0; animating application lifecycle event: 0
+2026-06-22 18:48:11.962 Df Traffic Getaway[4486:51e4b] [com.apple.KeyboardArbiter:Client] startConnection
+2026-06-22 18:48:11.965 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x109e84280] activating connection: mach=true listener=false peer=false name=com.apple.UIKit.KeyboardManagement.hosted
+2026-06-22 18:48:11.974 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:48:11.976 Df Traffic Getaway[4486:51e4b] [com.apple.FrontBoard:SceneExtension] Realizing settings extension SBUISecureRenderingSettingsExtension on FBSSceneSettings
+2026-06-22 18:48:11.977 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:InterfaceStyle] Not push traits update to screen for new style 1, <UIWindowScene: 0x109c97c00> (0934C4C5-FF83-4F56-958B-210E874BE088)
+2026-06-22 18:48:11.985 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:AppLifecycle] sceneOfRecord: sceneID: sceneID:com.danielwilliams.TrafficGetaway-default  persistentID: 0934C4C5-FF83-4F56-958B-210E874BE088
+2026-06-22 18:48:11.990 A  Traffic Getaway[4486:51e58] (RunningBoardServices) didChangeInheritances
+2026-06-22 18:48:11.995 Df Traffic Getaway[4486:51e4b] [com.apple.KeyboardArbiter:Client] handleKeyboardChange: set currentKeyboard:N (wasKeyboard:N)
+2026-06-22 18:48:12.009 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyboardSceneDelegate] forceReloadInputViews
+2026-06-22 18:48:12.012 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyboardSceneDelegate] Reloading input views for key-window scene responder: <(null): 0x0; > force:Y
+2026-06-22 18:48:12.014 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:KeyboardArbiterClientLog] isWritingToolsHandlingKeyboardTracking:Y (WT ready:Y, Arbiter ready:Y)
+2026-06-22 18:48:12.096 Df Traffic Getaway[4486:51e4b] [com.apple.network:activity] <nw_activity 50:1 [45E9395F-CA98-4972-A3E6-B1B41825333C] (global parent) (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2941ms
+2026-06-22 18:48:12.097 Df Traffic Getaway[4486:51e4b] [com.apple.network:activity] <nw_activity 50:2 [9A17E62B-FA56-4480-9F3A-45C49C57FF06] (reporting strategy default) complete (reason success)> complete with reason 2 (success), duration 2941ms
+2026-06-22 18:48:12.097 Df Traffic Getaway[4486:51e4b] [com.apple.network:activity] Unsetting the global parent activity <nw_activity 50:1 [45E9395F-CA98-4972-A3E6-B1B41825333C] (global parent) (reporting strategy default) complete (reason success)>
+2026-06-22 18:48:12.097 Df Traffic Getaway[4486:51e4b] [com.apple.network:activity] Unset the global parent activity
+2026-06-22 18:48:12.097 Df Traffic Getaway[4486:51e4b] [com.apple.app_launch_measurement:ApplicationLaunch] alm_release_pageins_recording_assertion: releasing pageins recording assertion
+2026-06-22 18:48:12.487 Df Traffic Getaway[4486:51e4b] [com.apple.BackBoard:Display] [FBSDisplaySource 1-1] silently connecting raw configuration: <FBSDisplayConfiguration: 0x1064d5100; Main; mode: "390x844@3x 60Hz p3 SDR">
+2026-06-22 18:48:13.410 Df Traffic Getaway[4486:51e4b] [com.apple.extensionkit:NSExtension] Class EXGetExtensionClass(void) returning EXConcreteExtension
+2026-06-22 18:48:13.410 Df Traffic Getaway[4486:51e4b] [com.apple.xpc:connection] [0x109e84640] activating connection: mach=true listener=false peer=false name=com.apple.pluginkit.pkd
+2026-06-22 18:48:13.411 A  Traffic Getaway[4486:51e4b] (PlugInKit) continuous-discovery
+2026-06-22 18:48:13.411 Df Traffic Getaway[4486:51e4b] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106448c00> created discovery driver
+2026-06-22 18:48:13.411 Df Traffic Getaway[4486:51e4b] [com.apple.PlugInKit:discovery] [d 57E553AD-CDFB-4497-8EB4-BB5D96D20F3C] <PKHost:0x10647a180> Beginning discovery for flags: 0, point: com.apple.AudioUnit
+2026-06-22 18:48:13.412 Df Traffic Getaway[4486:51e58] [com.apple.PlugInKit:discovery] [d 57E553AD-CDFB-4497-8EB4-BB5D96D20F3C] <PKHost:0x10647a180> Completed discovery. Final # of matches: 0
+2026-06-22 18:48:13.412 Df Traffic Getaway[4486:51e58] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106448c00> delivering update to host (0 plugins)
+2026-06-22 18:48:13.412 A  Traffic Getaway[4486:51e58] (ExtensionFoundation) discovering extensions
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e58] [com.apple.extensionkit:NSExtension] discovered extensions: attributes {
+    NSExtensionPointName = "com.apple.AudioUnit";
+}, extensionSet {(
+)}
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e58] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106448c00> installing watchers for continuous discovery
+2026-06-22 18:48:13.413 A  Traffic Getaway[4486:51e4b] (PlugInKit) continuous-discovery
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e4b] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106449680> created discovery driver
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e4b] [com.apple.PlugInKit:discovery] [d F463104C-5C14-45C4-92D5-98B7F7CDD505] <PKHost:0x10647a180> Beginning discovery for flags: 0, point: com.apple.AudioUnit-UI
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e58] [com.apple.launchservices:appinstallation] registering for distributed notification com.apple.LaunchServices.pluginsregistered in this process
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e58] [com.apple.xpc:connection] [0x109e85e00] activating connection: mach=true listener=false peer=false name=com.apple.distributed_notifications@1v3
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e58] [com.apple.launchservices:appinstallation] registering for distributed notification com.apple.LaunchServices.pluginsunregistered in this process
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e57] [com.apple.PlugInKit:discovery] [d F463104C-5C14-45C4-92D5-98B7F7CDD505] <PKHost:0x10647a180> Completed discovery. Final # of matches: 0
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e57] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106449680> delivering update to host (0 plugins)
+2026-06-22 18:48:13.413 A  Traffic Getaway[4486:51e57] (ExtensionFoundation) discovering extensions
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e57] [com.apple.extensionkit:NSExtension] discovered extensions: attributes {
+    NSExtensionPointName = "com.apple.AudioUnit-UI";
+}, extensionSet {(
+)}
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e57] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x106449680> installing watchers for continuous discovery
+2026-06-22 18:48:13.413 A  Traffic Getaway[4486:51e4b] (PlugInKit) continuous-discovery
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e4b] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x1064497a0> created discovery driver
+2026-06-22 18:48:13.413 Df Traffic Getaway[4486:51e4b] [com.apple.PlugInKit:discovery] [d 8590A467-5284-4717-B523-25FA6BF8F98F] <PKHost:0x10647a180> Beginning discovery for flags: 0, point: com.apple.AudioUnit-Speech
+2026-06-22 18:48:13.414 Df Traffic Getaway[4486:51e58] [com.apple.launchservices:progress] Establishing xpc connection to lsd
+2026-06-22 18:48:13.414 Df Traffic Getaway[4486:51e58] [com.apple.xpc:connection] [0x109e85a40] activating connection: mach=true listener=false peer=false name=com.apple.lsd.xpc
+2026-06-22 18:48:13.414 Df Traffic Getaway[4486:51e57] [com.apple.launchservices:progress] Received LSWorkspaceObserverPing, xpc connection established
+2026-06-22 18:48:13.415 Df Traffic Getaway[4486:51e5b] (libAudioDSP.dylib) cannot migrate AudioUnit assets for current process
+2026-06-22 18:48:13.415 Df Traffic Getaway[4486:51e57] [com.apple.PlugInKit:discovery] [d 8590A467-5284-4717-B523-25FA6BF8F98F] <PKHost:0x10647a180> Completed discovery. Final # of matches: 4
+2026-06-22 18:48:13.415 Df Traffic Getaway[4486:51e58] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x1064497a0> delivering update to host (4 plugins)
+2026-06-22 18:48:13.415 A  Traffic Getaway[4486:51e58] (ExtensionFoundation) discovering extensions
+2026-06-22 18:48:13.416 Df Traffic Getaway[4486:51e58] [com.apple.extensionkit:NSExtension] discovered extensions: attributes {
+    NSExtensionPointName = "com.apple.AudioUnit-Speech";
+}, extensionSet {(
+    <EXConcreteExtension: 0x109d9eca0> {id = com.apple.texttospeech.SiriAUSP},
+    <EXConcreteExtension: 0x109d9ee60> {id = com.apple.speech.MacinTalkFramework.MacinTalkAUSP},
+    <EXConcreteExtension: 0x109d9ef40> {id = com.apple.ax.KonaTTSSupport.KonaSynthesizer},
+    <EXConcreteExtension: 0x109d9f020> {id = com.apple.ax.MauiTTSSupport.MauiAUSP}
+)}
+2026-06-22 18:48:13.416 Df Traffic Getaway[4486:51e58] [com.apple.PlugInKit:discovery] <PKDiscoveryDriver:0x1064497a0> installing watchers for continuous discovery
+2026-06-22 18:48:13.422 Df Traffic Getaway[4486:51e4b] [com.apple.audio.caulk:alloc] Registered notify signal com.apple.caulk.alloc.rtdump (0)
+2026-06-22 18:48:13.488 Df Traffic Getaway[4486:51e4b] (CoreAudio)   HALPlugInManagement.cpp:443    HALPlugInManagement::RegisterPlugIns: loading in-process plug-ins
+2026-06-22 18:48:13.490 E  Traffic Getaway[4486:51e4b] [com.apple.CFBundle:plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x10bcc8260> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-06-22 18:48:13.532 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:as_client] AVAudioSessionImpl_Simulator.mm:111   Set volume on device 85 to 0.60
+2026-06-22 18:48:13.533 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:as_client] AVAudioSessionImpl_Simulator.mm:111   Set volume on device 85 to 0.60
+2026-06-22 18:48:13.535 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:ddagg]        AggregateDevice.mm:887   Creating DefaultDeviceAggregate
+2026-06-22 18:48:13.544 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:ddagg]        AggregateDevice.mm:688   Built valid aggregate 125
+2026-06-22 18:48:13.544 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:ddagg]        AggregateDevice.mm:1008  PrimarySessionActiveWithInputEnabled 0 -> 0
+2026-06-22 18:48:13.562 Df Traffic Getaway[4486:51e4b] [com.apple.avfaudio:avae]      AVAudioIONodeImpl.mm:235   Engine@0x10bc4c3c0: associating with audio session (0x0), error -10879
+2026-06-22 18:48:13.564 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x10667c640: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x0, 0 channel descriptions [], err = 0
+2026-06-22 18:48:13.567 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]           AQMixEngine.cpp:735   AQMEDevice (0x10bcdf358) has neither a defaultOutStreamClient nor a defaultInStreamClient
+2026-06-22 18:48:13.567 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x106531e00(@0x106532018); output; [4486]> is NOT Now Playing eligible
+2026-06-22 18:48:13.567 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x106532018 spatialization disabled.  layout = tag=0x0, 0 channel descriptions [], format =  2 ch,      0 Hz, Float32, deinterleaved
+2026-06-22 18:48:13.567 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:EnhanceDialogueProcessor] EnhanceDialogueProcessor.cpp:244   EnhanceDialogueProcessor() - Product does not support Enhance Dialogue
+2026-06-22 18:48:13.567 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:EnhanceDialogueProcessor] EnhanceDialogueProcessor.cpp:244   EnhanceDialogueProcessor() - Product does not support Enhance Dialogue
+2026-06-22 18:48:13.568 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:AudioConverter]        ACv2Workarounds.mm:51    com.danielwilliams.TrafficGetaway: fix84702776_86723525_86479548_89800354_SinglePacketDesc: false
+2026-06-22 18:48:13.570 Df Traffic Getaway[4486:51e56] [com.apple.audio.caulk:alloc] Registered notify signal com.apple.caulk.alloc.audiodump (0)
+2026-06-22 18:48:13.571 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1077  Created a new in process converter -> 0x109cd4390, from  2 ch,  48000 Hz, Float32, deinterleaved to  2 ch,  48000 Hz, Float32, interleaved
+2026-06-22 18:48:13.580 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x106531e00 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:48:13.581 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:48:13.581 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1077  Created a new in process converter -> 0x109cd4ba0, from  2 ch,      0 Hz, Float32, deinterleaved to  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x109cd4ba0: The in-process GetProperty call returned 1886547824 for property 1936876385 with size 4.
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x109cd4ba0: The in-process GetProperty call returned 1886547824 for property 1936876401 with size 4.
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x109cd4ba0: The in-process GetProperty call returned 1886547824 for property 1886546285 with size 8.
+2026-06-22 18:48:13.582 Df Traffic Getaway[4486:51ee7] [com.apple.coreaudio:AudioConverter] AudioConverter -> 0x109cd4ba0: The in-process SetProperty call returned 1886547824 for property 1886547309 with size 4.
+2026-06-22 18:48:13.583 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:SpatialMgr] SpatializationManager.cpp:1461  Could not load preset file, invalid model/product name!
+2026-06-22 18:48:13.583 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1741  Stopping AURemoteIO(0x10667c640)
+2026-06-22 18:48:13.583 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aqme]        MEMixerChannel.cpp:3273  2-channel audiovisual content is NOT eligible for spatialization
+2026-06-22 18:48:13.583 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aqme]  MEDeviceStreamClient.cpp:245   AQME Default-InputOutput: client starting: <CA_UISoundClientBase@0x1067cb9c0>; running count now 1
+2026-06-22 18:48:13.583 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aqme]            AQMEIO_HAL.cpp:2857  FetchAndLogFrameSize starting IO deviceID=125, frame size is 512
+2026-06-22 18:48:13.624 Df Traffic Getaway[4486:51e58] [com.apple.coreaudio:aqme]            AQMEIO_HAL.cpp:2826  aqmeio@0x106532418, device 125 (iOSSimulatorAudioDevice-4486-0), AudioDeviceStart (err 0)
+2026-06-22 18:48:13.661 E  Traffic Getaway[4486:51eea] [com.apple.coreaudio:AMCP]          HALC_ProxyIOContext.cpp:1623  HALC_ProxyIOContext::IOWorkLoop: skipping cycle due to overload
+2026-06-22 18:48:14.467 Df Traffic Getaway[4486:51e4b] [com.apple.avfaudio:avae]          AVAudioEngine.mm:1182  Engine@0x106601a90: start, was running 0
+2026-06-22 18:48:14.467 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x10667c640: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x650002, err = 0
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x106531e00(@0x106532018); output; [4486]> is NOT Now Playing eligible
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x106532018 spatialization disabled.  layout = tag=0x650002, format =  2 ch,  44100 Hz, Float32, deinterleaved
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x106531e00 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:48:14.468 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:48:14.469 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1077  Created a new in process converter -> 0x109cd4810, from  2 ch,  44100 Hz, Float32, deinterleaved to  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:48:14.469 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:AudioConverter]        AudioConverter.cpp:1327  AudioConverter -> 0x109cd4810: The in-process GetProperty call returned 1886547824 for property 1936876385 with size 4.
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1741  Stopping AURemoteIO(0x10667c640)
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x10667c640: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x650002, err = 0
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x106531e00(@0x106532018); output; [4486]> is NOT Now Playing eligible
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x106532018 spatialization disabled.  layout = tag=0x650002, format =  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x106531e00 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1741  Stopping AURemoteIO(0x10667c640)
+2026-06-22 18:48:14.470 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1130  AURemoteIO@0x10667c640: set kAudioOutputUnitProperty_OutputChannelLayout.  Layout = tag=0x650002, err = 0
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x106531e00(@0x106532018); output; [4486]> is NOT Now Playing eligible
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1888  rio@0x106532018 spatialization disabled.  layout = tag=0x650002, format =  2 ch,  48000 Hz, Float32, deinterleaved
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]          RemoteIOServer.h:101   rio@0x106531e00 Got output layout from io node or spatialized client: tag=0x0, 2 channel descriptions [L, R]
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1597  SetLoudnessFromLM(): ->
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1636  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManager enabled? yes
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1639  SetLoudnessFromLM(): is CoreAudioServices/LoudnessManagerV2 enabled? yes
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1642  SetLoudnessFromLM(): is CoreAudioServices/lm-disable-hardware-check on? no
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1645  SetLoudnessFromLM(): is hardware supported? no
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aurios]        RemoteIOServer.cpp:1657  SetLoudnessFromLM(): hardware not supported, Loudness Manager disabled
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1666  Starting AURemoteIO(0x10667c640)
+output client:  2 ch,  48000 Hz, Float32, deinterleaved, output HW:  2 ch,  48000 Hz, Float32, deinterleaved
+input client:   2 ch,      0 Hz, Float32, deinterleaved, input HW:   2 ch,      0 Hz, Float32, deinterleaved
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]            AQMEIO_HAL.cpp:1087  fetched workgroup 0x109c12f00
+2026-06-22 18:48:14.471 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:30    AUOOPWorkgroupManager: AddRemoteIOWorkgroup called with token 18374662.
+2026-06-22 18:48:14.472 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:66    AUOOPWorkgroupManager: mutating workgroups.
+2026-06-22 18:48:14.472 Df Traffic Getaway[4486:51e4b] [com.apple.coreaudio:aurioc]            AURemoteIO.cpp:1727  workgroup port 0x11f03
+2026-06-22 18:48:14.472 Df Traffic Getaway[4486:51fb1] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:30    AUOOPWorkgroupManager: AddRemoteIOWorkgroup called with token 18374661.
+2026-06-22 18:48:14.472 Df Traffic Getaway[4486:51fb1] [com.apple.coreaudio:auext]        AUOOPWorkgroups.mm:66    AUOOPWorkgroupManager: mutating workgroups.
+2026-06-22 18:48:14.472 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]              AQIONode.cpp:744   client <RemoteIOClient@0x106531e00(@0x106532018); output; [4486]> is NOT Now Playing eligible
+2026-06-22 18:48:14.472 Df Traffic Getaway[4486:51e56] [com.apple.coreaudio:aqme]  MEDeviceStreamClient.cpp:245   AQME Default-InputOutput: client starting: <RemoteIOClient@0x106531e00(@0x106532018); output; [4486]>; running count now 2
+2026-06-22 18:49:36.998 Df Traffic Getaway[4486:51e4b] (libMobileGestalt.dylib) Property isp[camera-front] found {length = 4, bytes = 0x01000000}
+2026-06-22 18:49:36.999 A  Traffic Getaway[4486:51e4b] (CoreFoundation) Updating Key-Value Observers Of Preferences
+2026-06-22 18:49:37.171 A  Traffic Getaway[4486:51e4b] (libsystem_containermanager.dylib) container_system_group_path_for_identifier
+2026-06-22 18:49:37.171 Df Traffic Getaway[4486:51e4b] [com.apple.containermanager:xpc] Requesting container lookup; class = 13, identifier = (null), group_identifier = systemgroup.com.apple.configurationprofiles, create = 1, temp = 0, euid = 501, uid = 501
+2026-06-22 18:49:37.171 A  Traffic Getaway[4486:51e4b] (libsystem_containermanager.dylib) container_query_t
+2026-06-22 18:49:37.171 Df Traffic Getaway[4486:51e4b] [com.apple.containermanager:xpc] Query; euid = 501, uid = 501, class = 13, identifier = [(null)](0), flags = 900000003
+2026-06-22 18:49:37.180 Df Traffic Getaway[4486:51e4b] [com.apple.containermanager:unspecified] _container_query_get_result_at_index: success
+2026-06-22 18:49:37.180 A  Traffic Getaway[4486:51e4b] (libsystem_containermanager.dylib) container_copy_object
+2026-06-22 18:49:37.180 Df Traffic Getaway[4486:51e4b] [com.apple.containermanager:unspecified] container_system_group_path_for_identifier: success
+2026-06-22 18:49:37.180 Df Traffic Getaway[4486:51e4b] [com.apple.ManagedConfiguration:MC] Got system group container path from MCM for systemgroup.com.apple.configurationprofiles: /Users/danielwilliams/Library/Developer/CoreSimulator/Devices/8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E/data/Containers/Shared/SystemGroup/systemgroup.com.apple.configurationprofiles
+2026-06-22 18:49:43.674 E  Traffic Getaway[4486:51e4b] [com.apple.Accessibility:AXRuntimeCommon] Unknown client: Traffic Getaway
+2026-06-22 18:49:43.754 Df Traffic Getaway[4486:51e4b] [com.apple.KeyboardArbiter:Client] TX focusApplication (peekAppEvent) stealKB:Y scene:com.danielwilliams.TrafficGetaway-default
+2026-06-22 18:49:43.756 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDispatch] Evaluating dispatch of UIEvent: 0x1064d4d00; type: 0; subtype: 0; backing type: 11; shouldSend: 1; ignoreInteractionEvents: 0, systemGestureStateChange: 0
+2026-06-22 18:49:43.756 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-06-22 18:49:43.757 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x10658c400>; contextId: 0xD5143DDF
+2026-06-22 18:49:43.788 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDispatch] Evaluating dispatch of UIEvent: 0x1064d4d00; type: 0; subtype: 0; backing type: 11; shouldSend: 1; ignoreInteractionEvents: 0, systemGestureStateChange: 0
+2026-06-22 18:49:43.788 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to windows: 1
+2026-06-22 18:49:43.788 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:EventDispatch] Sending UIEvent type: 0; subtype: 0; to window: <UIWindow: 0x10658c400>; contextId: 0xD5143DDF
+2026-06-22 18:49:44.160 A  Traffic Getaway[4486:52d7e] (Metal) Metal Compiling Shader
+2026-06-22 18:49:44.249 A  Traffic Getaway[4486:52d7e] (Metal) Metal Compiling Shader
+2026-06-22 18:50:00.094 Df Traffic Getaway[4486:51e4b] (SpriteKit) SKView: no drawables available for rendering. Skipping this frame.
+2026-06-22 18:50:05.790 Df Traffic Getaway[4486:51e4b] (SpriteKit) SKView: no drawables available for rendering. Skipping this frame.
+2026-06-22 18:50:07.498 Df Traffic Getaway[4486:51e4b] [com.apple.UIKit:Feedback] generator <UINotificationFeedbackGenerator: 0x10bcbf8e0> cannot play feedback <nil: 0x0> (enabled=0)

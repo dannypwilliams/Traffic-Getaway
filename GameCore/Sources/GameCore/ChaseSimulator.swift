@@ -423,7 +423,9 @@ public enum ChaseSimulator {
         dodgeBoostActive: Bool
     ) -> (target: Int?, risky: Bool) {
         let reach = reachableSlots(vehicle: vehicle, boosted: dodgeBoostActive)
-        let candidates = safeSlots.filter { abs($0 - current) <= reach }
+        let candidates = safeSlots
+            .filter { abs($0 - current) <= reach }
+            .sorted()
         guard !candidates.isEmpty else { return (nil, false) }
 
         let desired: Int
@@ -437,6 +439,9 @@ public enum ChaseSimulator {
         let target = candidates.min { lhs, rhs in
             let lhsScore = abs(lhs - desired) + (lhs == current ? 2 : 0)
             let rhsScore = abs(rhs - desired) + (rhs == current ? 2 : 0)
+            if lhsScore == rhsScore {
+                return lhs < rhs
+            }
             return lhsScore < rhsScore
         }
         let risky = target.map { abs($0 - current) <= 2 && $0 != current } ?? false

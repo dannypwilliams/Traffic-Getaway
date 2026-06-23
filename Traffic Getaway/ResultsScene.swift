@@ -60,10 +60,11 @@ final class ResultsScene: SKScene {
         levelLabel.position = CGPoint(x: size.width / 2, y: title.position.y - 34)
         contentNode.addChild(levelLabel)
 
+        let showDoubleCash = AppConfig.rewardedCashDoublesEnabled && result.finalCashEarned > 0
         let actionBaseY = metrics.safeContentFrame.minY + 24
         let primaryY = actionBaseY + 52
         let doubleCashY = actionBaseY + 96
-        let panelBottom = doubleCashY + 34
+        let panelBottom = showDoubleCash ? doubleCashY + 34 : primaryY + 36
         let panelTop = levelLabel.position.y - 34
         let panelHeight = max(238, min(470, panelTop - panelBottom))
         let panelSize = CGSize(width: min(metrics.safeContentFrame.width, 370), height: panelHeight)
@@ -102,15 +103,17 @@ final class ResultsScene: SKScene {
             addMetricRow(title: row.0, value: row.1, y: topRowY - CGFloat(index) * spacing, width: rowWidth, counting: row.2)
         }
 
-        let doubleCash = UIHelpers.button(
-            text: doubleCashClaimed ? "CASH DOUBLED" : "DOUBLE CASH",
-            name: doubleCashClaimed ? "results.noop" : "results.doubleCash",
-            size: CGSize(width: 170, height: 38),
-            fill: doubleCashClaimed ? SKColor.green.withAlphaComponent(0.18) : SKColor(red: 1, green: 0.84, blue: 0.16, alpha: 0.2),
-            stroke: doubleCashClaimed ? .green : SKColor(red: 1, green: 0.84, blue: 0.16, alpha: 1)
-        )
-        doubleCash.position = CGPoint(x: size.width / 2, y: doubleCashY)
-        contentNode.addChild(doubleCash)
+        if showDoubleCash {
+            let doubleCash = UIHelpers.button(
+                text: doubleCashClaimed ? "CASH DOUBLED" : "DOUBLE CASH",
+                name: doubleCashClaimed ? "results.noop" : "results.doubleCash",
+                size: CGSize(width: 170, height: 38),
+                fill: doubleCashClaimed ? SKColor.green.withAlphaComponent(0.18) : SKColor(red: 1, green: 0.84, blue: 0.16, alpha: 0.2),
+                stroke: doubleCashClaimed ? .green : SKColor(red: 1, green: 0.84, blue: 0.16, alpha: 1)
+            )
+            doubleCash.position = CGPoint(x: size.width / 2, y: doubleCashY)
+            contentNode.addChild(doubleCash)
+        }
 
         let primaryText: String
         let primaryName: String

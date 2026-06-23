@@ -78,16 +78,6 @@ final class OnboardingScene: SKScene {
             minimumReadTime: 1.4
         ),
         Step(
-            title: "ONE REVIVE",
-            subtitle: "Crash once and you may get one revive.",
-            bullets: [
-                "Use it to recover",
-                "Then the next hit ends the run"
-            ],
-            interaction: .none,
-            minimumReadTime: 1.5
-        ),
-        Step(
             title: "SURVIVE THE CHASE",
             subtitle: "Move right until you reach the ramp.",
             bullets: [

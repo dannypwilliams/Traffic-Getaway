@@ -1,0 +1,98 @@
+# Traffic Getaway Codex Handoff
+
+## Milestone
+
+First-minute reliability, deterministic-core repair, and live telemetry: partial.
+
+## Verified baseline
+
+- Branch/state before edits: `main...origin/main [ahead 1]`, HEAD `a5af66b Testrun`, clean working tree.
+- Required source docs were missing from `Docs/`; only `Docs/.DS_Store` existed at session start.
+- `powershell -NoProfile -ExecutionPolicy Bypass -File .\Tools\windows\check_pc_handoff.ps1` could not run on this Mac because `powershell` is not installed.
+- PBX validation passed.
+- `GameCore` baseline failed determinism and traffic stress:
+  - `testSimulationIsDeterministic` produced different `ChaseRunResult` values for the same seed/config.
+  - `testSunsetMergeTrafficStressCommitsReachableWaves` reported 203 impossible committed waves and 203 exit reachability failures.
+- Baseline GameSim Level 1 Starter Compact: 10,000 runs, avg survival 43.3s, completed 98.7%, near misses 32.1, avg cash 909, avg XP 359, unfair collision 0.0%.
+- Baseline traffic stress: 160,000 waves, 9,432 fallback waves, 9,432 impossible committed waves, 9,432 exit reachability failures.
+- Mac app build passed before edits.
+- Simulator launch reproduced a white first frame; evidence: `PlaytestArtifacts/2026-06-22-production-pass-18-38/screenshots/01-launch.png`.
+
+## Changes made
+
+- `GameCore/Sources/GameCore/ChaseSimulator.swift`: made slot selection deterministic by sorting reachable safe slots and adding a stable tie-breaker.
+- `GameCore/Sources/GameCore/TrafficSafety.swift`: changed active-exit validation to preserve a reachable step toward the exit when the player is not yet on the exit side, and to preserve an exit-side route once they are.
+- `GameCore/Sources/GameCore/TrafficPatternGenerator.swift`: stopped returning invalid recovery waves as committed plans.
+- `Traffic Getaway/AppConfig.swift`: added off-by-default flags for rewarded revives and rewarded cash doubles.
+- `Traffic Getaway/GameScene.swift`: disabled first-crash revive offers unless `rewardedRevivesEnabled` is explicitly enabled.
+- `Traffic Getaway/ResultsScene.swift`: hid cash-doubling reward UI unless `rewardedCashDoublesEnabled` is explicitly enabled.
+- `Traffic Getaway/OnboardingScene.swift`: removed the tutorial page that promised a revive.
+- `Traffic Getaway/MainMenuScene.swift`: made cash/best-score accessibility label/value use the same final string as visible state after the count-up.
+- `Traffic Getaway/Info.plist` and `Traffic Getaway/Assets.xcassets/LaunchBackground.colorset/Contents.json`: added a dark launch-screen color to remove the white system launch frame.
+- `Traffic Getaway/TrafficSafetyAnalyzer.swift`: matched the app-side active-exit route validation to the fixed `GameCore` route-preservation rule.
+- `Traffic Getaway/TrafficPatternGenerator.swift`: stopped the app-side generator from committing invalid recovery waves.
+- `Traffic Getaway/RunTelemetryRecorder.swift`: added debug JSONL live-run telemetry for run starts, traffic waves, lane changes, exits, collisions, and run endings.
+- `Traffic Getaway/GameScene.swift`: records live first-minute state including seed, player slot/lane, traffic pattern, safe slots, exit state, police pressure, collision rectangles, and terminal outcomes; also adds a debug open-path overlay for lane centers, slot centers, safe slots, exit corridors, near-miss bands, hitboxes, wave ID, and seed.
+- `Traffic Getaway.xcodeproj/project.pbxproj`: added the telemetry recorder to the iOS target.
+- `scripts/summarize_run_telemetry.py`: added a repeatable JSONL summarizer for live-run telemetry exports.
+
+## Tests run
+
+- `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"`: passed.
+- `python3 scripts/validate_pbxproj_ids.py --self-test`: passed.
+- `cd GameCore && swift test`: passed after fixes, 18 tests, 0 failures.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress`: passed stress gate after fixes, 160,000 waves, 0 impossible committed waves, 0 exit reachability failures.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345`: passed command, but balance remains too easy.
+- `bash Tools/mac/verify_on_mac.sh`: passed after fixes.
+- `plutil -lint "Traffic Getaway/Info.plist"`: passed.
+- Live telemetry smoke test on iPhone 17e simulator: passed; produced 24 JSONL events including `run_started`, 21 `traffic_wave` events, `collision`, and `run_ended`.
+- `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-22-production-pass-18-38/telemetry`: passed; summarized the live crash sample.
+- Re-ran `cd GameCore && swift test` after debug overlay changes: passed, 18 tests, 0 failures.
+- Re-ran `bash Tools/mac/verify_on_mac.sh` after debug overlay changes: passed.
+
+## Simulator/device evidence
+
+- Simulator: iPhone 17e, iOS 26.5, Debug simulator build from `/tmp/TrafficGetawayVerifyDerivedData`.
+- Before launch fix: `PlaytestArtifacts/2026-06-22-production-pass-18-38/screenshots/01-launch.png` captured a white screen.
+- After launch fix: `PlaytestArtifacts/2026-06-22-production-pass-18-38/screenshots/02-launch-after-fix.png` captured the dark first tutorial screen.
+- Live telemetry run: `PlaytestArtifacts/2026-06-22-production-pass-18-38/screenshots/04-live-telemetry-run.png` plus `PlaytestArtifacts/2026-06-22-production-pass-18-38/telemetry/2026-06-22_18-49-43-la_01-starter_compact-17033032432948192956.jsonl`.
+- Debug diagnostic overlay: `PlaytestArtifacts/2026-06-22-production-pass-18-38/screenshots/05-debug-diagnostics-overlay.png`.
+- Telemetry sample ended in a traffic collision at 22.946s with 21 traffic waves logged; pattern counts were `staggeredCars` 8, `denseClusters` 6, `sparseLanes` 6, and `recoveryWave` 1.
+- Telemetry summarizer result: 1 run, 0/1 completed, average terminal time 22.9s, 4 near misses, 44 cash, wanted level 3, collision rectangles present.
+- Logs:
+  - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
+  - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
+  - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`
+
+## Metrics before and after
+
+| Metric | Before | After |
+|---|---:|---:|
+| GameCore tests | 18 tests, 3 failures | 18 tests, 0 failures |
+| Traffic stress impossible waves | 9,432 / 160,000 | 0 / 160,000 |
+| Traffic stress exit failures | 9,432 / 160,000 | 0 / 160,000 |
+| Level 1 completion | 98.7% | 99.1% |
+| Level 1 near misses | 32.1/run | 35.3/run |
+| Level 1 avg cash | 909 | 998 |
+| Level 1 avg XP | 359 | 391 |
+| Live telemetry | Not present | 1 iPhone 17e run captured |
+| Debug visualization | Not present | Open-path overlay screenshot captured |
+
+## Remaining defects
+
+- P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
+- P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
+- P1 milestone blocker: Sim/live reconciliation is still not complete; this pass added and verified live telemetry, but only one live crash sample has been captured.
+- P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
+- P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
+
+## Risks
+
+- The exit reachability model now validates path preservation across waves; future stricter tests should add multi-wave route proofs and bad-seed fixtures.
+- The simulator launch logs include simulator/accessibility/audio warnings; no app crash was observed, but full manual flow validation is still needed.
+- The app target still does not import `GameCore`; rules are duplicated between app and pure Swift systems.
+- The debug overlay is intentionally tied to debug settings and should remain off for normal production screenshots/play.
+
+## Next highest-priority action
+
+Capture a small live-run matrix with the new JSONL telemetry, reconcile those outcomes with GameSim, then retune Sunset Merge difficulty and rewards.
