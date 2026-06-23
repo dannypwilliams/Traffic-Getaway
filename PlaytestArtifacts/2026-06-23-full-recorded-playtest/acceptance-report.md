@@ -18,7 +18,7 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 - Failed: 1
 - Partial: 7
 - Blocked: 0
-- Invalid: 4
+- Invalid: 5
 - Not tested: 45
 - Valid active-input runs: 12
 - Valid complete-evidence runs counted for LA Starter Compact: 5
@@ -29,7 +29,7 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 - Device coverage: iPhone 17e has two completed recorded active-run slices plus one recorded retry functional session; iPhone 17 Pro has one Dynamic Island active sample that failed the safe-area check; no physical hardware.
 - City coverage: Los Angeles has completed Starter Compact and Starter Bike active-run slices for `la_01`; New York and Miami have automated simulation only.
 - Vehicle coverage: Starter Compact and Starter Bike each have one completed iPhone 17e Los Angeles city slice. Garage browsing is partially recorded: selected Sunset Cruiser, Cars/Bikes tab switching, and locked Starter Bike messaging are proven, but alternate unlocked-vehicle selection is still unproven.
-- Save/relaunch coverage: partial. App termination/relaunch and true Home-screen background/foreground restored high score 741, cash `$443`, Sunset Cruiser, and Los Angeles start context, but active-gameplay backgrounding and full main-menu Level 2 XP restoration remain unproven.
+- Save/relaunch coverage: partial. App termination/relaunch, true Home-screen background/foreground, and active-gameplay background/foreground are recorded. Active-gameplay foreground returned to a terminal `CAPTURED` result with telemetry, but the sample had 0 lane changes and full main-menu Level 2 XP restoration remains unproven.
 - Tutorial result: pass for recorded first-run onboarding completion without skip; launch-frame still capture is partial because the screenshot caught tutorial page 1 rather than the branded launch frame.
 - First-minute result: fail/partial signal; six valid active Starter Compact LA01 runs all crashed before 10 seconds, and three complete-evidence Starter Bike LA01 runs all failed before completion.
 - Control-feel result: partial; tap steering produced lane changes in twelve valid active-input runs, but other control modes are untested and the iPhone 17 Pro vehicle-specific sample is weakened by a vehicle identity mismatch.

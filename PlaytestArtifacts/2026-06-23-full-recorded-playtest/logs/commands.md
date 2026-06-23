@@ -58,3 +58,9 @@ Commit: 3c2431d
 - xcrun simctl launch foregrounded `com.danielwilliams.TrafficGetaway` after Home-screen backgrounding
 - xcrun simctl io <iPhone 17e> screenshot for background/foreground before-home, actual-home-screen, and actual-after-foreground checkpoints
 - Final post-background cleanup logged at `build-validation/background-foreground-debug-defaults-final-clean-after-capture.log`
+- xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_la01_active-gameplay_background-foreground_session01.mp4`
+- Computer Use tapped `Tap to Start` from the LA01 start gate, then osascript sent Simulator keyboard shortcut Command-Shift-H during active gameplay to reach the iOS Home screen
+- xcrun simctl launch foregrounded `com.danielwilliams.TrafficGetaway`; foreground returned to gameplay/result flow and terminal `CAPTURED`
+- xcrun simctl io <iPhone 17e> screenshot for active-gameplay lifecycle start-gate, before-home-active, home-screen, after-foreground, and result-captured checkpoints
+- Copied telemetry `2026-06-23_10-46-19-la_01-starter_compact-17033032432948224632.jsonl` to the artifact raw telemetry folder and generated `2026-06-23_iphone17e_la01_active-gameplay_background-foreground_session01-summary.md`
+- Final post-active-gameplay-background cleanup logged at `build-validation/active-gameplay-background-foreground-debug-defaults-final-clean-after-capture.log`

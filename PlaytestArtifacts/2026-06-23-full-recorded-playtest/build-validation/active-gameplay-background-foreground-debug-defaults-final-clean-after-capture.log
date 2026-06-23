@@ -1,0 +1,30 @@
+# Final cleanup after active gameplay background/foreground capture
+# Before cleanup
+{
+  "TrafficGetaway.debug.autoplay" => false
+  "TrafficGetaway.debug.autoStartLevelID" => "la_01"
+  "TrafficGetaway.debug.autoStartVehicleID" => "starter_compact"
+  "TrafficGetaway.debug.showOpenLaneAnalysis" => false
+  "TrafficGetaway.debug.waitForStartTap" => true
+  "TrafficGetaway.hapticsEnabled" => true
+  "TrafficGetaway.musicEnabled" => true
+  "TrafficGetaway.musicVolume" => 0.72
+  "TrafficGetaway.SaveData.v2" => {length = 1788, bytes = 0x7b22636f6d706c657465644d69737369 ... 6564223a3531347d}
+  "TrafficGetaway.sfxEnabled" => true
+  "TrafficGetaway.sfxVolume" => 0.82
+}
+# Deleting debug defaults
+deleted TrafficGetaway.debug.autoplay
+deleted TrafficGetaway.debug.autoStartLevelID
+deleted TrafficGetaway.debug.autoStartVehicleID
+deleted TrafficGetaway.debug.showOpenLaneAnalysis
+deleted TrafficGetaway.debug.waitForStartTap
+# After cleanup
+{
+  "TrafficGetaway.hapticsEnabled" => true
+  "TrafficGetaway.musicEnabled" => true
+  "TrafficGetaway.musicVolume" => 0.72
+  "TrafficGetaway.SaveData.v2" => {length = 1788, bytes = 0x7b22636f6d706c657465644d69737369 ... 6564223a3531347d}
+  "TrafficGetaway.sfxEnabled" => true
+  "TrafficGetaway.sfxVolume" => 0.82
+}
