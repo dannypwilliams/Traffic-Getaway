@@ -3,12 +3,13 @@
 ## P0 Ship Blockers
 
 - Sunset Merge balance is far outside target: about 99% sim completion, about 35 near misses/run, and about 998 cash/run.
-- Sim/live behavior is not reconciled; live gameplay metrics are not yet captured.
+- Sim/live behavior is not reconciled; live telemetry exists, but live autoplay still crashes far earlier than GameSim.
 
 ## P1 Milestone Blockers
 
 - Full tutorial and first-minute terminal-outcome matrix has not been completed.
 - App-local rules duplicate `GameCore`, creating drift risk.
+- Live collision timing/active traffic lifetime is not modeled by GameSim closely enough to explain early live crashes.
 
 ## P2 Important Polish
 

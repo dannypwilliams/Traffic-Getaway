@@ -63,6 +63,8 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
     waves = [event for event in events if event.get("event") == "traffic_wave"]
     decisions = [event.get("movementDecision") for event in events if event.get("movementDecision")]
     move_decisions = [decision for decision in decisions if decision.get("status") == "move"]
+    decision_sources = Counter(decision.get("source", "missing") for decision in decisions)
+    decision_statuses = Counter(decision.get("status", "missing") for decision in decisions)
     target_mismatches = [
         decision for decision in decisions
         if decision.get("targetSlot") is not None
@@ -111,6 +113,8 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
         "has_active_traffic": any(event.get("activeTraffic") for event in events),
         "autoplay_decisions": len(decisions),
         "autoplay_moves": len(move_decisions),
+        "autoplay_sources": decision_sources,
+        "autoplay_statuses": decision_statuses,
         "target_mismatches": len(target_mismatches),
         "move_target_mismatches": len(move_target_mismatches),
         "applied_mismatches": len(applied_mismatches),
@@ -129,9 +133,13 @@ def print_markdown(summaries: list[dict]) -> None:
     terminal_times = [item["terminal_time"] for item in summaries if item["terminal_time"] > 0]
     pattern_counts: Counter = Counter()
     terminal_counts: Counter = Counter()
+    source_counts: Counter = Counter()
+    status_counts: Counter = Counter()
     for item in summaries:
         pattern_counts.update(item["pattern_counts"])
         terminal_counts[item["terminal_reason"]] += 1
+        source_counts.update(item["autoplay_sources"])
+        status_counts.update(item["autoplay_statuses"])
 
     print(f"- Runs: {len(summaries)}")
     print(f"- Completed: {completed}/{len(summaries)} ({completed / len(summaries) * 100:.1f}%)")
@@ -148,6 +156,10 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Autoplay target mismatches: {sum(item['target_mismatches'] for item in summaries)}")
     print(f"- Autoplay move-target mismatches: {sum(item['move_target_mismatches'] for item in summaries)}")
     print(f"- Autoplay applied-slot mismatches: {sum(item['applied_mismatches'] for item in summaries)}")
+    if source_counts:
+        print(f"- Autoplay decision sources: {dict(sorted(source_counts.items()))}")
+    if status_counts:
+        print(f"- Autoplay decision statuses: {dict(sorted(status_counts.items()))}")
     print(f"- Terminal reasons: {dict(sorted(terminal_counts.items()))}")
     print(f"- Pattern mix: {dict(sorted(pattern_counts.items()))}")
     print()

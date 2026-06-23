@@ -18,6 +18,7 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - The debug open-path overlay was screenshot-verified, then disabled again in the simulator.
 - A five-run debug-autoplay matrix was captured with active traffic snapshots in all collision samples.
 - A corrected five-run debug-autoplay decision matrix was captured. It showed 207 autoplay decisions, 18 move decisions, 36 target-policy mismatches, 2 move-target mismatches, and 2 applied-slot mismatches versus the GameSim policy target.
+- A live-hazard debug-autoplay matrix was captured after explicitly installing the new build. It showed 5/5 traffic collisions, 8.6s average terminal time, 269 decisions, 176 live-hazard decisions, and one run that survived 24.9s.
 - No full clean-install tutorial matrix or human-controlled terminal outcome matrix was performed in this pass.
 
 ## Evidence
@@ -31,6 +32,8 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/telemetry/`
 - `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/summary.md`
 - `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/telemetry/`
+- `PlaytestArtifacts/2026-06-22-live-autoplay-live-hazard-matrix/summary.md`
+- `PlaytestArtifacts/2026-06-22-live-autoplay-live-hazard-matrix/telemetry/`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`

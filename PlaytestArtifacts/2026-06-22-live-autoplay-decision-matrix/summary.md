@@ -14,6 +14,8 @@
 - Autoplay target mismatches: 36
 - Autoplay move-target mismatches: 2
 - Autoplay applied-slot mismatches: 2
+- Autoplay decision sources: {'debug_autoplay': 207}
+- Autoplay decision statuses: {'already_at_target': 101, 'move': 18, 'no_reachable_slots': 88}
 - Terminal reasons: {'traffic': 5}
 - Pattern mix: {'denseClusters': 10, 'sparseLanes': 12, 'staggeredCars': 9}
 

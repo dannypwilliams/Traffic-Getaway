@@ -68,10 +68,25 @@ Live debug-autoplay decision matrix:
 - Terminal reasons: traffic collision in all 5.
 - Summary: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/summary.md`.
 
+Live-hazard debug-autoplay matrix:
+
+- Runs: 5.
+- Completed: 0/5.
+- Avg terminal time: 8.6s.
+- Median terminal time: 4.5s.
+- Avg traffic waves before terminal event: 8.4.
+- Avg near misses/cash: 2.6 / 19.
+- Autoplay decisions: 269.
+- Autoplay move decisions: 41.
+- Autoplay decision sources: `debug_autoplay_live_hazards` 176, `debug_autoplay_latest_wave` 93.
+- Autoplay decision statuses: `already_at_target` 205, `move` 41, `no_reachable_slots` 23.
+- Terminal reasons: traffic collision in all 5.
+- Summary: `PlaytestArtifacts/2026-06-22-live-autoplay-live-hazard-matrix/summary.md`.
+
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome. Corrected decision telemetry shows actual live moves mostly land on the GameSim-style target, so the remaining mismatch is not lane movement conversion; it is live decision/state modeling, especially stay-vs-move decisions and early no-reachable-safe-slot frames. Do not tune rewards or density until that model mismatch is fixed or intentionally modeled.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome. Corrected decision telemetry shows actual live moves mostly land on the GameSim-style target. Live-hazard steering improved average terminal time, but all runs still crashed before the exit. Do not tune rewards or density until active traffic lifetime and collision timing are reconciled or intentionally modeled.
 
 ## Next
 
-Compare live no-reachable-safe-slot and collision frames against GameSim per-wave state for the same seeds, decide whether GameSim or live safety selection needs the next parity fix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
+Add collision-frame analysis for the live matrices, decide whether GameSim or live safety selection needs the next parity fix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.

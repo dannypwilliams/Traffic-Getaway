@@ -17,6 +17,7 @@ Partial.
 - Debug direct-start/autoplay capture produced a five-run iPhone 17e live matrix for `la_01` + `starter_compact`.
 - New-schema collision telemetry includes active traffic snapshots.
 - Debug autoplay decision telemetry produced a five-run iPhone 17e matrix. Corrected instrumentation shows only 2 applied-slot mismatches across 18 move decisions, with the remaining sim/live gap concentrated in target-policy and no-reachable-state differences.
+- Live-hazard debug autoplay produced another five-run iPhone 17e matrix. Average terminal time improved to 8.6s, including one 24.9s run, but 5/5 runs still ended in traffic collisions before the exit.
 
 ## Evidence
 
@@ -29,6 +30,8 @@ Partial.
 - Autoplay matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/telemetry/`
 - Autoplay decision matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/summary.md`
 - Autoplay decision matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/telemetry/`
+- Live-hazard autoplay matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-live-hazard-matrix/summary.md`
+- Live-hazard autoplay matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-live-hazard-matrix/telemetry/`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -54,3 +57,4 @@ Partial.
 - Debug collision/traffic-plan visualization added and screenshot-verified.
 - Debug direct-start/autoplay telemetry capture added and verified.
 - Debug autoplay movement-decision telemetry added and summarized.
+- Debug autoplay now switches to live on-screen hazard safety when immediate traffic is near, with the source recorded in telemetry.
