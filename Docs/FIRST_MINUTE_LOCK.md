@@ -4,7 +4,7 @@
 
 Not locked.
 
-The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, and tightened debug autoplay can escape Sunset Merge 5/5 times. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, Starter Bike payoff flow, and GameSim/live model ownership are incomplete.
+The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, tightened debug autoplay can escape Sunset Merge 5/5 times on iPhone 17e, and Dynamic Island-class debug autoplay now has a five-run telemetry matrix. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, Starter Bike payoff flow, and GameSim/live model ownership are incomplete.
 
 ## Locked So Far
 
@@ -13,11 +13,13 @@ The first minute has stronger evidence than the original baseline: launch presen
 - `GameCore` determinism and traffic reachability tests pass.
 - Debug live-run telemetry records traffic waves, decisions, collisions, active traffic, and terminal outcomes.
 - Tightened debug autoplay guards animated lane-change exposure with transition horizon and predicted traffic padding.
+- iPhone 17 Pro debug autoplay preserved 0 lane-change intersection probes across 198 transitions, though it completed only 3/5 sampled runs.
 
 ## Not Locked
 
 - Tutorial completion without `SKIP` has not been matrix-validated.
 - Human-controlled Sunset Merge runs have not been captured after tightened transition clearance.
+- Dynamic Island-class coverage is still debug-autoplay only, and it exposed 2/5 traffic-collision terminals after `no_transition_safe_slots` decisions.
 - Crash, capture, missed-exit, retry, and return-to-menu outcomes have not been fully matrix-validated.
 - First escape to Starter Bike unlock to `USE BIKE` to 405 Afterburn has not been validated.
 - Default GameSim still reports Level 1 as too easy, while the opt-in active-traffic lifetime diagnostic is too punitive and needs calibration.
@@ -25,4 +27,4 @@ The first minute has stronger evidence than the original baseline: launch presen
 
 ## Current Gate
 
-Capture human-controlled iPhone 17e and Dynamic Island-class first-minute runs with the tightened transition-clearance build. Use those results to calibrate the active-traffic lifetime diagnostic before tuning Sunset Merge rewards, near misses, density, or completion rate.
+Capture human-controlled iPhone 17e and Dynamic Island-class first-minute runs with the tightened transition-clearance build. Use those results and the Dynamic Island debug-autoplay collisions to calibrate the active-traffic lifetime diagnostic before tuning Sunset Merge rewards, near misses, density, or completion rate.

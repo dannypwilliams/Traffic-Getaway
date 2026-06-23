@@ -30,6 +30,7 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - `Traffic Getaway/GameScene.swift`: disabled first-crash revive offers unless `rewardedRevivesEnabled` is explicitly enabled.
 - `Traffic Getaway/ResultsScene.swift`: hid cash-doubling reward UI unless `rewardedCashDoublesEnabled` is explicitly enabled.
 - `Traffic Getaway/OnboardingScene.swift`: removed the tutorial page that promised a revive.
+- `Traffic Getaway/OnboardingScene.swift`: fixed the final exit-ramp illustration so `EXIT RIGHT` appears on the current five-step tutorial, added an explicit exit-side lane/visual completion predicate, added debug tutorial diagnostics, and auto-advances the final lesson after the read gate opens.
 - `Traffic Getaway/MainMenuScene.swift`: made cash/best-score accessibility label/value use the same final string as visible state after the count-up.
 - `Traffic Getaway/Info.plist` and `Traffic Getaway/Assets.xcassets/LaunchBackground.colorset/Contents.json`: added a dark launch-screen color to remove the white system launch frame.
 - `Traffic Getaway/TrafficSafetyAnalyzer.swift`: matched the app-side active-exit route validation to the fixed `GameCore` route-preservation rule.
@@ -105,6 +106,11 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345` after active-traffic diagnostic: passed; default output remains 99.1% completion, 35.3 near misses/run, 998 cash/run.
 - `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`: passed; diagnostic output is 0.0% completion, 7.3s average survival, 6.5s median survival, 2.1 near misses/run, 58 cash/run, 33.3% unfair collision estimate, top failure `traffic_collision:6668`.
 - `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress` after active-traffic diagnostic: passed; 160,000 waves, 0 impossible committed waves, 0 exit reachability failures.
+- `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"` after tutorial exit-ramp fix: passed, 99 unique IDs.
+- `bash Tools/mac/verify_on_mac.sh` after tutorial exit-ramp fix: passed.
+- `python3 -u scripts/capture_live_telemetry.py --device 90D3514A-BDE2-412C-8238-8ECC17BD86B6 --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/telemetry --timeout 120`: passed after installing the verified build on iPhone 17 Pro simulator.
+- `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/telemetry`: passed.
+- Direct plist verification confirmed the debug auto-start/autoplay keys were manually cleared after the Dynamic Island capture.
 
 ## Simulator/device evidence
 
@@ -147,6 +153,11 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - GameSim active-traffic lifetime diagnostic command: `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`.
 - GameSim active-traffic lifetime diagnostic result: 10,000 runs, 0.0% completed, avg survival 7.3s, median survival 6.5s, first crash p10/p50/p90 4.8s / 6.5s / 11.5s, avg near misses 2.1/run, avg cash/XP 58/33, unfair collision estimate 33.3%, top failure `traffic_collision:6668`.
 - GameSim active-traffic lifetime read: deterministic and useful as a red diagnostic. Sampling lane-change progress and narrowing recent-spawn hazards improved average survival from 5.1s to 7.3s, but it remains much too punitive versus tightened live autoplay, so it needs further calibration before balance tuning.
+- Dynamic Island transition-clearance matrix: `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/telemetry/`.
+- Dynamic Island transition-clearance matrix summary: `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/summary.md`.
+- Dynamic Island transition-clearance matrix notes: `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/notes.md`.
+- Dynamic Island transition-clearance result: 5 iPhone 17 Pro debug-autoplay runs, 3/5 completed, avg terminal time 38.9s, median terminal time 42.3s, avg first crash 32.3s, avg traffic waves 33.6, avg near misses 16.6, 1039 lane-change probes across 198 transitions, 0 lane-change intersection probes, 1 unsafe-path probe, and 23 `no_transition_safe_slots` decisions.
+- Dynamic Island transition-clearance read: the transition-path fix held on a Dynamic Island-class device, but 2/5 traffic collisions show device-shape/live timing sensitivity remains unresolved.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -172,12 +183,13 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 | Lane-change parity telemetry | Not present | 163 lane-change probes captured; 3/5 last pre-crash probes intersected traffic |
 | Transition-clearance autoplay | Not present | Baseline transition clearance: 1/5 completed, avg terminal time 26.7s. Tightened transition clearance: 5/5 completed, avg terminal time 42.8s, 0 lane-change intersection probes |
 | Active-traffic GameSim diagnostic | Not present | Opt-in mode exists; 0.0% completion and 7.3s avg survival, so calibration is required |
+| Dynamic Island debug autoplay | Not present | iPhone 17 Pro tightened transition clearance: 3/5 completed, 42.3s median terminal time, 0 lane-change intersection probes, 2 traffic collisions |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
-- P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 live runs, but human-controlled validation and active-traffic diagnostic calibration are still unresolved.
+- P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 3/5 iPhone 17 Pro runs, but human-controlled validation and active-traffic diagnostic calibration are still unresolved.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 
@@ -190,4 +202,4 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 
 ## Next highest-priority action
 
-Capture one human-controlled iPhone 17e matrix and one Dynamic Island-class layout/input run with the tightened transition-clearance build. Then calibrate `GameSim --active-traffic-lifetime` against live telemetry before retuning Sunset Merge.
+Capture human-controlled iPhone 17e and Dynamic Island-class matrices with the tightened transition-clearance build. Then investigate the iPhone 17 Pro `no_transition_safe_slots` traffic terminals and calibrate `GameSim --active-traffic-lifetime` against live telemetry before retuning Sunset Merge.

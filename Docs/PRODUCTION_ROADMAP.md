@@ -9,15 +9,17 @@
 - Core determinism and traffic stress are now green.
 - First-minute fake revive/reward affordances are hidden by default.
 - Launch no longer reproduces the captured white first frame on iPhone 17e simulator.
+- Final tutorial exit-ramp signage and completion flow were repaired in code; full clean-install tutorial matrix remains open.
+- Dynamic Island-class iPhone 17 Pro debug-autoplay telemetry now exists for the tightened transition-clearance build: 3/5 completed, median terminal time 42.3s, 0 lane-change intersection probes.
 
 ## Issue Matrix
 
 | Concern | Status | Evidence |
 |---|---|---|
-| Final onboarding exit page stuck on READ | Partially fixed | Code already has lane-based predicate; not matrix-validated this pass. |
+| Final onboarding exit page stuck on READ | Partially fixed | Exit-ramp signage now appears on the five-step tutorial, and the final step uses explicit lane/visual completion plus auto-advance after the read gate; not matrix-validated. |
 | Free revive loading then crash results | Partially fixed | Revive UI now hidden by `AppConfig.rewardedRevivesEnabled = false`. |
 | Live crashes around LA 738-740 | Unverified | Needs live first-minute telemetry/manual runs. |
-| Live first minute harsher than GameSim | Partially reproduced | Default GameSim over-completes, while opt-in active-traffic lifetime diagnostic overcorrects to early traffic collisions. |
+| Live first minute harsher than GameSim | Partially reproduced | Default GameSim over-completes, iPhone 17e debug autoplay completes 5/5, iPhone 17 Pro debug autoplay completes 3/5, while opt-in active-traffic lifetime diagnostic overcorrects to early traffic collisions. |
 | GameSim far from Level 1 targets | Reproduced | 99.1% completion, 35.3 near misses/run, 998 cash/run after fixes. |
 | GameCore determinism failing | Fixed | `swift test` passes. |
 | Impossible committed waves | Fixed for current stress gate | 0 / 160,000 waves after fixes. |

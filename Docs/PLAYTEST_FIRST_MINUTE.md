@@ -27,6 +27,9 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - Transition-clearance read: this is the first live autoplay matrix to produce an escape and it moves first-minute feel toward target, but it still needs a tighter horizon/padding model before GameSim or balance changes.
 - A tightened transition-clearance debug-autoplay matrix was captured after installing the verified build. It showed 5/5 escapes, 42.8s average terminal time, 42.7s median terminal time, 36.2 traffic waves/run, 14.0 near misses/run, 0 lane-change intersection probes across 183 transitions, and 18 `no_transition_safe_slots` decisions.
 - Tightened transition-clearance read: the live safety adapter now covers sampled animated lane-change exposure, but this is not final balance evidence because debug autoplay completed every run.
+- A Dynamic Island-class iPhone 17 Pro debug-autoplay matrix was captured with the same tightened transition-clearance build. It showed 3/5 escapes, 38.9s average terminal time, 42.3s median terminal time, 32.3s average first crash, 16.6 near misses/run, 0 lane-change intersection probes across 198 transitions, and 23 `no_transition_safe_slots` decisions.
+- Dynamic Island read: the transition-path fix held, but 2/5 traffic collisions show that device-shape/live timing sensitivity is still not locked.
+- The final tutorial exit-ramp page had an impossible sign-rendering gate from an older six-page flow. The current build now renders `EXIT RIGHT` on the five-step final page and can auto-advance after the exit-side practice predicate and read gate are satisfied.
 - No full clean-install tutorial matrix or human-controlled terminal outcome matrix was performed in this pass.
 
 ## Evidence
@@ -54,6 +57,9 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/summary.md`
 - `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/telemetry/`
 - `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/notes.md`
+- `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/summary.md`
+- `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/telemetry/`
+- `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/notes.md`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`

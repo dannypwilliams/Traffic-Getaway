@@ -29,12 +29,14 @@ final class OnboardingScene: SKScene {
     private var trainingCombo = 0
     private weak var trainingCar: SKNode?
     private weak var promptLabel: SKLabelNode?
+    private weak var diagnosticsLabel: SKLabelNode?
     private var safeAreaInsets = UIEdgeInsets.zero
     private var didRenderVisibleFrame = false
     private var hasObservedFirstUpdate = false
     private var stepPresentedAt: TimeInterval?
     private var currentSceneTime: TimeInterval = 0
     private var lastCanAdvance = false
+    private var autoAdvanceAt: TimeInterval?
 
     private let steps: [Step] = [
         Step(
@@ -118,6 +120,13 @@ final class OnboardingScene: SKScene {
             lastCanAdvance = canAdvanceNow
             buildButtons()
         }
+        scheduleAutoAdvanceIfNeeded()
+        updateDiagnostics()
+        if let autoAdvanceAt, currentTime >= autoAdvanceAt, stepIndex == steps.count - 1, !isTransitioning {
+            completeOnboarding()
+            return
+        }
+        checkExitRampPracticeCompletion(reason: "visual-failsafe")
     }
 
     private func buildStep() {
@@ -130,6 +139,7 @@ final class OnboardingScene: SKScene {
         didRenderVisibleFrame = false
         stepPresentedAt = nil
         lastCanAdvance = false
+        autoAdvanceAt = nil
         addChild(contentNode)
 
         backgroundColor = UITheme.Color.background
@@ -159,6 +169,7 @@ final class OnboardingScene: SKScene {
         buildBullets(step.bullets)
         buildPagerDots()
         buildButtons()
+        buildDiagnostics()
     }
 
     private func buildBackground() {
@@ -234,7 +245,7 @@ final class OnboardingScene: SKScene {
             contentNode.addChild(bonus)
         }
 
-        if index >= 5 {
+        if steps[index].interaction == .exitRamp {
             let sign = UIHelpers.label("EXIT RIGHT", size: 18, color: UITheme.Color.green, width: roadWidth - 22)
             sign.position = CGPoint(x: center.x, y: center.y + 70)
             sign.zPosition = 6
@@ -415,11 +426,33 @@ final class OnboardingScene: SKScene {
             contentNode.childNode(withName: "onboarding.back")?.position = CGPoint(x: size.width / 2 - 74, y: buttonY)
             contentNode.childNode(withName: "onboarding.back")?.zPosition = 24
         }
+        updateDiagnostics()
     }
 
     private var canAdvanceCurrentStep: Bool {
         guard actionComplete, didRenderVisibleFrame, let stepPresentedAt else { return false }
         return currentSceneTime - stepPresentedAt >= steps[stepIndex].minimumReadTime
+    }
+
+    private var exitRampTargetLane: Int {
+        max(0, LaneManager.laneCount - 2)
+    }
+
+    private var readGateOpen: Bool {
+        guard didRenderVisibleFrame, let stepPresentedAt else { return false }
+        return currentSceneTime - stepPresentedAt >= steps[stepIndex].minimumReadTime
+    }
+
+    private func scheduleAutoAdvanceIfNeeded() {
+        guard stepIndex == steps.count - 1,
+              actionComplete,
+              canAdvanceCurrentStep,
+              autoAdvanceAt == nil,
+              !isTransitioning else {
+            return
+        }
+        autoAdvanceAt = currentSceneTime + 0.55
+        buildButtons()
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -518,10 +551,7 @@ final class OnboardingScene: SKScene {
             let lanesMoved = abs(dx) > 86 ? 2 : 1
             trainingLane = max(0, min(LaneManager.laneCount - 1, trainingLane + lanesMoved))
             trainingCar?.run(.moveTo(x: xForTrainingLane(trainingLane), duration: 0.16))
-            if trainingLane >= LaneManager.laneCount - 2 {
-                showPop("RAMP LINE", color: UITheme.Color.green)
-                completeAction(text: "EXIT READY")
-            } else {
+            if !checkExitRampPracticeCompletion(reason: "lane-state") {
                 showPop("KEEP MOVING RIGHT", color: UITheme.Color.cyan)
             }
             return true
@@ -537,6 +567,26 @@ final class OnboardingScene: SKScene {
         promptLabel?.text = "\(text) - NEXT"
         promptLabel?.fontColor = UITheme.Color.green
         buildButtons()
+        scheduleAutoAdvanceIfNeeded()
+    }
+
+    @discardableResult
+    private func checkExitRampPracticeCompletion(reason: String) -> Bool {
+        guard steps[stepIndex].interaction == .exitRamp, !actionComplete else {
+            return actionComplete
+        }
+
+        let laneComplete = trainingLane >= exitRampTargetLane
+        let targetX = xForTrainingLane(exitRampTargetLane)
+        let visualComplete = (trainingCar?.position.x ?? -.greatestFiniteMagnitude) >= targetX - 1
+        guard laneComplete || visualComplete else { return false }
+
+        if visualComplete && !laneComplete, AppConfig.debugMode {
+            print("Onboarding exit-ramp visual fail-safe completed practice: lane=\(trainingLane) target=\(exitRampTargetLane) reason=\(reason)")
+        }
+        showPop("RAMP LINE", color: UITheme.Color.green)
+        completeAction(text: "EXIT READY")
+        return true
     }
 
     private func showPop(_ text: String, color: SKColor) {
@@ -555,5 +605,21 @@ final class OnboardingScene: SKScene {
         SaveManager.shared.setOnboardingCompleted(true)
         AnalyticsManager.shared.onboardingCompleted()
         UIHelpers.present(GameScene(size: size), from: self, transition: .doorsOpenVertical(withDuration: 0.28))
+    }
+
+    private func buildDiagnostics() {
+        guard AppConfig.debugMode else { return }
+        let label = UIHelpers.bodyLabel("", size: 10, color: SKColor.cyan.withAlphaComponent(0.72), width: size.width - 34)
+        label.name = "tutorial.diagnostics"
+        label.zPosition = 30
+        label.position = CGPoint(x: size.width / 2, y: bottomSafeInset + 8)
+        diagnosticsLabel = label
+        contentNode.addChild(label)
+        updateDiagnostics()
+    }
+
+    private func updateDiagnostics() {
+        guard AppConfig.debugMode else { return }
+        diagnosticsLabel?.text = "page \(stepIndex + 1)/\(steps.count) lane \(trainingLane)->\(exitRampTargetLane) read \(readGateOpen ? "open" : "wait") action \(actionComplete ? "done" : "todo") auto \(autoAdvanceAt == nil ? "off" : "on") transition \(isTransitioning ? "yes" : "no")"
     }
 }
