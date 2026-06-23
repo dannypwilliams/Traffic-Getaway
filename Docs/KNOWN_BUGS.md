@@ -3,7 +3,7 @@
 ## P0 Ship Blockers
 
 - Sunset Merge balance is far outside target: about 99% sim completion, about 35 near misses/run, and about 998 cash/run.
-- Sim/live behavior is not fully reconciled; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 3/5 iPhone 17 Pro runs, but human-controlled validation and GameSim model ownership are still unresolved.
+- Sim/live behavior is not fully reconciled; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after a strict emergency fallback, but human-controlled validation and GameSim model ownership are still unresolved.
 
 ## P1 Milestone Blockers
 
@@ -16,7 +16,7 @@
 - Rewarded revive and cash-double code remain present but hidden behind disabled flags.
 - Placeholder/procedural art remains across many surfaces.
 - Accessibility audit is incomplete beyond the main-menu cash fix.
-- Dynamic Island-class debug autoplay still produced 2/5 traffic-collision terminals after `no_transition_safe_slots` decisions.
+- Dynamic Island-class debug autoplay still produced 1/5 traffic-collision terminals after `no_transition_safe_slots` decisions.
 
 ## Recently Fixed
 
@@ -28,3 +28,4 @@
 - Debug autoplay now rejects predicted unsafe transition paths with a lane-change-duration horizon and padded predicted traffic hitboxes; the tightened matrix completed 5/5 sampled live runs.
 - `GameSim --active-traffic-lifetime` now exists as a deterministic diagnostic for active on-screen traffic and transition safety.
 - Final tutorial exit-ramp signage is visible again on the current five-step tutorial, and the final practice can advance from the explicit exit-side predicate after the read gate opens.
+- Debug autoplay has a strict emergency transition fallback that improved the sampled iPhone 17 Pro matrix from 3/5 to 4/5 escapes without lane-change intersection probes.

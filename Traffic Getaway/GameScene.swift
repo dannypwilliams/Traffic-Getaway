@@ -2772,6 +2772,11 @@ final class GameScene: SKScene {
 
         let transitionReachable = reachable.filter { debugAutoplayTransitionIsSafe(toSlot: $0) }
         guard !transitionReachable.isEmpty else {
+            if let emergency = debugAutoplayEmergencyTransition(from: reachable) {
+                recordAutoplayDecision(source: safeSlotSnapshot.source, status: "emergency_move", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: emergency.desiredSlot, targetSlot: emergency.targetSlot, appliedDelta: emergency.moveDelta, appliedSlot: emergency.appliedSlot, liveReach: liveReach, simReach: simReach)
+                movePlayer(by: emergency.moveDelta, kind: abs(emergency.moveDelta) > 1 ? .fastSwipe : .swipe)
+                return
+            }
             recordAutoplayDecision(source: safeSlotSnapshot.source, status: "no_transition_safe_slots", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: nil, targetSlot: nil, appliedDelta: nil, appliedSlot: nil, liveReach: liveReach, simReach: simReach)
             return
         }
@@ -2837,6 +2842,60 @@ final class GameScene: SKScene {
         return debugAutoplayPathIsClear(fromSlot: playerSlot, toSlot: appliedSlot, duration: duration, horizon: debugAutoplayTransitionHorizon)
     }
 
+    private func debugAutoplayEmergencyTransition(from reachableSlots: Set<Int>) -> (desiredSlot: Int, targetSlot: Int, moveDelta: Int, appliedSlot: Int)? {
+        let currentRisk = debugAutoplayStayRisk(slot: playerSlot, horizon: debugAutoplayTransitionHorizon)
+        guard currentRisk > 0 else { return nil }
+
+        let desiredSlot: Int
+        if exitPhase == .active, let activeExitSide {
+            let exitSlots = laneManager.exitSlots(for: activeExitSide, vehicleClass: activeCar.vehicleClass)
+            desiredSlot = activeExitSide == .left ? (exitSlots.min() ?? 0) : (exitSlots.max() ?? LaneManager.slotCount - 1)
+        } else {
+            desiredSlot = LaneManager.startSlot
+        }
+
+        let candidates = reachableSlots
+            .filter { $0 != playerSlot }
+            .compactMap { targetSlot -> (targetSlot: Int, moveDelta: Int, appliedSlot: Int, risk: CGFloat, routeScore: CGFloat)? in
+                guard let move = debugAutoplayMove(forTargetSlot: targetSlot) else { return nil }
+                let kind: LaneMoveKind = abs(move.moveDelta) > 1 ? .fastSwipe : .swipe
+                let duration = laneChangeDuration(laneDelta: move.appliedSlot - playerSlot, kind: kind)
+                let risk = debugAutoplayPathRisk(fromSlot: playerSlot, toSlot: move.appliedSlot, duration: duration, horizon: debugAutoplayTransitionHorizon)
+                guard risk < currentRisk else { return nil }
+                return (targetSlot: targetSlot, moveDelta: move.moveDelta, appliedSlot: move.appliedSlot, risk: risk, routeScore: debugRouteScore(slot: targetSlot, desiredSlot: desiredSlot))
+            }
+
+        guard let best = candidates.min(by: { lhs, rhs in
+            if abs(lhs.risk - rhs.risk) > 0.001 {
+                return lhs.risk < rhs.risk
+            }
+            if lhs.routeScore != rhs.routeScore {
+                return lhs.routeScore < rhs.routeScore
+            }
+            return lhs.targetSlot < rhs.targetSlot
+        }) else {
+            return nil
+        }
+
+        return (desiredSlot: desiredSlot, targetSlot: best.targetSlot, moveDelta: best.moveDelta, appliedSlot: best.appliedSlot)
+    }
+
+    private func debugAutoplayMove(forTargetSlot targetSlot: Int) -> (moveDelta: Int, appliedSlot: Int)? {
+        let delta = targetSlot - playerSlot
+        let moveDelta: Int
+        if activeCar.vehicleClass == .car {
+            moveDelta = max(-3, min(3, delta / 2))
+        } else {
+            moveDelta = max(-3, min(3, delta))
+        }
+        guard moveDelta != 0 else { return nil }
+
+        let appliedSlotDelta = moveDelta * (activeCar.vehicleClass == .car ? 2 : 1)
+        let appliedSlot = laneManager.targetSlot(from: playerSlot, delta: appliedSlotDelta, vehicleClass: activeCar.vehicleClass)
+        guard appliedSlot == targetSlot else { return nil }
+        return (moveDelta: moveDelta, appliedSlot: appliedSlot)
+    }
+
     private var debugAutoplayTransitionHorizon: TimeInterval {
         0.3
     }
@@ -2857,16 +2916,26 @@ final class GameScene: SKScene {
     }
 
     private func debugAutoplayPathIsClear(fromSlot startSlot: Int, toSlot targetSlot: Int, duration: TimeInterval, horizon: TimeInterval) -> Bool {
+        debugAutoplayPathRisk(fromSlot: startSlot, toSlot: targetSlot, duration: duration, horizon: horizon) == 0
+    }
+
+    private func debugAutoplayStayRisk(slot: Int, horizon: TimeInterval) -> CGFloat {
+        debugAutoplayPathRisk(fromSlot: slot, toSlot: slot, duration: 0, horizon: horizon)
+    }
+
+    private func debugAutoplayPathRisk(fromSlot startSlot: Int, toSlot targetSlot: Int, duration: TimeInterval, horizon: TimeInterval) -> CGFloat {
         guard let playerCar,
               slotCenters.indices.contains(startSlot),
               slotCenters.indices.contains(targetSlot) else {
-            return true
+            return 0
         }
 
         let startX = playerCar.position.x
         let targetX = slotCenters[targetSlot]
         let totalTime = max(duration + horizon, 0.016)
         let sampleCount = max(4, Int(ceil(totalTime / 0.025)))
+        var risk: CGFloat = 0
+        let playerArea = max(playerCar.size.width * playerCar.size.height, 1)
 
         for sample in 0...sampleCount {
             let elapsed = totalTime * TimeInterval(sample) / TimeInterval(sampleCount)
@@ -2876,12 +2945,18 @@ final class GameScene: SKScene {
             let playerRect = playerHitboxRect(atX: x, size: playerCar.size)
 
             for vehicle in trafficNode.children.compactMap({ $0 as? SKSpriteNode }) {
-                if predictedTrafficHitboxRect(for: vehicle, after: elapsed, verticalPadding: debugAutoplayPredictionPadding).intersects(playerRect) {
-                    return false
+                let trafficRect = predictedTrafficHitboxRect(for: vehicle, after: elapsed, verticalPadding: debugAutoplayPredictionPadding)
+                guard trafficRect.intersects(playerRect) else { continue }
+                let overlap = playerRect.intersection(trafficRect)
+                let overlapRatio = max(0, min(1, (overlap.width * overlap.height) / playerArea))
+                let urgency = CGFloat(1 + (1 - min(1, elapsed / totalTime)))
+                risk += urgency * (1 + overlapRatio * 4)
+                if risk > 1000 {
+                    return risk
                 }
             }
         }
-        return true
+        return risk
     }
 
     private func debugAutoplaySafeSlots(validSlots: Set<Int>) -> (slots: Set<Int>, source: String) {

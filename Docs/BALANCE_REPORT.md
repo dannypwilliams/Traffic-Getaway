@@ -161,9 +161,27 @@ Live tightened transition-clearance debug-autoplay matrix:
 - Summary: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/summary.md`.
 - Notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/notes.md`.
 
+Dynamic Island emergency-transition debug-autoplay matrix:
+
+- Runs: 5.
+- Completed: 4/5.
+- Avg terminal time: 38.4s.
+- Median terminal time: 42.4s.
+- Avg traffic waves before terminal event: 31.4.
+- Avg near misses/cash: 15.8 / 114.
+- `emergency_move`: 1.
+- `no_transition_safe_slots`: 19.
+- Lane-change probes: 1103.
+- Lane-change transitions: 191.
+- Lane-change intersection probes: 0.
+- Lane-change unsafe-path probes: 0.
+- Terminal reasons: escaped 4, traffic 1.
+- Summary: `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/summary.md`.
+- Notes: `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/notes.md`.
+
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Default GameSim over-completes at 99.1%, tightened live debug autoplay over-completes at 5/5 escapes, and the opt-in active-traffic lifetime diagnostic overcorrects to 0.0% completion. Do not tune rewards or density from either simulation mode alone; first calibrate active traffic lifetime against human/live evidence.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Default GameSim over-completes at 99.1%, tightened iPhone 17e debug autoplay over-completes at 5/5 escapes, iPhone 17 Pro debug autoplay is now 4/5 after emergency transition handling, and the opt-in active-traffic lifetime diagnostic overcorrects to 0.0% completion. Do not tune rewards or density from either simulation mode alone; first calibrate active traffic lifetime against human/live evidence.
 
 ## Next
 

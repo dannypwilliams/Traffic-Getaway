@@ -24,6 +24,7 @@ Partial.
 - Tightened transition-clearance debug autoplay produced a five-run iPhone 17e matrix. Completion improved to 5/5, average terminal time reached 42.8s, lane-change intersection probes dropped to 0, and all terminal reasons were `escaped`.
 - The final tutorial exit-ramp illustration now actually shows `EXIT RIGHT`, because the old page-index gate targeted a removed sixth page. The exit-ramp practice now uses an explicit lane/visual completion predicate, debug diagnostics, and a short auto-start delay once the read gate opens.
 - Dynamic Island-class debug autoplay was captured on iPhone 17 Pro. It completed 3/5 runs, reached a 42.3s median terminal time, recorded 0 lane-change intersection probes across 198 transitions, and still produced 2 traffic-collision terminals after `no_transition_safe_slots` decisions.
+- Dynamic Island-class debug autoplay was rerun after adding a strict emergency-transition fallback. It completed 4/5 runs, kept lane-change intersection probes at 0 across 191 transitions, recorded 1 `emergency_move`, and reduced terminal traffic collisions from 2 to 1.
 
 ## Evidence
 
@@ -53,6 +54,9 @@ Partial.
 - Dynamic Island transition-clearance summary: `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/summary.md`
 - Dynamic Island transition-clearance telemetry: `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/telemetry/`
 - Dynamic Island transition-clearance notes: `PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/notes.md`
+- Dynamic Island emergency-transition summary: `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/summary.md`
+- Dynamic Island emergency-transition telemetry: `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/telemetry/`
+- Dynamic Island emergency-transition notes: `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/notes.md`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -83,4 +87,5 @@ Partial.
 - Collision-frame telemetry now records the colliding vehicle, active traffic roster, player slot/lane, live safe and unsafe slots, overlap geometry, and last movement decision.
 - Lane-change parity telemetry now records logical slot, target slot, sprite nearest slot, sprite x-position, path danger, active traffic intersection, and completion state while the lane-change animation is active.
 - Debug autoplay now rejects predicted unsafe transition paths before moving, using a lane-change-duration horizon and small vertical padding on predicted traffic hitboxes.
+- Debug autoplay now has a strict emergency fallback for cases where staying is predicted dangerous and every normal transition candidate is rejected.
 - Final tutorial exit-ramp signage is visible on the current five-step flow, and the final lesson advances automatically after the exit-side predicate and read gate are both satisfied.
