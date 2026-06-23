@@ -5,6 +5,7 @@
   "test_date": "2026-06-23",
   "branch": "main",
   "starting_commit": "3c2431d",
+  "current_production_commit": "aab6198791b5e302153ba9447c3c8b05ab40563a",
   "physical_hardware_available": false,
   "build_configuration": "Debug iOS Simulator playtest build",
   "manual_capture_command": "python3 -u scripts/capture_live_telemetry.py --manual --wait-for-start-tap",

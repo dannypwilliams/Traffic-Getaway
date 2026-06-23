@@ -34,7 +34,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - No physical-device validation has been performed.
 - Previous artifacts include simulator screenshots and telemetry, but this full pass requires video in addition to screenshots; old screenshot-only evidence is reference material, not proof of a completed required test.
 - The latest active iPhone 17e manual attempt outside this folder produced only 1/5 active-input runs and is invalid for balance conclusions.
-- Start-gated manual capture tooling exists, and `--leave-app-running` was added during this pass so result-screen screenshots can be captured before the app is terminated. When this flag is used, terminate the app and verify debug defaults afterward.
+- Start-gated manual capture tooling exists, `--leave-app-running` can preserve the result UI for screenshots, and `--control-preference` can seed `SWIPE + TAP`, `SWIPE ONLY`, or `TAP ONLY` saves for future control-mode coverage. When result-preservation or preference seeding is used, terminate the app and verify debug defaults afterward.
 - Post-run cleanup was verified after the LA Starter Compact capture set; `build-validation/post-run-debug-defaults-check.log` shows iPhone 17e debug defaults cleared to `[]`.
 - Six valid active-input LA01 Starter Compact runs are recorded; five have complete screenshot evidence and one supplemental run is missing the result screenshot.
 - Three complete-evidence active-input LA01 Starter Bike runs are recorded in Runs 03, 04, and 05. A prior Bike Run 02 has telemetry/result evidence but is rejected from the complete-evidence count because the start screenshot and video are missing.

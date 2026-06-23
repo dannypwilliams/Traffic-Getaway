@@ -9,7 +9,7 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 ## Commit Range
 
 - Starting commit: `3c2431d`
-- Ending commit: `6fb062a`
+- Ending commit: `aab6198`
 
 ## Counts
 
@@ -61,4 +61,4 @@ Capture a real active-input completion to replace the debug-assisted `FUNC-09` p
 
 ## Remote Alignment
 
-Current setup began from `main` aligned with `origin/main` at `3c2431d`. Production `main` has been pushed through `6fb062a`.
+Current setup began from `main` aligned with `origin/main` at `3c2431d`. Production `main` has been pushed through `aab6198`.
