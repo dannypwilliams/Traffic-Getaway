@@ -38,9 +38,10 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - `Traffic Getaway/GameScene.swift`: records `autoplay_decision` events and compares debug autoplay choices against a GameSim-style route target.
 - `Traffic Getaway/GameScene.swift`: debug autoplay now uses live on-screen hazard safety while immediate traffic is near and records whether each decision came from live hazards or the latest traffic-wave plan.
 - `Traffic Getaway/GameScene.swift`: collision telemetry now records a structured crash-frame analysis with colliding vehicle, active traffic roster, player slot/lane, live safe and unsafe slots, overlap geometry, and the last movement decision.
+- `Traffic Getaway/GameScene.swift`: lane-change parity telemetry now records logical slot, target slot, sprite x-position, sprite nearest slot, path danger, active traffic intersection, and completion state while the lane-change animation is active.
 - `Traffic Getaway/GameViewController.swift` and `Traffic Getaway/AppConfig.swift`: added debug-only direct level/vehicle auto-start defaults so simulator live telemetry can be captured without hand navigation.
 - `Traffic Getaway.xcodeproj/project.pbxproj`: added the telemetry recorder to the iOS target.
-- `scripts/summarize_run_telemetry.py`: added a repeatable JSONL summarizer for live-run telemetry exports, including autoplay target, move-target, applied-slot mismatch, decision-source, decision-status, and collision-analysis counts.
+- `scripts/summarize_run_telemetry.py`: added a repeatable JSONL summarizer for live-run telemetry exports, including autoplay target, move-target, applied-slot mismatch, decision-source, decision-status, collision-analysis counts, and lane-change probe counts.
 - `scripts/capture_live_telemetry.py`: added a repeatable simulator capture loop for debug autoplay live-run matrices, with flushed progress output, a working empty `--app ''` skip-install path, and direct plist debug-default writes to avoid flaky simulator `defaults write` hangs.
 
 ## Tests run
@@ -78,6 +79,12 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --runs 5 --level la_01 --vehicle starter_compact --app '' --output-dir PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/telemetry --timeout 120`: passed after explicitly installing the verified build.
 - `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/telemetry`: passed.
 - Direct plist verification confirmed the debug auto-start/autoplay keys were missing after the collision-analysis capture.
+- `python3 -m py_compile scripts/summarize_run_telemetry.py scripts/capture_live_telemetry.py`: passed after lane-change parity summarizer changes.
+- `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"` after lane-change parity telemetry: passed, 99 unique IDs.
+- `bash Tools/mac/verify_on_mac.sh` after lane-change parity telemetry: passed.
+- `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --runs 5 --level la_01 --vehicle starter_compact --app '' --output-dir PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/telemetry --timeout 120`: passed after explicitly installing the verified build.
+- `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/telemetry`: passed.
+- Direct plist verification confirmed the debug auto-start/autoplay keys were missing after the lane-change parity capture.
 
 ## Simulator/device evidence
 
@@ -102,6 +109,11 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - Collision-analysis autoplay matrix notes: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/notes.md`.
 - Collision-analysis autoplay matrix result: 5 iPhone 17e debug-autoplay runs, 0/5 completed, avg terminal time 5.2s, median terminal time 4.7s, avg traffic waves 5.4, avg near misses 1.0, traffic collision in all 5, collision analysis in 5/5, avg active traffic at collision 10.6, and the last movement decision before every sampled crash was `move`.
 - Collision-analysis read: sampled early live crashes are now narrowed to lane-change transition timing/path occupancy. The logical player slot can advance to a selected safe slot while the SpriteKit car is still physically intersecting the departure lane or movement path.
+- Lane-change parity matrix: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/telemetry/`.
+- Lane-change parity matrix summary: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/summary.md`.
+- Lane-change parity matrix notes: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/notes.md`.
+- Lane-change parity matrix result: 5 iPhone 17e debug-autoplay runs, 0/5 completed, avg terminal time 7.9s, median terminal time 6.6s, avg traffic waves 7.6, avg near misses 1.8, traffic collision in all 5, 163 lane-change probes across 26 transitions, 3 lane-change intersection probes, 1 unsafe-path probe, and 3/5 last pre-crash probes already intersecting traffic.
+- Lane-change parity read: the next fix should be transition-aware. A move should only be considered safe if the current-to-target path stays clear for the lane-change duration and the target slot remains safe on a short post-move horizon.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -124,12 +136,13 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 | Autoplay decision telemetry | Not present | 207 decisions captured; 36 target-policy mismatches, 2 move-target mismatches, 2 applied-slot mismatches |
 | Live-hazard autoplay | Not present | 269 decisions captured; 176 live-hazard decisions; avg terminal time 8.6s but still 0/5 complete |
 | Collision-analysis telemetry | Not present | 5/5 sampled terminal crashes include colliding vehicle, active roster, safe slots, overlap, and last movement decision |
+| Lane-change parity telemetry | Not present | 163 lane-change probes captured; 3/5 last pre-crash probes intersected traffic |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
-- P1 milestone blocker: Sim/live reconciliation is still not complete; collision analysis narrows the early live crashes to lane-change transition timing/path occupancy and active traffic lifetime that GameSim does not model closely enough yet.
+- P1 milestone blocker: Sim/live reconciliation is still not complete; lane-change parity narrows the early live crashes to transition clearance, target-slot danger horizon, and active traffic lifetime that GameSim does not model closely enough yet.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 
@@ -142,4 +155,4 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 
 ## Next highest-priority action
 
-Add a lane-change parity probe that records current slot, target slot, sprite x-position, interpolated path occupancy, active traffic danger, and colliding vehicle across each lane-change tick. Then decide whether GameSim should model live lane-change duration/path occupancy or live safety selection/autoplay needs transition-clearance checks and longer lead time, rerun the collision-analysis matrix, capture a manual matrix, and only then retune Sunset Merge.
+Add transition-clearance checks to debug autoplay first: require the current-to-target path to stay clear for the lane-change duration and the target slot to remain safe on a short post-move horizon. Then rerun the lane-change parity matrix, decide whether the successful model belongs in GameSim, the live safety adapter, or both, capture a manual matrix, and only then retune Sunset Merge.

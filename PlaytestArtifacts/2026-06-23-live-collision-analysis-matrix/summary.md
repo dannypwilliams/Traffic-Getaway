@@ -17,6 +17,12 @@
 - Collision analyses: 5/5
 - Avg collision overlap area: 94.2
 - Avg active traffic at collision: 10.6
+- Lane-change probes: 0
+- Lane-change transitions: 0
+- Lane-change intersection probes: 0
+- Lane-change unsafe-path probes: 0
+- Max lane-change path danger: 0.0
+- Last pre-crash probe intersected traffic: 0/5
 - Collision last-decision sources: {'debug_autoplay_latest_wave': 1, 'debug_autoplay_live_hazards': 4}
 - Collision last-decision statuses: {'move': 5}
 - Autoplay decision sources: {'debug_autoplay_latest_wave': 99, 'debug_autoplay_live_hazards': 72}
@@ -24,10 +30,10 @@
 - Terminal reasons: {'traffic': 5}
 - Pattern mix: {'denseClusters': 10, 'sparseLanes': 10, 'staggeredCars': 7}
 
-| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Decisions | Target mismatch | Applied mismatch |
-|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|
-| 01-2026-06-22_20-12-35-la_01-starter_compact-17033032432948462202.jsonl | la_01 | starter_compact | 17033032432948462202 | traffic | false | 4.6 | 5 | 1 | 6 | 1 | true | true | true | 32 | 16 | 1 |
-| 02-2026-06-22_20-12-43-la_01-starter_compact-17033032432948470121.jsonl | la_01 | starter_compact | 17033032432948470121 | traffic | false | 4.7 | 5 | 0 | 5 | 2 | true | true | true | 31 | 5 | 0 |
-| 03-2026-06-22_20-12-50-la_01-starter_compact-17033032432948478040.jsonl | la_01 | starter_compact | 17033032432948478040 | traffic | false | 5.4 | 6 | 1 | 7 | 1 | true | true | true | 33 | 11 | 0 |
-| 04-2026-06-22_20-12-59-la_01-starter_compact-17033032432948485959.jsonl | la_01 | starter_compact | 17033032432948485959 | traffic | false | 7.1 | 7 | 2 | 11 | 1 | true | true | true | 46 | 26 | 0 |
-| 05-2026-06-22_20-13-08-la_01-starter_compact-17033032432948493878.jsonl | la_01 | starter_compact | 17033032432948493878 | traffic | false | 4.3 | 4 | 1 | 6 | 1 | true | true | true | 29 | 12 | 2 |
+| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Lane probes | Probe intersections | Decisions | Target mismatch | Applied mismatch |
+|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|
+| 01-2026-06-22_20-12-35-la_01-starter_compact-17033032432948462202.jsonl | la_01 | starter_compact | 17033032432948462202 | traffic | false | 4.6 | 5 | 1 | 6 | 1 | true | true | true | 0 | 0 | 32 | 16 | 1 |
+| 02-2026-06-22_20-12-43-la_01-starter_compact-17033032432948470121.jsonl | la_01 | starter_compact | 17033032432948470121 | traffic | false | 4.7 | 5 | 0 | 5 | 2 | true | true | true | 0 | 0 | 31 | 5 | 0 |
+| 03-2026-06-22_20-12-50-la_01-starter_compact-17033032432948478040.jsonl | la_01 | starter_compact | 17033032432948478040 | traffic | false | 5.4 | 6 | 1 | 7 | 1 | true | true | true | 0 | 0 | 33 | 11 | 0 |
+| 04-2026-06-22_20-12-59-la_01-starter_compact-17033032432948485959.jsonl | la_01 | starter_compact | 17033032432948485959 | traffic | false | 7.1 | 7 | 2 | 11 | 1 | true | true | true | 0 | 0 | 46 | 26 | 0 |
+| 05-2026-06-22_20-13-08-la_01-starter_compact-17033032432948493878.jsonl | la_01 | starter_compact | 17033032432948493878 | traffic | false | 4.3 | 4 | 1 | 6 | 1 | true | true | true | 0 | 0 | 29 | 12 | 2 |

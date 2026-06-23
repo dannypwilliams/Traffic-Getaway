@@ -62,6 +62,7 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
     collisions = [event for event in events if event.get("event") == "collision"]
     waves = [event for event in events if event.get("event") == "traffic_wave"]
     decisions = [event.get("movementDecision") for event in events if event.get("movementDecision")]
+    lane_probes = [event.get("laneChangeProbe") for event in events if event.get("laneChangeProbe")]
     move_decisions = [decision for decision in decisions if decision.get("status") == "move"]
     decision_sources = Counter(decision.get("source", "missing") for decision in decisions)
     decision_statuses = Counter(decision.get("status", "missing") for decision in decisions)
@@ -91,6 +92,17 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
     last_collision_decision = first_collision_analysis.get("lastMovementDecision") or {}
     collision_overlap_area = float(first_collision_analysis.get("overlapArea") or 0)
     collision_active_traffic_count = len(first_collision_analysis.get("activeTraffic") or [])
+    lane_probe_transitions = {probe.get("transitionID") for probe in lane_probes if probe.get("transitionID") is not None}
+    lane_probe_intersections = [probe for probe in lane_probes if probe.get("intersectsTraffic")]
+    lane_probe_unsafe = [probe for probe in lane_probes if probe.get("pathUnsafeSlots")]
+    lane_probe_path_dangers = [float(probe.get("pathMaxDanger") or 0) for probe in lane_probes]
+    collision_time = float(collisions[0].get("time") or 0) if collisions else None
+    probes_before_collision = [
+        event.get("laneChangeProbe")
+        for event in events
+        if event.get("laneChangeProbe") and collision_time is not None and float(event.get("time") or 0) <= collision_time
+    ]
+    last_probe_before_collision = probes_before_collision[-1] if probes_before_collision else {}
 
     return {
         "path": path,
@@ -122,6 +134,14 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
         "collision_last_decision_source": last_collision_decision.get("source", ""),
         "collision_last_decision_status": last_collision_decision.get("status", ""),
         "collision_last_decision_age": first_collision_analysis.get("lastMovementDecisionAge"),
+        "lane_change_probes": len(lane_probes),
+        "lane_change_transitions": len(lane_probe_transitions),
+        "lane_change_intersection_probes": len(lane_probe_intersections),
+        "lane_change_unsafe_probes": len(lane_probe_unsafe),
+        "lane_change_max_path_danger": max(lane_probe_path_dangers) if lane_probe_path_dangers else 0.0,
+        "last_probe_intersects": bool(last_probe_before_collision.get("intersectsTraffic")),
+        "last_probe_progress": last_probe_before_collision.get("progress"),
+        "last_probe_path_danger": last_probe_before_collision.get("pathMaxDanger"),
         "autoplay_decisions": len(decisions),
         "autoplay_moves": len(move_decisions),
         "autoplay_sources": decision_sources,
@@ -148,6 +168,7 @@ def print_markdown(summaries: list[dict]) -> None:
     status_counts: Counter = Counter()
     collision_source_counts: Counter = Counter()
     collision_status_counts: Counter = Counter()
+    last_probe_intersections = 0
     for item in summaries:
         pattern_counts.update(item["pattern_counts"])
         terminal_counts[item["terminal_reason"]] += 1
@@ -157,6 +178,8 @@ def print_markdown(summaries: list[dict]) -> None:
             collision_source_counts[item["collision_last_decision_source"]] += 1
         if item["collision_last_decision_status"]:
             collision_status_counts[item["collision_last_decision_status"]] += 1
+        if item["last_probe_intersects"]:
+            last_probe_intersections += 1
 
     print(f"- Runs: {len(summaries)}")
     print(f"- Completed: {completed}/{len(summaries)} ({completed / len(summaries) * 100:.1f}%)")
@@ -176,6 +199,12 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Collision analyses: {sum(1 for item in summaries if item['has_collision_analysis'])}/{len(summaries)}")
     print(f"- Avg collision overlap area: {fmt_float(average([item['collision_overlap_area'] for item in summaries]))}")
     print(f"- Avg active traffic at collision: {fmt_float(average([item['collision_active_traffic_count'] for item in summaries]))}")
+    print(f"- Lane-change probes: {sum(item['lane_change_probes'] for item in summaries)}")
+    print(f"- Lane-change transitions: {sum(item['lane_change_transitions'] for item in summaries)}")
+    print(f"- Lane-change intersection probes: {sum(item['lane_change_intersection_probes'] for item in summaries)}")
+    print(f"- Lane-change unsafe-path probes: {sum(item['lane_change_unsafe_probes'] for item in summaries)}")
+    print(f"- Max lane-change path danger: {fmt_float(max(item['lane_change_max_path_danger'] for item in summaries))}")
+    print(f"- Last pre-crash probe intersected traffic: {last_probe_intersections}/{len(summaries)}")
     if collision_source_counts:
         print(f"- Collision last-decision sources: {dict(sorted(collision_source_counts.items()))}")
     if collision_status_counts:
@@ -187,8 +216,8 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Terminal reasons: {dict(sorted(terminal_counts.items()))}")
     print(f"- Pattern mix: {dict(sorted(pattern_counts.items()))}")
     print()
-    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Decisions | Target mismatch | Applied mismatch |")
-    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|")
+    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Lane probes | Probe intersections | Decisions | Target mismatch | Applied mismatch |")
+    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|")
     for item in summaries:
         print(
             "| "
@@ -206,6 +235,8 @@ def print_markdown(summaries: list[dict]) -> None:
             f"{str(item['has_collision_rects']).lower()} |"
             f" {str(item['has_collision_analysis']).lower()} |"
             f" {str(item['has_active_traffic']).lower()} | "
+            f"{item['lane_change_probes']} | "
+            f"{item['lane_change_intersection_probes']} | "
             f"{item['autoplay_decisions']} | "
             f"{item['target_mismatches']} | "
             f"{item['applied_mismatches']} |"

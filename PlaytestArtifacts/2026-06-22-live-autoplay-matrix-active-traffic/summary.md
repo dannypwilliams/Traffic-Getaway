@@ -17,13 +17,19 @@
 - Collision analyses: 0/5
 - Avg collision overlap area: 0.0
 - Avg active traffic at collision: 0.0
+- Lane-change probes: 0
+- Lane-change transitions: 0
+- Lane-change intersection probes: 0
+- Lane-change unsafe-path probes: 0
+- Max lane-change path danger: 0.0
+- Last pre-crash probe intersected traffic: 0/5
 - Terminal reasons: {'traffic': 5}
 - Pattern mix: {'denseClusters': 13, 'sparseLanes': 10, 'staggeredCars': 8}
 
-| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Decisions | Target mismatch | Applied mismatch |
-|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|
-| 01-2026-06-22_19-04-32-la_01-starter_compact-17033032432948248389.jsonl | la_01 | starter_compact | 17033032432948248389 | traffic | false | 5.1 | 5 | 2 | 9 | 1 | true | false | true | 0 | 0 | 0 |
-| 02-2026-06-22_19-04-47-la_01-starter_compact-17033032432948256308.jsonl | la_01 | starter_compact | 17033032432948256308 | traffic | false | 15.1 | 14 | 6 | 42 | 1 | true | false | true | 0 | 0 | 0 |
-| 03-2026-06-22_19-05-11-la_01-starter_compact-17033032432948264227.jsonl | la_01 | starter_compact | 17033032432948264227 | traffic | false | 3.7 | 4 | 1 | 5 | 1 | true | false | true | 0 | 0 | 0 |
-| 04-2026-06-22_19-05-22-la_01-starter_compact-17033032432948272146.jsonl | la_01 | starter_compact | 17033032432948272146 | traffic | false | 4.4 | 4 | 1 | 6 | 1 | true | false | true | 0 | 0 | 0 |
-| 05-2026-06-22_19-05-37-la_01-starter_compact-17033032432948280065.jsonl | la_01 | starter_compact | 17033032432948280065 | traffic | false | 3.4 | 4 | 1 | 16 | 1 | true | false | true | 0 | 0 | 0 |
+| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Lane probes | Probe intersections | Decisions | Target mismatch | Applied mismatch |
+|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|
+| 01-2026-06-22_19-04-32-la_01-starter_compact-17033032432948248389.jsonl | la_01 | starter_compact | 17033032432948248389 | traffic | false | 5.1 | 5 | 2 | 9 | 1 | true | false | true | 0 | 0 | 0 | 0 | 0 |
+| 02-2026-06-22_19-04-47-la_01-starter_compact-17033032432948256308.jsonl | la_01 | starter_compact | 17033032432948256308 | traffic | false | 15.1 | 14 | 6 | 42 | 1 | true | false | true | 0 | 0 | 0 | 0 | 0 |
+| 03-2026-06-22_19-05-11-la_01-starter_compact-17033032432948264227.jsonl | la_01 | starter_compact | 17033032432948264227 | traffic | false | 3.7 | 4 | 1 | 5 | 1 | true | false | true | 0 | 0 | 0 | 0 | 0 |
+| 04-2026-06-22_19-05-22-la_01-starter_compact-17033032432948272146.jsonl | la_01 | starter_compact | 17033032432948272146 | traffic | false | 4.4 | 4 | 1 | 6 | 1 | true | false | true | 0 | 0 | 0 | 0 | 0 |
+| 05-2026-06-22_19-05-37-la_01-starter_compact-17033032432948280065.jsonl | la_01 | starter_compact | 17033032432948280065 | traffic | false | 3.4 | 4 | 1 | 16 | 1 | true | false | true | 0 | 0 | 0 | 0 | 0 |

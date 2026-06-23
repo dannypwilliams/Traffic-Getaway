@@ -140,6 +140,27 @@ private enum LaneMoveKind {
     case swipe
     case fastSwipe
     case hold
+
+    var telemetryName: String {
+        switch self {
+        case .tap: return "tap"
+        case .swipe: return "swipe"
+        case .fastSwipe: return "fastSwipe"
+        case .hold: return "hold"
+        }
+    }
+}
+
+private struct LaneChangeTrace {
+    let transitionID: Int
+    let kind: String
+    let startSlot: Int
+    let targetSlot: Int
+    let startX: CGFloat
+    let targetX: CGFloat
+    let startTime: TimeInterval
+    let duration: TimeInterval
+    var lastProbeTime: TimeInterval
 }
 
 private enum ExitPhase {
@@ -279,6 +300,8 @@ final class GameScene: SKScene {
     private var debugAutoplayTimer: TimeInterval = 0
     private var lastMovementDecision: RunTelemetryEvent.MovementDecision?
     private var lastMovementDecisionTime: TimeInterval?
+    private var laneChangeTransitionID = 0
+    private var activeLaneChangeTrace: LaneChangeTrace?
     private var performanceSampleTimer: TimeInterval = 0
     private var performanceFrameCounter = 0
     private var awardedLaneSplitPairs: Set<String> = []
@@ -1129,6 +1152,8 @@ final class GameScene: SKScene {
         debugAutoplayTimer = 0
         lastMovementDecision = nil
         lastMovementDecisionTime = nil
+        laneChangeTransitionID = 0
+        activeLaneChangeTrace = nil
         performanceSampleTimer = 0
         performanceFrameCounter = 0
         awardedLaneSplitPairs.removeAll()
@@ -1287,7 +1312,8 @@ final class GameScene: SKScene {
         collisionVehicle: SKSpriteNode? = nil,
         playerRect: CGRect? = nil,
         trafficRect: CGRect? = nil,
-        movementDecision: RunTelemetryEvent.MovementDecision? = nil
+        movementDecision: RunTelemetryEvent.MovementDecision? = nil,
+        laneChangeProbe: RunTelemetryEvent.LaneChangeProbe? = nil
     ) {
         guard RunTelemetryRecorder.shared.isEnabled else { return }
 
@@ -1342,6 +1368,7 @@ final class GameScene: SKScene {
             spawns: spawns,
             activeTraffic: activeTraffic,
             movementDecision: movementDecision,
+            laneChangeProbe: laneChangeProbe,
             collisionPlayerRect: playerRect.map(RunTelemetryEvent.RectValue.init),
             collisionTrafficRect: trafficRect.map(RunTelemetryEvent.RectValue.init),
             collisionVehicleID: vehicleID,
@@ -1437,6 +1464,77 @@ final class GameScene: SKScene {
             horizontalGap: horizontalGap,
             verticalGap: verticalGap
         )
+    }
+
+    private func recordLaneChangeProbeIfNeeded() {
+        guard RunTelemetryRecorder.shared.isEnabled,
+              var trace = activeLaneChangeTrace,
+              let playerCar else {
+            return
+        }
+
+        let elapsed = max(0, runTime - trace.startTime)
+        let isComplete = elapsed >= trace.duration || playerCar.action(forKey: "laneChange") == nil
+        guard isComplete || trace.lastProbeTime < 0 || elapsed - trace.lastProbeTime >= 0.024 else {
+            return
+        }
+
+        trace.lastProbeTime = elapsed
+        let probe = makeLaneChangeProbe(trace: trace, isComplete: isComplete)
+        activeLaneChangeTrace = isComplete ? nil : trace
+        recordTelemetry(event: "lane_change_probe", laneChangeProbe: probe)
+    }
+
+    private func makeLaneChangeProbe(trace: LaneChangeTrace, isComplete: Bool) -> RunTelemetryEvent.LaneChangeProbe {
+        let progress = trace.duration > 0 ? min(1, max(0, (runTime - trace.startTime) / trace.duration)) : 1
+        let pathSlots = slotsBetween(trace.startSlot, trace.targetSlot)
+        let pathDangers = pathSlots.map { Double(activeTrafficDanger(forSlot: $0)) }
+        let maxDanger = pathDangers.max() ?? 0
+        let unsafeSlots = zip(pathSlots, pathDangers)
+            .filter { $0.1 >= 0.74 }
+            .map { $0.0 }
+        let playerRect = playerHitboxRect()
+        let intersectingVehicle = firstIntersectingTraffic(with: playerRect)
+        let spriteX = playerCar?.position.x ?? trace.targetX
+        let expectedX = trace.startX + (trace.targetX - trace.startX) * CGFloat(progress)
+        let spriteNearestSlot = laneManager.nearestSlotForX(spriteX)
+
+        return RunTelemetryEvent.LaneChangeProbe(
+            transitionID: trace.transitionID,
+            kind: trace.kind,
+            startSlot: trace.startSlot,
+            targetSlot: trace.targetSlot,
+            logicalSlot: playerSlot,
+            spriteNearestSlot: spriteNearestSlot,
+            startX: Double(trace.startX),
+            targetX: Double(trace.targetX),
+            spriteX: Double(spriteX),
+            expectedLinearX: Double(expectedX),
+            elapsed: max(0, runTime - trace.startTime),
+            duration: trace.duration,
+            progress: progress,
+            pathSlots: pathSlots,
+            pathUnsafeSlots: unsafeSlots,
+            pathMaxDanger: maxDanger,
+            targetDanger: Double(activeTrafficDanger(forSlot: trace.targetSlot)),
+            spriteSlotDanger: Double(activeTrafficDanger(forSlot: spriteNearestSlot)),
+            intersectsTraffic: intersectingVehicle != nil,
+            intersectingVehicle: intersectingVehicle.flatMap(activeTrafficSnapshot(for:)),
+            complete: isComplete
+        )
+    }
+
+    private func slotsBetween(_ startSlot: Int, _ targetSlot: Int) -> [Int] {
+        guard startSlot != targetSlot else { return [laneManager.clampSlot(startSlot, for: activeCar.vehicleClass)] }
+        let lower = max(0, min(startSlot, targetSlot))
+        let upper = min(LaneManager.slotCount - 1, max(startSlot, targetSlot))
+        return Array(lower...upper)
+    }
+
+    private func firstIntersectingTraffic(with playerRect: CGRect) -> SKSpriteNode? {
+        guard !playerRect.isNull else { return nil }
+        return trafficNode.children.compactMap { $0 as? SKSpriteNode }
+            .first { trafficHitboxRect(for: $0).intersects(playerRect) }
     }
 
     private var appBuildIdentifier: String {
@@ -2207,6 +2305,13 @@ final class GameScene: SKScene {
         let nextLane = laneManager.nearestLaneForSlot(nextSlot)
         let clutchRisk = clutchRiskForLaneChange(from: previousLane, to: nextLane)
         let idleBeforeMove = timeSinceLastLaneChange
+        let moveDuration = laneChangeDuration(laneDelta: readableDelta, kind: kind)
+        beginLaneChangeTrace(
+            fromSlot: previousSlot,
+            toSlot: nextSlot,
+            kind: kind,
+            duration: moveDuration
+        )
         setPlayerSlot(nextSlot)
         timeSinceLastLaneChange = 0
         passivePressureAlertShown = false
@@ -2249,6 +2354,46 @@ final class GameScene: SKScene {
         return fallback - playerSlot
     }
 
+    private func beginLaneChangeTrace(
+        fromSlot: Int,
+        toSlot: Int,
+        kind: LaneMoveKind,
+        duration: TimeInterval
+    ) {
+        guard AppConfig.debugMode, RunTelemetryRecorder.shared.isEnabled else { return }
+        guard slotCenters.indices.contains(fromSlot), slotCenters.indices.contains(toSlot) else { return }
+
+        laneChangeTransitionID += 1
+        activeLaneChangeTrace = LaneChangeTrace(
+            transitionID: laneChangeTransitionID,
+            kind: kind.telemetryName,
+            startSlot: fromSlot,
+            targetSlot: toSlot,
+            startX: playerCar?.position.x ?? slotCenters[fromSlot],
+            targetX: slotCenters[toSlot],
+            startTime: runTime,
+            duration: duration,
+            lastProbeTime: -1
+        )
+    }
+
+    private func laneChangeDuration(laneDelta: Int, kind: LaneMoveKind) -> TimeInterval {
+        let handlingScale = max(0.88, min(activeCar.vehicleClass == .motorcycle ? 1.3 : 1.16, activeCar.handling))
+        let laneDistance = max(1, abs(laneDelta))
+        let baseMoveDuration: TimeInterval
+        switch kind {
+        case .fastSwipe:
+            baseMoveDuration = activeCar.vehicleClass == .motorcycle ? 0.128 : (laneDistance >= 3 ? 0.18 : 0.16)
+        case .hold:
+            baseMoveDuration = activeCar.vehicleClass == .motorcycle ? 0.085 : 0.105
+        case .tap, .swipe:
+            baseMoveDuration = activeCar.vehicleClass == .motorcycle ? 0.098 : 0.12
+        }
+        let boostScale: TimeInterval = dodgeBoostTimer > 0 ? 0.74 : 1
+        let levelScale = currentLevel.map { LevelDifficultyConfig.snapshot(for: $0, elapsed: runTime, exitActive: exitPhase == .active).laneChangeDurationScale } ?? 1
+        return baseMoveDuration * boostScale * levelScale / TimeInterval(handlingScale)
+    }
+
     private func positionPlayer(animated: Bool, laneDelta: Int = 0, kind: LaneMoveKind = .swipe) {
         guard let playerCar, slotCenters.indices.contains(playerSlot) else { return }
         let target = CGPoint(x: slotCenters[playerSlot], y: playerY)
@@ -2257,20 +2402,8 @@ final class GameScene: SKScene {
             playerCar.removeAction(forKey: "laneChange")
             playerCar.removeAction(forKey: "laneTilt")
 
-            let handlingScale = max(0.88, min(activeCar.vehicleClass == .motorcycle ? 1.3 : 1.16, activeCar.handling))
             let laneDistance = max(1, abs(laneDelta))
-            let baseMoveDuration: TimeInterval
-            switch kind {
-            case .fastSwipe:
-                baseMoveDuration = activeCar.vehicleClass == .motorcycle ? 0.128 : (laneDistance >= 3 ? 0.18 : 0.16)
-            case .hold:
-                baseMoveDuration = activeCar.vehicleClass == .motorcycle ? 0.085 : 0.105
-            case .tap, .swipe:
-                baseMoveDuration = activeCar.vehicleClass == .motorcycle ? 0.098 : 0.12
-            }
-            let boostScale: TimeInterval = dodgeBoostTimer > 0 ? 0.74 : 1
-            let levelScale = currentLevel.map { LevelDifficultyConfig.snapshot(for: $0, elapsed: runTime, exitActive: exitPhase == .active).laneChangeDurationScale } ?? 1
-            let moveDuration = baseMoveDuration * boostScale * levelScale / TimeInterval(handlingScale)
+            let moveDuration = laneChangeDuration(laneDelta: laneDelta, kind: kind)
             let move = SKAction.move(to: target, duration: moveDuration)
             move.timingMode = .easeOut
             playerCar.run(move, withKey: "laneChange")
@@ -2580,6 +2713,7 @@ final class GameScene: SKScene {
         updateDebugAutoplay(deltaTime: TimeInterval(rawDeltaTime))
         updatePerformanceDebug(deltaTime: TimeInterval(rawDeltaTime))
         updateTrafficDiagnostics()
+        recordLaneChangeProbeIfNeeded()
         checkCollisions()
     }
 

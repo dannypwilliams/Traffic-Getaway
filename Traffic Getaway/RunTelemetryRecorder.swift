@@ -68,6 +68,30 @@ struct RunTelemetryEvent: Codable {
         let verticalGap: Double
     }
 
+    struct LaneChangeProbe: Codable {
+        let transitionID: Int
+        let kind: String
+        let startSlot: Int
+        let targetSlot: Int
+        let logicalSlot: Int
+        let spriteNearestSlot: Int
+        let startX: Double
+        let targetX: Double
+        let spriteX: Double
+        let expectedLinearX: Double
+        let elapsed: Double
+        let duration: Double
+        let progress: Double
+        let pathSlots: [Int]
+        let pathUnsafeSlots: [Int]
+        let pathMaxDanger: Double
+        let targetDanger: Double
+        let spriteSlotDanger: Double
+        let intersectsTraffic: Bool
+        let intersectingVehicle: ActiveTraffic?
+        let complete: Bool
+    }
+
     let event: String
     let build: String
     let tuningVersion: String
@@ -99,6 +123,7 @@ struct RunTelemetryEvent: Codable {
     let spawns: [TrafficSpawn]?
     let activeTraffic: [ActiveTraffic]?
     let movementDecision: MovementDecision?
+    let laneChangeProbe: LaneChangeProbe?
     let collisionPlayerRect: RectValue?
     let collisionTrafficRect: RectValue?
     let collisionVehicleID: Int?

@@ -98,10 +98,26 @@ Live collision-analysis debug-autoplay matrix:
 - Summary: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/summary.md`.
 - Notes: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/notes.md`.
 
+Live lane-change parity debug-autoplay matrix:
+
+- Runs: 5.
+- Completed: 0/5.
+- Avg terminal time: 7.9s.
+- Median terminal time: 6.6s.
+- Avg traffic waves before terminal event: 7.6.
+- Avg near misses/cash: 1.8 / 13.
+- Lane-change probes: 163.
+- Lane-change transitions: 26.
+- Lane-change intersection probes: 3.
+- Lane-change unsafe-path probes: 1.
+- Last pre-crash probe intersected traffic: 3/5.
+- Summary: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/summary.md`.
+- Notes: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/notes.md`.
+
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome. Corrected decision telemetry shows actual live moves mostly land on the GameSim-style target. Live-hazard steering improved average terminal time, but all runs still crashed before the exit. Collision-analysis telemetry narrows the gap: sampled terminal crashes are happening immediately after move decisions, while the SpriteKit car is still physically moving through the lane-change path. Do not tune rewards or density until lane-change transition timing/path occupancy and active traffic lifetime are reconciled or intentionally modeled.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome. Corrected decision telemetry shows actual live moves mostly land on the GameSim-style target. Live-hazard steering improved average terminal time, but all runs still crashed before the exit. Collision-analysis and lane-change parity telemetry narrow the gap: most sampled terminal crashes involve physical sprite collision during or immediately after an animated lane change. Do not tune rewards or density until transition-clearance, target-slot danger horizon, and active traffic lifetime are reconciled or intentionally modeled.
 
 ## Next
 
-Decide whether GameSim should model live lane-change duration/path occupancy, or whether live safety selection needs transition-clearance checks and longer lead time. Capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
+Add transition-clearance checks to debug autoplay first, rerun the lane-change parity matrix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
