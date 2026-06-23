@@ -6,7 +6,7 @@ Evidence-based Traffic Getaway playtest pass for responsiveness, understandabili
 
 This directory is the authoritative artifact root for the full recorded playtest requested on 2026-06-23. Do not mark a matrix row complete unless matching video, telemetry, summary, screenshots, and written observations exist.
 
-Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice is complete; the broader all-city/all-vehicle/all-device playtest remains incomplete.
+Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete; the broader all-city/all-device playtest remains incomplete.
 
 ## Starting State
 
@@ -37,6 +37,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - Start-gated manual capture tooling exists, and `--leave-app-running` was added during this pass so result-screen screenshots can be captured before the app is terminated. When this flag is used, terminate the app and verify debug defaults afterward.
 - Post-run cleanup was verified after the LA Starter Compact capture set; `build-validation/post-run-debug-defaults-check.log` shows iPhone 17e debug defaults cleared to `[]`.
 - Six valid active-input LA01 Starter Compact runs are recorded; five have complete screenshot evidence and one supplemental run is missing the result screenshot.
+- Three complete-evidence active-input LA01 Starter Bike runs are recorded in Runs 03, 04, and 05. A prior Bike Run 02 has telemetry/result evidence but is rejected from the complete-evidence count because the start screenshot and video are missing.
 
 ## Artifact Structure
 

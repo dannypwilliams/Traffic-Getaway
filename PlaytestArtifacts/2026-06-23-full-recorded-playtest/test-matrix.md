@@ -5,14 +5,15 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 ## Summary Counts
 
 - Planned tests: 73
-- Passed: 15
+- Passed: 16
 - Failed: 0
 - Partial: 2
 - Blocked: 0
-- Invalid: 0
-- Not tested: 56
-- Valid active-input runs in this artifact set: 6
+- Invalid: 1
+- Not tested: 55
+- Valid active-input runs in this artifact set: 9
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
+- Valid complete-evidence runs counted for LA Starter Bike requirement: 3
 
 ## Preparation And Automated Validation
 
@@ -26,7 +27,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | AUTO-03 | `git diff --check` | pass | `build-validation/git-diff-check.log` | Empty log with zero exit means whitespace check passed. |
 | AUTO-04 | GameCore tests | pass | `build-validation/gamecore-swift-test.log` | 22 tests, 0 failures. |
 | AUTO-05 | Mac/iOS Simulator build verification | pass | `build-validation/verify-on-mac.log` | Build succeeded. |
-| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md` | Summary generated from raw telemetry. |
+| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md` | Summaries generated from raw telemetry. |
 | AUTO-07 | Representative GameSim runs for all levels with starter vehicle | pass | `build-validation/gamesim-all-levels-starter-compact.log` | 15 levels x 1,000 runs. |
 | AUTO-08 | Representative GameSim runs for all levels with Starter Bike | pass | `build-validation/gamesim-all-levels-starter-bike.log` | 15 levels x 1,000 runs. |
 | AUTO-09 | Traffic stress/procedural fairness validation | pass | `build-validation/gamecore-swift-test.log`, `build-validation/gamesim-all-levels-starter-compact.log`, `build-validation/gamesim-all-levels-starter-bike.log` | Automated stress/fairness signals exist; manual fairness remains unproven. |
@@ -67,7 +68,7 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 | ID | City | Requirement | Device | Status | Valid Runs | Evidence |
 |---|---|---|---|---|---:|---|
 | LA-STARTER | Los Angeles | Five valid active-input Starter Compact runs | iPhone 17e | pass | 5 | Runs 01, 02, 04, 05, and 06 have video, start/result screenshots, telemetry, summary, and observations. Run 03 is supplemental active evidence but is missing result screenshot. |
-| LA-BIKE | Los Angeles | Three valid active-input Starter Bike runs | iPhone 17e | not tested | 0 | |
+| LA-BIKE | Los Angeles | Three valid active-input Starter Bike runs | iPhone 17e | pass | 3 | Runs 03, 04, and 05 have video, start/result screenshots, telemetry, summary, and observations. Run 02 has telemetry/result evidence but is rejected from the complete-evidence count because the start screenshot and video are missing. |
 | LA-PROGRESSION | Los Angeles | Complete recorded progression attempt | iPhone 17e | not tested | 0 | |
 | LA-STRESS | Los Angeles | Deliberate difficult stress run | iPhone 17e | not tested | 0 | |
 | NY-STARTER | New York | Five valid active-input Starter Compact runs | iPhone 17e | not tested | 0 | |
@@ -83,7 +84,7 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 
 | Level | City | Stage | Starter Compact Status | Starter Bike Status | Evidence |
 |---|---|---|---|---|---|
-| la_01 Sunset Merge | Los Angeles | early | pass | not tested | Starter Compact requirement complete for iPhone 17e: five complete-evidence active runs plus one supplemental active run. Starter Bike still not tested. |
+| la_01 Sunset Merge | Los Angeles | early | pass | pass | Starter Compact requirement complete for iPhone 17e: five complete-evidence active runs plus one supplemental active run. Starter Bike requirement complete for iPhone 17e: three complete-evidence active runs. |
 | la_02 405 Afterburn | Los Angeles | middle | not tested | not tested | |
 | la_03 Valley Cut | Los Angeles | middle | not tested | not tested | |
 | la_04 Freeway Riot | Los Angeles | late | not tested | not tested | |
@@ -101,4 +102,6 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 
 ## Invalid Runs
 
-No invalid runs have been captured inside this artifact set yet. Run 03 is valid active telemetry/video evidence but is excluded from the five complete-evidence count because the result screenshot is missing.
+Starter Compact Run 03 is valid active telemetry/video evidence but is excluded from the five complete-evidence Starter Compact count because the result screenshot is missing.
+
+Starter Bike Run 02 is rejected from the complete-evidence Starter Bike count because only telemetry and a result screenshot remain in the artifact directory; the start screenshot and video are missing. The valid complete-evidence Starter Bike set is Runs 03, 04, and 05.

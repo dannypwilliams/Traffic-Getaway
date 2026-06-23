@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slice now has a strong first-minute concern.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -22,12 +22,25 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Previous active-traffic diagnostic evidence is too punitive and is explicitly not a balance source.
 - Previous debug autoplay evidence is useful for repeatability but is not a proxy for human difficulty.
 - Previous ungated active manual iPhone 17e attempt is invalid for balance conclusions because only 1/5 runs had active input.
-- Current LA01 active slice is valid evidence for a first-minute concern, but it still covers only one level, one vehicle, one device, and one control mode.
+- Current LA01 active slices are valid evidence for first-level concerns, but they still cover only one level, one device, and one control mode.
+
+## Manual LA01 Starter Bike Slice
+
+- Level/vehicle: `la_01` / Starter Bike.
+- Device: iPhone 17e simulator.
+- Runs: 3 complete-evidence active-input runs counted for the LA Starter Bike requirement.
+- Result: 0/3 completed; terminal reasons were traffic collision twice and roadblock once.
+- Avg terminal time: 27.5s; median terminal time: 21.1s.
+- Active input: 13 lane changes, 43 lane-change probes, 0 autoplay decisions.
+- Near misses/cash: average 5.3 near misses and 51 cash.
+- Fairness signal: collision analysis present in 3/3, 0 lane-change intersection probes, 0 unsafe-path probes in the counted set.
+- Read: Starter Bike survives longer than Starter Compact and can reach exit countdown, but this slice still failed to complete LA01 in 3/3 complete-evidence samples.
 
 ## Simulation Comparison
 
 - Default GameSim previously reported LA01 Starter Compact completion around 99% with high near misses and high cash.
-- Recorded iPhone 17e active play now shows 0/6 completion and sub-10-second traffic terminals.
+- Recorded iPhone 17e active Starter Compact play now shows 0/6 completion and sub-10-second traffic terminals.
+- Recorded iPhone 17e active Starter Bike play shows 0/3 completion in the counted complete-evidence set, with one run reaching the exit countdown at 50.2s before traffic collision.
 - Interpretation: sim/live/manual difficulty are not reconciled. Do not tune from simulation alone.
 
 ## Required Next Evidence
