@@ -1,0 +1,28 @@
+Pause/settings probe notes for iPhone 17e / iOS 26.5 simulator.
+
+Observed start-screen app controls before gameplay:
+- Settings
+- High Score 741   Cash $514
+- Tap to Start
+- LOS ANGELES  Sunset Cruiser
+- Traffic Getaway
+
+Observed Settings overlay controls before gameplay:
+- MUSIC VOLUME controls
+- SFX VOLUME controls
+- MUSIC toggle
+- SFX toggle
+- HAPTICS toggle
+- Back
+
+Observed active-gameplay accessibility elements after the explicit start tap:
+- $0
+- LA DIST 9/16
+- EXIT --
+- WANTED *
+- COMBO READY
+- SCORE 8/17
+- Sunset Merge. Los Angeles is live.
+- LOS ANGELES
+
+No Settings, Pause, Resume, Restart, or Back game control was exposed in the active-gameplay accessibility tree; only Simulator toolbar controls were present outside the app. The observed result screen exposed Retry Level, Garage, Level Select, and Menu after the run reached terminal police capture.

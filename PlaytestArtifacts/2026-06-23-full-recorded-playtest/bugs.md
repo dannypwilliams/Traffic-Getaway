@@ -6,6 +6,7 @@
 | FTG-P1-002 | P1 | Active iPhone 17e LA01 Starter Bike complete-evidence runs fail 3/3 | iPhone 17e / iOS 26.5 simulator | Los Angeles / la_01 Sunset Merge | Starter Bike | SWIPE + TAP using tap input | `378d832` | 3/3 complete-evidence active runs | Yes, if confirmed by broader human play | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md`, videos `run03`-`run05`, screenshots `run03`-`run05` |
 | FTG-P2-001 | P2 | Dynamic Island overlaps top gameplay HUD | iPhone 17 Pro / iOS 26.5 simulator | Los Angeles / la_01 Sunset Merge | Visible UI: Sunset Cruiser; telemetry: Starter Compact | SWIPE + TAP using tap input | `dbe1519` | 2/2 Dynamic Island samples observed | No, but must be fixed before release UI signoff | `videos/dynamic-island/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02.mp4`, screenshots under `screenshots/dynamic-island/` |
 | FTG-P2-002 | P2 | iPhone 17 Pro debug vehicle identity mismatch during manual capture | iPhone 17 Pro / iOS 26.5 simulator | Los Angeles / la_01 Sunset Merge | Requested Starter Bike; telemetry Starter Compact; UI Sunset Cruiser | SWIPE + TAP using tap input | `dbe1519` | 2/2 Dynamic Island samples observed | No, but it weakens vehicle-specific test validity | `telemetry/raw/01-2026-06-23_09-51-27-la_01-starter_compact-17033032432948438445.jsonl`, start/result screenshots under `screenshots/dynamic-island/` |
+| FTG-P2-003 | P2 | No app-level pause/resume or restart-after-pause path during active gameplay | iPhone 17e / iOS 26.5 simulator | Los Angeles / la_01 Sunset Merge | Starter Compact / visible UI Sunset Cruiser | SWIPE + TAP using tap input | `658b46d` | 1/1 active-gameplay probe | No, but required functional coverage cannot pass | `videos/progression/2026-06-23_iphone17e_la01_pause-settings-probe_session01.mp4`, `screenshots/progression/2026-06-23_iphone17e_la01_pause-settings-probe_session01_active-hud-no-pause-visible.png`, `logs/2026-06-23_iphone17e_la01_pause-settings-probe_accessibility-notes.txt` |
 
 ## FTG-P1-001 Details
 
@@ -39,9 +40,17 @@
 - Random seeds: `17033032432948430526`, `17033032432948438445`.
 - Notes: This is treated as a playtest/tooling validity defect until the app-side debug vehicle selection path is verified.
 
+## FTG-P2-003 Details
+
+- Reproduction steps: use iPhone 17e simulator, launch `la_01` from the manual start-gated flow, confirm the start-screen Settings button can open/close, tap `Tap to Start`, then inspect visible and accessibility-exposed app controls during active gameplay.
+- Expected result: active gameplay should expose an app-level pause path, and pause should support resume plus restart-from-pause coverage required by the master playtest prompt.
+- Actual result: active gameplay exposed HUD/status elements only (`WANTED`, `SCORE`, `EXIT`, `COMBO`, `LA DIST`, city/status labels). No app-level Pause, Resume, Settings, Back, or Restart control was visible or discoverable. Result-screen `RETRY LEVEL` appeared only after terminal police capture.
+- Random seed: `17033032432948232551`.
+- Notes: The probe telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s, so it is invalid for active-run and balance coverage. It is valid functional evidence for the missing active pause/restart-after-pause path.
+
 ## Severity Reference
 
 - P0: crash, data loss, impossible progression, or consistently unwinnable gameplay.
 - P1: major control, fairness, progression, performance, or city-identity defect.
-- P2: noticeable but non-blocking gameplay or presentation problem.
+- P2: noticeable but non-blocking gameplay, functional coverage, or presentation problem.
 - P3: cosmetic or optional polish issue.

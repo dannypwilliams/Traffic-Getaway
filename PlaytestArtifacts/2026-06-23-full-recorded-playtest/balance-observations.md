@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session, one Dynamic Island-class active sample, and one existing-save active progression sample. Fresh-install tutorial-to-run, existing-save attempt 03, and active-gameplay background/foreground samples exist but are invalid for balance because each recorded 0 lane changes. Garage/vehicle browsing and relaunch restoration evidence exists, but it is not gameplay balance evidence; it shows the current save at `$443`, selected Sunset Cruiser, high score 741, and locked Starter Bike at `NEED $107 MORE`. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session, one Dynamic Island-class active sample, and one existing-save active progression sample. Fresh-install tutorial-to-run, existing-save attempt 03, active-gameplay background/foreground, and pause/settings probe samples exist but are invalid for balance because each recorded 0 lane changes. Garage/vehicle browsing and relaunch restoration evidence exists, but it is not gameplay balance evidence; it shows the current save at `$443`, selected Sunset Cruiser, high score 741, and locked Starter Bike at `NEED $107 MORE`. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -74,6 +74,14 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Result: police capture at 9.0s, 0 near misses, 0 lane changes, 12 telemetry cash, wanted level 3, 0 autoplay decisions.
 - Functional read: result-screen rewards/progress were visible, including Level 2 progress, but the attempted input path did not produce telemetry-confirmed active steering.
 - Balance use: invalid. Retain as evidence of an attempted progression run, but do not use for active-run, fairness, or balance conclusions.
+
+## Invalid Pause/Settings Probe Session 01
+
+- Device: iPhone 17e simulator.
+- Flow: start-gated `la_01`; recorded start-screen Settings, Settings Back return, active HUD, and result screen.
+- Result: police capture at 9.0s, 0 near misses, 0 lane changes, 12 telemetry cash, wanted level 3, 0 autoplay decisions.
+- Functional read: pre-game Settings works, but active gameplay exposes no app-level pause/resume/restart-after-pause path.
+- Balance use: invalid. Retain as functional pause/restart evidence only; do not use for active-run, fairness, or balance conclusions.
 
 ## Simulation Comparison
 

@@ -6,7 +6,7 @@ Evidence-based Traffic Getaway playtest pass for responsiveness, understandabili
 
 This directory is the authoritative artifact root for the full recorded playtest requested on 2026-06-23. Do not mark a matrix row complete unless matching video, telemetry, summary, screenshots, and written observations exist.
 
-Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete, failure/retry has recorded evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, the City Select / Level Select progression screen has recorded evidence, Garage/vehicle browsing has partial recorded evidence, and relaunch/save restoration has partial recorded evidence. The broader all-city/all-device playtest remains incomplete.
+Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete, failure/retry has recorded evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, the City Select / Level Select progression screen has recorded evidence, Garage/vehicle browsing has partial recorded evidence, relaunch/save restoration has partial recorded evidence, and pause/restart-after-pause has a recorded negative probe. The broader all-city/all-device playtest remains incomplete.
 
 ## Starting State
 
@@ -48,6 +48,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - Existing-save relaunch restoration is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_relaunch-restoration-clean_session02.mp4`; it proves high score, cash, selected vehicle, and Los Angeles start context survive termination/relaunch, but it does not prove OS background/foreground behavior or full main-menu progression restoration.
 - Existing-save background/foreground is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_background-foreground_session01.mp4`; it proves Home-screen backgrounding and foregrounding back to the Los Angeles start state, but not active-gameplay backgrounding.
 - Active-gameplay background/foreground is recorded in `videos/progression/2026-06-23_iphone17e_la01_active-gameplay_background-foreground_session01.mp4`; it proves Home-screen backgrounding during a run and foregrounding into a terminal captured result, but the gameplay sample is invalid for active-run/balance coverage because telemetry recorded 0 lane changes.
+- Pause/settings probing is recorded in `videos/progression/2026-06-23_iphone17e_la01_pause-settings-probe_session01.mp4`; it proves start-screen Settings opens and returns with Back, and it shows no app-level Pause, Resume, Settings, Back, or Restart control during active gameplay. The run is invalid for active-run/balance coverage because telemetry recorded 0 lane changes. See `FTG-P2-003`.
 
 ## Artifact Structure
 
