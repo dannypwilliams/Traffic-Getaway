@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session, one Dynamic Island-class active sample, and one existing-save active progression sample. Fresh-install tutorial-to-run, existing-save attempt 03, active-gameplay background/foreground, and pause/settings probe samples exist but are invalid for balance because each recorded 0 lane changes. Garage/vehicle browsing and relaunch restoration evidence exists, but it is not gameplay balance evidence; it shows the current save at `$443`, selected Sunset Cruiser, high score 741, and locked Starter Bike at `NEED $107 MORE`. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session, one Dynamic Island-class active sample, and one existing-save active progression sample. Fresh-install tutorial-to-run, existing-save attempt 03, active-gameplay background/foreground, and pause/settings probe samples exist but are invalid for balance because each recorded 0 lane changes. A debug-assisted first-escape completion/reward result exists but is also not balance evidence because it is synthetic result UI, not a real active-input completion. Garage/vehicle browsing and relaunch restoration evidence exists, but it is not gameplay balance evidence; it shows the current save at `$443`, selected Sunset Cruiser, high score 741, and locked Starter Bike at `NEED $107 MORE`. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -82,6 +82,14 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Result: police capture at 9.0s, 0 near misses, 0 lane changes, 12 telemetry cash, wanted level 3, 0 autoplay decisions.
 - Functional read: pre-game Settings works, but active gameplay exposes no app-level pause/resume/restart-after-pause path.
 - Balance use: invalid. Retain as functional pause/restart evidence only; do not use for active-run, fairness, or balance conclusions.
+
+## Debug-Assisted Completion/Reward Session 01
+
+- Device: iPhone 17e simulator.
+- Flow: debug-only `first_escape_starter_bike` scenario opened the real `ResultsScene` after processing a synthetic completed `la_01` run.
+- Result UI: `ESCAPED`, `$423`, `213 XP`, `Level 1 -> 2`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`.
+- Functional read: valid completion/reward/unlock presentation evidence.
+- Balance use: invalid. It is not a real active-input completion, has no raw run telemetry, and should not inform completion rate, reward tuning, or fairness conclusions.
 
 ## Simulation Comparison
 

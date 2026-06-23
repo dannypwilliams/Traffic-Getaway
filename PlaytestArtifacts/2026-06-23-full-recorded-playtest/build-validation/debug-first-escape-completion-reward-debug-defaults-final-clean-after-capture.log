@@ -1,0 +1,34 @@
+# Final cleanup after debug-first-escape completion/reward capture
+# Before cleanup
+{
+  "TrafficGetaway.debug.autoplay" => false
+  "TrafficGetaway.debug.autoStartLevelID" => "la_01"
+  "TrafficGetaway.debug.autoStartVehicleID" => "starter_compact"
+  "TrafficGetaway.debug.resultScenario" => "first_escape_starter_bike"
+  "TrafficGetaway.debug.showOpenLaneAnalysis" => false
+  "TrafficGetaway.debug.waitForStartTap" => true
+  "TrafficGetaway.hapticsEnabled" => true
+  "TrafficGetaway.musicEnabled" => true
+  "TrafficGetaway.musicVolume" => 0.72
+  "TrafficGetaway.SaveData.v2" => {length = 1842, bytes = 0x7b226461696c794368616c6c656e6765 ... 6e746572223a317d}
+  "TrafficGetaway.sfxEnabled" => true
+  "TrafficGetaway.sfxVolume" => 0.82
+}
+# Save data raw length check
+    1843
+# Deleting debug defaults
+deleted TrafficGetaway.debug.autoplay
+deleted TrafficGetaway.debug.autoStartLevelID
+deleted TrafficGetaway.debug.autoStartVehicleID
+deleted TrafficGetaway.debug.showOpenLaneAnalysis
+deleted TrafficGetaway.debug.waitForStartTap
+deleted TrafficGetaway.debug.resultScenario
+# After cleanup
+{
+  "TrafficGetaway.hapticsEnabled" => true
+  "TrafficGetaway.musicEnabled" => true
+  "TrafficGetaway.musicVolume" => 0.72
+  "TrafficGetaway.SaveData.v2" => {length = 1842, bytes = 0x7b226461696c794368616c6c656e6765 ... 6e746572223a317d}
+  "TrafficGetaway.sfxEnabled" => true
+  "TrafficGetaway.sfxVolume" => 0.82
+}

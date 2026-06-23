@@ -57,10 +57,10 @@
     "planned_tests": 73,
     "passed": 20,
     "failed": 3,
-    "partial": 7,
+    "partial": 8,
     "blocked": 0,
     "invalid": 6,
-    "not_tested": 43,
+    "not_tested": 42,
     "valid_active_input_runs": 12,
     "valid_complete_evidence_runs_for_la_starter_compact": 5,
     "valid_complete_evidence_runs_for_la_starter_bike": 3

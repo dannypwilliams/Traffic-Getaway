@@ -7,10 +7,10 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 - Planned tests: 73
 - Passed: 20
 - Failed: 3
-- Partial: 7
+- Partial: 8
 - Blocked: 0
 - Invalid: 6
-- Not tested: 43
+- Not tested: 42
 - Valid active-input runs in this artifact set: 12
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 - Valid complete-evidence runs counted for LA Starter Bike requirement: 3
@@ -45,7 +45,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | FUNC-06 | Pause and resume | iPhone 17e | fail | `videos/progression/2026-06-23_iphone17e_la01_pause-settings-probe_session01.mp4` | `telemetry/raw/01-2026-06-23_10-51-46-la_01-starter_compact-pause-settings-probe-17033032432948232551.jsonl` | Start-screen Settings and Back were recorded, but active gameplay exposed no visible or accessibility-discoverable app-level Pause, Resume, Settings, or Back control. Logged as `FTG-P2-003`. The run is invalid for active-run coverage because telemetry recorded 0 lane changes. |
 | FUNC-07 | Restart after pause | iPhone 17e | fail | `videos/progression/2026-06-23_iphone17e_la01_pause-settings-probe_session01.mp4` | `telemetry/raw/01-2026-06-23_10-51-46-la_01-starter_compact-pause-settings-probe-17033032432948232551.jsonl` | Restart-after-pause could not be performed because no active-gameplay pause state was available. Result-screen Retry/Garage/Level Select/Menu were visible after capture, but that is failure-result navigation rather than restart after pause. Logged as `FTG-P2-003`. |
 | FUNC-08 | Failure screen and retry | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01.mp4` | `telemetry/raw/01-2026-06-23_09-42-21-la_01-starter_bike-16090129143462938849.jsonl` | Failure screen captured, `RETRY LEVEL` tapped, and retry returned to the Los Angeles Starter Bike start screen. |
-| FUNC-09 | Completion screen and reward screen | iPhone 17e | not tested | | | |
+| FUNC-09 | Completion screen and reward screen | iPhone 17e | partial | `videos/progression/2026-06-23_iphone17e_la01_debug-first-escape_completion-reward_session01.mp4` | | Debug-assisted first-escape result scenario captured the real result UI with `ESCAPED`, `$423`, `213 XP`, `Level 1 -> 2`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`. Partial only because it is a synthetic completed-run scenario, not a real active-input completion, and no raw run telemetry is expected. |
 | FUNC-10 | Background and relaunch restoration | iPhone 17e | partial | `videos/progression/2026-06-23_iphone17e_la01_active-gameplay_background-foreground_session01.mp4`, `videos/progression/2026-06-23_iphone17e_existing-save_background-foreground_session01.mp4`, `videos/progression/2026-06-23_iphone17e_existing-save_relaunch-restoration-clean_session02.mp4` | `telemetry/raw/01-2026-06-23_10-46-19-la_01-starter_compact-active-gameplay-background-foreground-17033032432948224632.jsonl` | App termination/relaunch, start-screen Home foregrounding, and active-gameplay Home foregrounding are recorded. Active-gameplay foreground returned to a terminal `CAPTURED` result with telemetry. Still partial because the active gameplay sample had 0 lane changes and normal main-menu foreground restoration remains unproven. |
 | FUNC-11 | Existing-save progression restoration | iPhone 17e | partial | `videos/progression/2026-06-23_iphone17e_existing-save_relaunch-restoration-clean_session02.mp4` | | Save-backed high score, cash, selected vehicle, and Los Angeles start context restored after relaunch. The richer main-menu progression state with Level 2 XP was visible before termination but not after relaunch, so full progression restoration remains unproven. |
 | FUNC-12 | Dynamic Island safe-area/control obstruction check | iPhone 17 Pro | fail | `videos/dynamic-island/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02.mp4` | `telemetry/raw/01-2026-06-23_09-51-27-la_01-starter_compact-17033032432948438445.jsonl` | Test performed. Dynamic Island overlaps/clips top HUD; logged as `FTG-P2-001`. |
