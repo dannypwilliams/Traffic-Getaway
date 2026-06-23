@@ -7,10 +7,10 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 - Planned tests: 73
 - Passed: 20
 - Failed: 3
-- Partial: 8
+- Partial: 10
 - Blocked: 0
 - Invalid: 6
-- Not tested: 42
+- Not tested: 40
 - Valid active-input runs in this artifact set: 12
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 - Valid complete-evidence runs counted for LA Starter Bike requirement: 3
@@ -71,11 +71,11 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 | LA-BIKE | Los Angeles | Three valid active-input Starter Bike runs | iPhone 17e | pass | 3 | Runs 03, 04, and 05 have video, start/result screenshots, telemetry, summary, and observations. Run 02 has telemetry/result evidence but is rejected from the complete-evidence count because the start screenshot and video are missing. |
 | LA-PROGRESSION | Los Angeles | Complete recorded progression attempt | iPhone 17e | partial | 1 | Fresh-install tutorial-to-LA attempt recorded in `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4`; it ended as passive police capture at 9.0s with 0 lane changes. Existing-save Level Select to LA01 attempt recorded in `videos/progression/2026-06-23_iphone17e_existing-save_level-select-la01_active-progression_attempt02.mp4`; it is valid active input but ended as traffic collision at 8.5s. Existing-save attempt 03 recorded video/screenshots/telemetry but is invalid for active coverage because telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s. Complete city-progression coverage remains unsatisfied. |
 | LA-STRESS | Los Angeles | Deliberate difficult stress run | iPhone 17e | not tested | 0 | |
-| NY-STARTER | New York | Five valid active-input Starter Compact runs | iPhone 17e | not tested | 0 | |
+| NY-STARTER | New York | Five valid active-input Starter Compact runs | iPhone 17e | not tested | 0 | Start-gate-only evidence exists for `ny_01`, but no active-input New York runs are recorded. |
 | NY-BIKE | New York | Three valid active-input Starter Bike runs | iPhone 17e | not tested | 0 | |
 | NY-PROGRESSION | New York | Complete recorded progression attempt | iPhone 17e | not tested | 0 | |
 | NY-STRESS | New York | Deliberate difficult stress run | iPhone 17e | not tested | 0 | |
-| MIA-STARTER | Miami | Five valid active-input Starter Compact runs | iPhone 17e | not tested | 0 | |
+| MIA-STARTER | Miami | Five valid active-input Starter Compact runs | iPhone 17e | not tested | 0 | Start-gate-only evidence exists for `mia_01`, but no active-input Miami runs are recorded. |
 | MIA-BIKE | Miami | Three valid active-input Starter Bike runs | iPhone 17e | not tested | 0 | |
 | MIA-PROGRESSION | Miami | Complete recorded progression attempt | iPhone 17e | not tested | 0 | |
 | MIA-STRESS | Miami | Deliberate difficult stress run | iPhone 17e | not tested | 0 | |
@@ -89,12 +89,12 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 | la_03 Valley Cut | Los Angeles | middle | not tested | not tested | |
 | la_04 Freeway Riot | Los Angeles | late | not tested | not tested | |
 | la_05 Last Exit West | Los Angeles | late | not tested | not tested | |
-| ny_01 Brooklyn Warmup | New York | early | not tested | not tested | |
+| ny_01 Brooklyn Warmup | New York | early | partial | not tested | Start-gate-only evidence: `videos/city-2/2026-06-23_iphone17e_ny01_starter-compact_start-gate.mp4`, `screenshots/city-2/2026-06-23_iphone17e_ny01_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_ny01_starter-compact_start-gate_probe.log`. No active run, telemetry summary, result screen, or balance evidence. |
 | ny_02 FDR Squeeze | New York | middle | not tested | not tested | |
 | ny_03 Midtown Split | New York | middle | not tested | not tested | |
 | ny_04 Queensboro Heat | New York | late | not tested | not tested | |
 | ny_05 Tunnel Break | New York | late | not tested | not tested | |
-| mia_01 Ocean Drive Run | Miami | early | not tested | not tested | |
+| mia_01 Ocean Drive Run | Miami | early | partial | not tested | Start-gate-only evidence: `videos/city-3/2026-06-23_iphone17e_mia01_starter-compact_start-gate.mp4`, `screenshots/city-3/2026-06-23_iphone17e_mia01_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_mia01_starter-compact_start-gate_probe.log`. No active run, telemetry summary, result screen, or balance evidence. |
 | mia_02 Neon Causeway | Miami | middle | not tested | not tested | |
 | mia_03 Thunder Strip | Miami | middle | not tested | not tested | |
 | mia_04 Vice Lockdown | Miami | late | not tested | not tested | |
