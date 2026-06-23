@@ -43,6 +43,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - The iPhone 17 Pro Dynamic Island capture also exposed a vehicle identity mismatch: the run requested Starter Bike, telemetry reported `starter_compact`, and visible UI/result labels showed Sunset Cruiser. See `FTG-P2-002`. Treat the sample as valid for Dynamic Island safe-area evidence, but only partial for vehicle-specific control coverage.
 - Fresh-install tutorial completion is recorded in `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4`. The follow-on gameplay run had 0 lane changes and ended as police capture at 9.0s, so it is valid tutorial/progression-flow evidence but invalid for active-run, balance, or complete city-progression coverage.
 - Existing-save Level Select to LA01 active progression evidence is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_level-select-la01_active-progression_attempt02.mp4`. It has 3 lane changes and 3 near misses, but ended as a traffic collision at 8.5s, so complete Los Angeles city progression remains open.
+- Existing-save LA01 progression attempt 03 is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_la01_active-progression_attempt03.mp4` with start/result screenshots and telemetry, but is invalid for active-run and city-progression coverage because telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s.
 
 ## Artifact Structure
 

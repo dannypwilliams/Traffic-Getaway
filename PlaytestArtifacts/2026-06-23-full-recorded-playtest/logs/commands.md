@@ -38,3 +38,7 @@ Commit: 3c2431d
 - Computer Use selected `LEVEL SELECT`, selected `1. SUNSET MERGE`, tapped `Tap to Start`, and used coordinate taps during gameplay for active lane changes
 - xcrun simctl io <iPhone 17e> screenshot for City Select, start screen, and result screen checkpoints in existing-save active progression attempt 02
 - python3 scripts/summarize_run_telemetry.py for existing-save active progression attempt 02
+- xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_existing-save_la01_active-progression_attempt03.mp4`
+- Computer Use tapped `RETRY LEVEL`, tapped `Tap to Start`, and OS-level coordinate taps were attempted during gameplay for existing-save active progression attempt 03
+- xcrun simctl io <iPhone 17e> screenshot for start and result checkpoints in existing-save active progression attempt 03
+- python3 scripts/summarize_run_telemetry.py for existing-save active progression attempt 03; telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s, so the run was rejected from active/progression coverage

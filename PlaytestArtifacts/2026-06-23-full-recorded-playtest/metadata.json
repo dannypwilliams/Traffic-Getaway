@@ -59,7 +59,7 @@
     "failed": 1,
     "partial": 4,
     "blocked": 0,
-    "invalid": 3,
+    "invalid": 4,
     "not_tested": 48,
     "valid_active_input_runs": 12,
     "valid_complete_evidence_runs_for_la_starter_compact": 5,
