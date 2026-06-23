@@ -38,11 +38,29 @@ final class GameViewController: UIViewController {
         }
 
         hasPresentedInitialScene = true
-        let shouldShowOnboarding = AppConfig.forceOnboarding || !SaveManager.shared.data.hasCompletedOnboarding
         let sceneSize = skView.bounds.size
-        let scene: SKScene = shouldShowOnboarding ? OnboardingScene(size: sceneSize) : MainMenuScene(size: sceneSize)
+        let scene: SKScene
+        if AppConfig.debugMode,
+           let level = LevelCatalog.level(id: AppConfig.debugAutoStartLevelID) {
+            applyDebugAutoStartVehicleSelection()
+            SaveManager.shared.setOnboardingCompleted(true)
+            scene = GameScene(size: sceneSize, mode: .storyChase, level: level)
+        } else {
+            let shouldShowOnboarding = AppConfig.forceOnboarding || !SaveManager.shared.data.hasCompletedOnboarding
+            scene = shouldShowOnboarding ? OnboardingScene(size: sceneSize) : MainMenuScene(size: sceneSize)
+        }
         scene.scaleMode = .resizeFill
         skView.presentScene(scene)
+    }
+
+    private func applyDebugAutoStartVehicleSelection() {
+        guard AppConfig.debugMode else { return }
+        let vehicleID = AppConfig.debugAutoStartVehicleID
+        guard !vehicleID.isEmpty, CarCatalog.cars.contains(where: { $0.id == vehicleID }) else { return }
+        if !SaveManager.shared.data.unlockedCarIDs.contains(vehicleID) {
+            SaveManager.shared.unlockCar(vehicleID)
+        }
+        SaveManager.shared.selectCar(vehicleID)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {

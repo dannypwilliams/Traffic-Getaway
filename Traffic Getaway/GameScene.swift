@@ -1297,6 +1297,31 @@ final class GameScene: SKScene {
         }
         let vehicleType = collisionVehicle?.userData?["type"] as? String
         let vehicleID = collisionVehicle?.userData?["spawnID"] as? Int
+        let activeTraffic = trafficNode.children.compactMap { node -> RunTelemetryEvent.ActiveTraffic? in
+            guard let vehicle = node as? SKSpriteNode,
+                  let lane = vehicle.userData?["lane"] as? Int else {
+                return nil
+            }
+
+            let laneSpan = vehicle.userData?["laneSpan"] as? Int ?? 1
+            let spawnID = vehicle.userData?["spawnID"] as? Int ?? 0
+            let type = vehicle.userData?["type"] as? String ?? "unknown"
+            let speed = vehicle.userData?["speed"] as? CGFloat ?? 0
+            let spawnTime = vehicle.userData?["spawnTime"] as? TimeInterval ?? 0
+            return RunTelemetryEvent.ActiveTraffic(
+                spawnID: spawnID,
+                lane: lane,
+                slot: lane * 2,
+                laneSpan: laneSpan,
+                type: type,
+                speed: Double(speed),
+                y: Double(vehicle.position.y),
+                width: Double(vehicle.size.width),
+                height: Double(vehicle.size.height),
+                spawnTime: spawnTime,
+                isRoadblock: vehicle.userData?["roadblock"] as? Bool == true
+            )
+        }
 
         RunTelemetryRecorder.shared.record(RunTelemetryEvent(
             event: event,
@@ -1328,6 +1353,7 @@ final class GameScene: SKScene {
             safeMotorcycleSlots: plan?.safeMotorcycleSlots.sorted(),
             rejectionReason: plan?.rejectionReason,
             spawns: spawns,
+            activeTraffic: activeTraffic,
             collisionPlayerRect: playerRect.map(RunTelemetryEvent.RectValue.init),
             collisionTrafficRect: trafficRect.map(RunTelemetryEvent.RectValue.init),
             collisionVehicleID: vehicleID,
@@ -3256,6 +3282,7 @@ final class GameScene: SKScene {
             "laneSpan": laneSpan(for: type),
             "speed": randomTrafficSpeed(for: type) * speedMultiplier,
             "type": type.rawValue,
+            "spawnTime": runTime,
             "nearMissAwarded": false
         ]
         trafficNode.addChild(vehicle)
@@ -3741,8 +3768,10 @@ final class GameScene: SKScene {
             block.userData = [
                 "spawnID": trafficSpawnSerial,
                 "lane": lane,
+                "laneSpan": 1,
                 "speed": roadSpeed,
                 "type": "roadblock",
+                "spawnTime": runTime,
                 "nearMissAwarded": false,
                 "roadblock": true
             ]
@@ -3898,11 +3927,16 @@ final class GameScene: SKScene {
         showRoadblockWarning(lanes: blockedLanes)
 
         for (index, lane) in blockedLanes.enumerated() {
+            trafficSpawnSerial += 1
             let cone = makeConstructionNode()
             cone.position = CGPoint(x: laneCenters[lane], y: size.height + 84 + CGFloat(index) * 40)
             cone.userData = [
+                "spawnID": trafficSpawnSerial,
                 "lane": lane,
+                "laneSpan": 1,
                 "speed": roadSpeed * 0.96,
+                "type": "construction",
+                "spawnTime": runTime,
                 "nearMissAwarded": false,
                 "roadblock": true
             ]

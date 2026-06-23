@@ -23,6 +23,20 @@ struct RunTelemetryEvent: Codable {
         }
     }
 
+    struct ActiveTraffic: Codable {
+        let spawnID: Int
+        let lane: Int
+        let slot: Int
+        let laneSpan: Int
+        let type: String
+        let speed: Double
+        let y: Double
+        let width: Double
+        let height: Double
+        let spawnTime: Double
+        let isRoadblock: Bool
+    }
+
     let event: String
     let build: String
     let tuningVersion: String
@@ -52,6 +66,7 @@ struct RunTelemetryEvent: Codable {
     let safeMotorcycleSlots: [Int]?
     let rejectionReason: String?
     let spawns: [TrafficSpawn]?
+    let activeTraffic: [ActiveTraffic]?
     let collisionPlayerRect: RectValue?
     let collisionTrafficRect: RectValue?
     let collisionVehicleID: Int?

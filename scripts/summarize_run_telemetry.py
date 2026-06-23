@@ -92,6 +92,7 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
             or terminal.get("collisionTrafficRect")
             or any(event.get("collisionPlayerRect") for event in collisions)
         ),
+        "has_active_traffic": any(event.get("activeTraffic") for event in events),
     }
 
 
@@ -124,8 +125,8 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Terminal reasons: {dict(sorted(terminal_counts.items()))}")
     print(f"- Pattern mix: {dict(sorted(pattern_counts.items()))}")
     print()
-    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects |")
-    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|")
+    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Active traffic |")
+    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|")
     for item in summaries:
         print(
             "| "
@@ -141,6 +142,7 @@ def print_markdown(summaries: list[dict]) -> None:
             f"{item['cash']} | "
             f"{item['wanted_level']} | "
             f"{str(item['has_collision_rects']).lower()} |"
+            f" {str(item['has_active_traffic']).lower()} |"
         )
 
 
