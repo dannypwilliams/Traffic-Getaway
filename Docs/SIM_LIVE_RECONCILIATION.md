@@ -2,7 +2,7 @@
 
 ## Status
 
-Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e autoplay matrices now exist. Tightened transition-clearance debug autoplay completed 5/5 live runs, eliminated sampled lane-change intersection probes, and brought terminal time to the 42s exit window. The remaining GameSim-vs-live gap is model ownership: GameSim still does not explicitly model animated lane-change path occupancy, the live safety adapter now does, and human-controlled validation has not been captured.
+Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e autoplay matrices now exist. Tightened transition-clearance debug autoplay completed 5/5 live runs, eliminated sampled lane-change intersection probes, and brought terminal time to the 42s exit window. GameSim now has an opt-in active-traffic lifetime diagnostic, but it is intentionally not the default balance model yet because it is much more punitive than the tightened live autoplay matrix and needs calibration.
 
 ## Known Modeling Gap
 
@@ -13,10 +13,10 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 | Metric | GameSim | iOS live | Difference | Cause | Resolution |
 |---|---:|---:|---:|---|---|
 | Exit activation time | 42s target from config | Reached in 5/5 tightened transition-clearance autoplay runs | Aligned in debug autoplay | Longer transition horizon plus padded predicted traffic checks | Validate with human input |
-| First crash time | p50 36.8s | no crashes in tightened 5-run autoplay matrix | Autoplay now avoids sampled transition crashes | Live adapter guards animated path occupancy | Decide whether to port model into GameSim |
+| First crash time | p50 36.8s default / p50 4.8s active-lifetime diagnostic | no crashes in tightened 5-run autoplay matrix | Default sim omits active lifetime; diagnostic overcorrects | Active lifetime and steering cadence are not calibrated | Calibrate before tuning |
 | Traffic waves before terminal event | Stress: 0 impossible / 160,000 | avg 36.2 waves before escape | Much closer to sim | Live still tracks active on-screen traffic directly | Compare manual matrix before tuning |
 | Near misses | 35.3/run | 14.0/run | Live remains below sim but above target band | Longer runs plus safer transition filtering | Do not tune rewards from autoplay alone |
-| Completion | 99.1% | 5/5 autoplay completed | Autoplay now too successful for target balance | Debug autoplay is deterministic assistance, not human input | Capture manual matrix |
+| Completion | 99.1% default / 0.0% active-lifetime diagnostic | 5/5 autoplay completed | Sim bounds bracket live instead of matching it | Diagnostic mode is too punitive; autoplay is not human input | Capture manual matrix |
 | Collision box overlap | Unfair estimate 0.0% | Rects logged on every collision | Data available | App collision code separate | Review active traffic snapshots |
 | Reachable path at failure | Stress clean | Safe slots, active traffic, colliding vehicle, overlap, last decision, and lane-change probes logged | Lane-change samples available | Latest safe slot can be logically safe while the animated car is still exposed on the lane-change path | Keep tightened live guard; evaluate GameSim parity |
 | Police pressure at failure | Highest wanted 3 | Wanted mostly 1, one sample not above 2 | Live crashes before police peak | Early input/traffic interaction dominates | Keep police tuning unchanged |
@@ -159,6 +159,21 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 - `no_transition_safe_slots` decisions: 18.
 - Interpretation: extending transition prediction to the lane-change duration and padding predicted traffic vertically eliminated sampled live autoplay collisions. This validates the live safety direction, but not final balance: debug autoplay completed every run and near misses are still above the first-minute target band.
 
+### GameSim Active-Traffic Lifetime Diagnostic
+
+- Command: `swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`
+- Runs: 10,000.
+- Completed: 0.0%.
+- Avg survival: 5.1s.
+- Median survival: 4.8s.
+- First crash distribution: p10 2.8s / p50 4.8s / p90 7.8s.
+- Exit appeared/reached/completed: 0.0% / 0.0% / 0.0%.
+- Near misses: 1.5/run.
+- Avg cash/XP: 45 / 28.
+- Unfair collision estimate: 53.9%.
+- Top failure: `traffic_collision:4607`.
+- Interpretation: the opt-in diagnostic proves GameSim can now exercise active traffic lifetime and transition-horizon checks deterministically, but the geometry/timing calibration is not credible enough for balance. It currently overcorrects relative to the tightened live autoplay matrix, which escaped 5/5 runs.
+
 ## Summarizer
 
 Run:
@@ -181,7 +196,7 @@ Manual smoke result:
 
 ## Current Read
 
-Do not retune Sunset Merge from the autoplay matrix yet. The core simulator says the route policy can escape almost every run, and tightened debug autoplay now also escapes 5/5 runs after accounting for animated transition path occupancy. The diagnostic direction is validated, but the model is not yet reconciled: GameSim treats route steps as discrete safe-slot decisions, while live now checks spawned traffic against the animated sprite path and a short post-move horizon.
+Do not retune Sunset Merge from the autoplay matrix yet. The default core simulator says the route policy can escape almost every run, tightened debug autoplay also escapes 5/5 runs after accounting for animated transition path occupancy, and the new opt-in active-traffic lifetime diagnostic crashes almost every run before the exit. That bracket is useful evidence, not a lock: the diagnostic direction is validated, but the active-lifetime geometry, steering cadence, and collision timing still need calibration against live/human runs.
 
 ## Debug Rendering
 
@@ -191,5 +206,5 @@ The `OPEN PATHS` debug preference now draws lane centers, slot centers, safe-slo
 
 - Capture one human-controlled iPhone 17e matrix with the tightened transition-clearance build.
 - Capture one Dynamic Island-class layout/input run with the same live-safety behavior.
-- Decide whether the tightened horizon/padding model belongs in `GameCore`/`GameSim`, the live safety adapter, or both.
+- Calibrate `GameSim --active-traffic-lifetime` against tightened live telemetry before using it for balance.
 - Compare live terminal outcomes, active traffic, collision rectangles, near misses, and exit progress against GameSim before retuning.

@@ -50,6 +50,58 @@ final class GameCoreTests: XCTestCase {
         XCTAssertEqual(plan.rejectionReason, "ok")
     }
 
+    func testTransitionSafetyRejectsAnimatedPathThroughActiveTraffic() {
+        let hazards = [
+            TrafficHazardSnapshot(
+                lane: LaneModel.startLane + 1,
+                laneSpan: 1,
+                type: .sedan,
+                y: 40,
+                height: 86,
+                speed: 0,
+                isRoadblock: false
+            )
+        ]
+        let candidates: Set<Int> = [LaneModel.startSlot, LaneModel.startSlot + 2, LaneModel.startSlot + 4]
+
+        let safe = TrafficSafetyAnalyzer.transitionSafeSlots(
+            from: LaneModel.startSlot,
+            candidateSlots: candidates,
+            vehicleClass: .car,
+            hazards: hazards,
+            configuration: TrafficTransitionSafetyConfiguration(laneChangeDuration: 0.3, predictionHorizon: 0.3, playerHeight: 72, verticalPadding: 10)
+        )
+
+        XCTAssertTrue(safe.contains(LaneModel.startSlot))
+        XCTAssertFalse(safe.contains(LaneModel.startSlot + 2))
+        XCTAssertFalse(safe.contains(LaneModel.startSlot + 4))
+    }
+
+    func testTransitionSafetyPredictsTrafficMovingIntoTargetSlot() {
+        let hazards = [
+            TrafficHazardSnapshot(
+                lane: LaneModel.startLane + 1,
+                laneSpan: 1,
+                type: .sedan,
+                y: 180,
+                height: 86,
+                speed: 360,
+                isRoadblock: false
+            )
+        ]
+        let target = LaneModel.startSlot + 2
+
+        let safe = TrafficSafetyAnalyzer.transitionSafeSlots(
+            from: LaneModel.startSlot,
+            candidateSlots: [target],
+            vehicleClass: .car,
+            hazards: hazards,
+            configuration: TrafficTransitionSafetyConfiguration(laneChangeDuration: 0.3, predictionHorizon: 0.3, playerHeight: 72, verticalPadding: 10)
+        )
+
+        XCTAssertFalse(safe.contains(target))
+    }
+
     func testSimulationIsDeterministic() throws {
         let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
         let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)
@@ -57,6 +109,11 @@ final class GameCoreTests: XCTestCase {
         let second = ChaseSimulator.simulate(level: level, vehicle: vehicle, seed: 12345)
 
         XCTAssertEqual(first, second)
+
+        let activeTrafficOptions = ChaseSimulationOptions(modelsActiveTrafficLifetime: true)
+        let activeFirst = ChaseSimulator.simulate(level: level, vehicle: vehicle, seed: 12345, options: activeTrafficOptions)
+        let activeSecond = ChaseSimulator.simulate(level: level, vehicle: vehicle, seed: 12345, options: activeTrafficOptions)
+        XCTAssertEqual(activeFirst, activeSecond)
     }
 
     func testBatchSimulationCollectsExpectedMetrics() throws {

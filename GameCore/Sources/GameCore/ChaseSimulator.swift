@@ -26,6 +26,16 @@ public struct ChaseRunResult: Equatable {
     public let unfairCollisionEstimate: Bool
 }
 
+public struct ChaseSimulationOptions: Equatable {
+    public let modelsActiveTrafficLifetime: Bool
+
+    public init(modelsActiveTrafficLifetime: Bool = false) {
+        self.modelsActiveTrafficLifetime = modelsActiveTrafficLifetime
+    }
+
+    public static let `default` = ChaseSimulationOptions()
+}
+
 public struct ChaseSimulationAggregate {
     public private(set) var runs = 0
     public private(set) var totalDuration = 0.0
@@ -164,8 +174,43 @@ public enum ChaseSimulator {
     private static let dt = 0.25
     private static let maxPoliceGap = 180.0
     private static let minPoliceGap = 34.0
+    private static let trafficSpawnDistance = 860.0
 
-    public static func runBatch(levels: [LevelDefinition], vehicles: [VehicleDefinition], runsPerConfiguration: Int, baseSeed: UInt64) -> [String: ChaseSimulationAggregate] {
+    private struct SimulatedTrafficHazard {
+        let lane: Int
+        let type: TrafficVehicleType
+        let y: Double
+        let height: Double
+        let speed: Double
+        let isRoadblock: Bool
+
+        var snapshot: TrafficHazardSnapshot {
+            TrafficHazardSnapshot(
+                lane: lane,
+                laneSpan: type.laneSpan,
+                type: type,
+                y: y,
+                height: height,
+                speed: speed,
+                isRoadblock: isRoadblock
+            )
+        }
+
+        func advanced(by elapsed: Double) -> SimulatedTrafficHazard? {
+            let nextY = y - speed * elapsed
+            guard nextY > -180 else { return nil }
+            return SimulatedTrafficHazard(
+                lane: lane,
+                type: type,
+                y: nextY,
+                height: height,
+                speed: speed,
+                isRoadblock: isRoadblock
+            )
+        }
+    }
+
+    public static func runBatch(levels: [LevelDefinition], vehicles: [VehicleDefinition], runsPerConfiguration: Int, baseSeed: UInt64, options: ChaseSimulationOptions = .default) -> [String: ChaseSimulationAggregate] {
         var aggregates: [String: ChaseSimulationAggregate] = [:]
         let cappedRuns = max(1, runsPerConfiguration)
         for level in levels {
@@ -173,7 +218,7 @@ public enum ChaseSimulator {
                 let key = "\(level.levelID)|\(vehicle.id)"
                 for runIndex in 0..<cappedRuns {
                     let seed = SeededRNG.stableSeed(for: key, runIndex: runIndex, baseSeed: baseSeed)
-                    let result = simulate(level: level, vehicle: vehicle, seed: seed)
+                    let result = simulate(level: level, vehicle: vehicle, seed: seed, options: options)
                     var aggregate = aggregates[key] ?? ChaseSimulationAggregate()
                     aggregate.add(result)
                     aggregates[key] = aggregate
@@ -183,7 +228,7 @@ public enum ChaseSimulator {
         return aggregates
     }
 
-    public static func simulate(level: LevelDefinition, vehicle: VehicleDefinition, seed: UInt64) -> ChaseRunResult {
+    public static func simulate(level: LevelDefinition, vehicle: VehicleDefinition, seed: UInt64, options: ChaseSimulationOptions = .default) -> ChaseRunResult {
         var rng = SeededRNG(seed: seed)
         var time = 0.0
         var spawnTimer = 0.0
@@ -191,6 +236,8 @@ public enum ChaseSimulator {
         var minGap = maxPoliceGap
         var playerSlot = LaneModel.clampSlot(LaneModel.startSlot, for: vehicle.vehicleClass)
         var recentBlockedLanes: Set<Int> = []
+        var activeHazards: [SimulatedTrafficHazard] = []
+        var latestPlannedSafeSlots = Set(LaneModel.validSlots(for: vehicle.vehicleClass))
         var activeExitSide = level.exitSide
         var exitDeadline = level.durationBeforeExit + level.exitWindowSeconds
         var emergencyUsed = false
@@ -229,6 +276,13 @@ public enum ChaseSimulator {
             highestWantedLevel = max(highestWantedLevel, wantedLevel)
             densityTotal += snapshot.trafficDensity
             densitySamples += 1
+            activeHazards = activeHazards.filter { $0.y > -180 }
+
+            if options.modelsActiveTrafficLifetime && slotIntersectsActiveTraffic(playerSlot, vehicle: vehicle, activeHazards: activeHazards.map(\.snapshot)) {
+                failure = "traffic_collision"
+                firstCrashTime = time
+                break
+            }
 
             applyPassiveRewards(
                 snapshot: snapshot,
@@ -250,6 +304,30 @@ public enum ChaseSimulator {
                 break
             }
 
+            var movedThisTick = false
+            if options.modelsActiveTrafficLifetime && !activeHazards.isEmpty {
+                var activeSafeSlots = hasImmediateHazard(activeHazards.map(\.snapshot))
+                    ? Set(LaneModel.validSlots(for: vehicle.vehicleClass))
+                    : latestPlannedSafeSlots
+                if exitActive {
+                    activeSafeSlots.formUnion(LaneModel.exitSlots(for: activeExitSide, vehicleClass: vehicle.vehicleClass))
+                }
+                let activeDecision = chooseSlot(
+                    from: playerSlot,
+                    safeSlots: activeSafeSlots,
+                    vehicle: vehicle,
+                    exitActive: exitActive,
+                    exitSide: activeExitSide,
+                    dodgeBoostActive: dodgeBoost > 0,
+                    activeHazards: activeHazards.map(\.snapshot)
+                )
+                if let target = activeDecision.target, target != playerSlot {
+                    laneChanges += 1
+                    playerSlot = target
+                    movedThisTick = true
+                }
+            }
+
             spawnTimer += dt
             if spawnTimer >= snapshot.spawnInterval {
                 spawnTimer = 0
@@ -266,7 +344,9 @@ public enum ChaseSimulator {
                     protectedLanes: protectedLanes,
                     protectedSlots: protectedSlots,
                     recentBlockedLanes: recentBlockedLanes,
-                    recentHazards: [],
+                    recentHazards: options.modelsActiveTrafficLifetime ? activeHazards
+                        .filter { $0.y > 260 }
+                        .map(\.snapshot) : [],
                     exitActive: exitActive,
                     exitSide: exitActive ? activeExitSide : nil,
                     dodgeBoostActive: dodgeBoost > 0
@@ -284,20 +364,24 @@ public enum ChaseSimulator {
                 if exitActive {
                     safeSlots.formUnion(LaneModel.exitSlots(for: activeExitSide, vehicleClass: vehicle.vehicleClass))
                 }
+                latestPlannedSafeSlots = safeSlots
 
-                let decision = chooseSlot(
-                    from: playerSlot,
-                    safeSlots: safeSlots,
-                    vehicle: vehicle,
-                    exitActive: exitActive,
-                    exitSide: activeExitSide,
-                    dodgeBoostActive: dodgeBoost > 0
-                )
+                let decision = movedThisTick
+                    ? (target: Optional(playerSlot), risky: false, rejectionReason: Optional<String>.none)
+                    : chooseSlot(
+                        from: playerSlot,
+                        safeSlots: safeSlots,
+                        vehicle: vehicle,
+                        exitActive: exitActive,
+                        exitSide: activeExitSide,
+                        dodgeBoostActive: dodgeBoost > 0,
+                        activeHazards: options.modelsActiveTrafficLifetime ? activeHazards.map(\.snapshot) : []
+                    )
 
                 guard let target = decision.target else {
-                    failure = plan.rejectionReason
+                    failure = decision.rejectionReason ?? plan.rejectionReason
                     firstCrashTime = time
-                    unfairCollision = isUnfairFailure(plan.rejectionReason)
+                    unfairCollision = isUnfairFailure(failure)
                     break
                 }
 
@@ -330,6 +414,12 @@ public enum ChaseSimulator {
                     score += reward.score
                     runCash += reward.cash
                 }
+
+                if options.modelsActiveTrafficLifetime {
+                    activeHazards.append(contentsOf: plan.spawns.map {
+                        makeHazard(from: $0, snapshot: snapshot)
+                    })
+                }
             }
 
             if exitActive {
@@ -359,6 +449,9 @@ public enum ChaseSimulator {
                 if comboTimer <= 0 { combo = 0 }
             }
             dodgeBoost = max(0, dodgeBoost - dt)
+            if options.modelsActiveTrafficLifetime {
+                activeHazards = activeHazards.compactMap { $0.advanced(by: dt) }
+            }
             time += dt
         }
 
@@ -420,13 +513,28 @@ public enum ChaseSimulator {
         vehicle: VehicleDefinition,
         exitActive: Bool,
         exitSide: ExitSide,
-        dodgeBoostActive: Bool
-    ) -> (target: Int?, risky: Bool) {
+        dodgeBoostActive: Bool,
+        activeHazards: [TrafficHazardSnapshot]
+    ) -> (target: Int?, risky: Bool, rejectionReason: String?) {
         let reach = reachableSlots(vehicle: vehicle, boosted: dodgeBoostActive)
-        let candidates = safeSlots
+        let reachableCandidates = safeSlots
             .filter { abs($0 - current) <= reach }
             .sorted()
-        guard !candidates.isEmpty else { return (nil, false) }
+        guard !reachableCandidates.isEmpty else { return (nil, false, "no reachable safe slot") }
+
+        let transitionSafeCandidates = TrafficSafetyAnalyzer.transitionSafeSlots(
+            from: current,
+            candidateSlots: Set(reachableCandidates),
+            vehicleClass: vehicle.vehicleClass,
+            hazards: activeHazards,
+            configuration: transitionSafetyConfiguration(for: vehicle)
+        ).sorted()
+        guard !transitionSafeCandidates.isEmpty else {
+            if reachableCandidates.contains(current) {
+                return (current, false, "no transition-safe slot")
+            }
+            return (nil, false, "no transition-safe slot")
+        }
 
         let desired: Int
         if exitActive {
@@ -436,7 +544,7 @@ public enum ChaseSimulator {
             desired = LaneModel.startSlot
         }
 
-        let target = candidates.min { lhs, rhs in
+        let target = transitionSafeCandidates.min { lhs, rhs in
             let lhsScore = abs(lhs - desired) + (lhs == current ? 2 : 0)
             let rhsScore = abs(rhs - desired) + (rhs == current ? 2 : 0)
             if lhsScore == rhsScore {
@@ -445,7 +553,7 @@ public enum ChaseSimulator {
             return lhsScore < rhsScore
         }
         let risky = target.map { abs($0 - current) <= 2 && $0 != current } ?? false
-        return (target, risky)
+        return (target, risky, nil)
     }
 
     private static func reachableSlots(vehicle: VehicleDefinition, boosted: Bool) -> Int {
@@ -524,8 +632,65 @@ public enum ChaseSimulator {
     private static func isUnfairFailure(_ cause: String) -> Bool {
         cause == "no_valid_wave"
             || cause == "no reachable safe slot"
+            || cause == "no transition-safe slot"
             || cause == "no reachable exit-side route"
             || cause == "not enough safe car lanes"
             || cause == "not enough safe motorcycle slots"
+    }
+
+    private static func slotIntersectsActiveTraffic(_ slot: Int, vehicle: VehicleDefinition, activeHazards: [TrafficHazardSnapshot]) -> Bool {
+        let safe = TrafficSafetyAnalyzer.transitionSafeSlots(
+            from: slot,
+            candidateSlots: [slot],
+            vehicleClass: vehicle.vehicleClass,
+            hazards: activeHazards,
+            configuration: TrafficTransitionSafetyConfiguration(
+                laneChangeDuration: 0,
+                predictionHorizon: 0,
+                playerHeight: vehicle.vehicleClass == .motorcycle ? 62 : 72,
+                verticalPadding: 0
+            )
+        )
+        return safe.isEmpty
+    }
+
+    private static func hasImmediateHazard(_ activeHazards: [TrafficHazardSnapshot]) -> Bool {
+        activeHazards.contains { hazard in
+            hazard.y > -40 && hazard.y < 190
+        }
+    }
+
+    private static func makeHazard(from spawn: TrafficSpawnRequest, snapshot: DifficultySnapshot) -> SimulatedTrafficHazard {
+        let height = hazardHeight(for: spawn.type)
+        return SimulatedTrafficHazard(
+            lane: spawn.lane,
+            type: spawn.type,
+            y: trafficSpawnDistance + spawn.yOffset + height / 2,
+            height: height,
+            speed: max(120, snapshot.trafficSpeed * spawn.speedMultiplier),
+            isRoadblock: false
+        )
+    }
+
+    private static func hazardHeight(for type: TrafficVehicleType) -> Double {
+        switch type {
+        case .sedan, .taxi, .sports:
+            return 86
+        case .policeMoto:
+            return 76
+        case .truck:
+            return 118
+        case .bus:
+            return 136
+        }
+    }
+
+    private static func transitionSafetyConfiguration(for vehicle: VehicleDefinition) -> TrafficTransitionSafetyConfiguration {
+        TrafficTransitionSafetyConfiguration(
+            laneChangeDuration: vehicle.vehicleClass == .motorcycle ? 0.24 : 0.3,
+            predictionHorizon: 0.3,
+            playerHeight: vehicle.vehicleClass == .motorcycle ? 62 : 72,
+            verticalPadding: 10
+        )
     }
 }

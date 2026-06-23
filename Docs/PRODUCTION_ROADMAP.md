@@ -17,7 +17,7 @@
 | Final onboarding exit page stuck on READ | Partially fixed | Code already has lane-based predicate; not matrix-validated this pass. |
 | Free revive loading then crash results | Partially fixed | Revive UI now hidden by `AppConfig.rewardedRevivesEnabled = false`. |
 | Live crashes around LA 738-740 | Unverified | Needs live first-minute telemetry/manual runs. |
-| Live first minute harsher than GameSim | Unverified | Needs sim/live reconciliation. |
+| Live first minute harsher than GameSim | Partially reproduced | Default GameSim over-completes, while opt-in active-traffic lifetime diagnostic overcorrects to early traffic collisions. |
 | GameSim far from Level 1 targets | Reproduced | 99.1% completion, 35.3 near misses/run, 998 cash/run after fixes. |
 | GameCore determinism failing | Fixed | `swift test` passes. |
 | Impossible committed waves | Fixed for current stress gate | 0 / 160,000 waves after fixes. |
@@ -30,7 +30,7 @@
 
 ## Milestone Order
 
-1. Finish sim/live telemetry and first-minute manual matrix.
+1. Finish sim/live telemetry, calibrate active-traffic lifetime, and capture the first-minute manual matrix.
 2. Retune Sunset Merge against verified sim/live metrics.
 3. Incrementally adopt `GameCore` models in the app with parity tests.
 4. Lock tutorial/results/progression first-session flow.

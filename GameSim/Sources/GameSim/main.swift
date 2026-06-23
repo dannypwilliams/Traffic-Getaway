@@ -9,6 +9,7 @@ struct Options {
     var list = false
     var help = false
     var trafficStress = false
+    var activeTrafficLifetime = false
 }
 
 func parseOptions(_ arguments: [String]) -> Options {
@@ -24,6 +25,8 @@ func parseOptions(_ arguments: [String]) -> Options {
             options.list = true
         case "--traffic-stress":
             options.trafficStress = true
+        case "--active-traffic-lifetime":
+            options.activeTrafficLifetime = true
         case "--level":
             if index + 1 < arguments.count {
                 options.levelID = arguments[index + 1]
@@ -68,6 +71,8 @@ func printHelp() {
       --runs <count>         Runs per level/vehicle configuration. Default: 10000
       --seed <number>        Base deterministic seed. Default: 12345
       --traffic-stress       Run pure traffic wave reachability stress instead of chase simulation
+      --active-traffic-lifetime
+                             Run chase simulation with active on-screen traffic lifetime and transition checks
       --list                 List known levels and vehicles
       --help                 Show this help
     """)
@@ -174,12 +179,16 @@ func printReport(levels: [LevelDefinition], vehicles: [VehicleDefinition], optio
         levels: levels,
         vehicles: vehicles,
         runsPerConfiguration: options.runs,
-        baseSeed: options.seed
+        baseSeed: options.seed,
+        options: ChaseSimulationOptions(modelsActiveTrafficLifetime: options.activeTrafficLifetime)
     )
 
     print("Traffic Getaway GameSim")
     print("Runs per configuration: \(options.runs)")
     print("Base seed: \(options.seed)")
+    if options.activeTrafficLifetime {
+        print("Active traffic lifetime: enabled")
+    }
     print("")
     print("levelID,levelName,vehicleID,vehicleName,class,runs,seed,avgSurvival,medianSurvival,firstCrashDistribution,exitAppeared,exitReached,completed,nearMisses,laneSplits,avgMaxCombo,maxCombo,avgCash,avgXP,unfairCollision,topFailure,recommendation")
 

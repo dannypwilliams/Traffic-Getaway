@@ -41,6 +41,20 @@ After core fixes:
 - Avg cash/XP: 998 / 391.
 - Unfair collision estimate: 0.0%.
 
+Active-traffic lifetime diagnostic:
+
+- Command: `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`.
+- Avg survival: 5.1s.
+- Median survival: 4.8s.
+- First crash p10/p50/p90: 2.8s / 4.8s / 7.8s.
+- Exit appeared/reached/completed: 0.0% / 0.0% / 0.0%.
+- Near misses: 1.5/run.
+- Avg max combo: 1.4.
+- Avg cash/XP: 45 / 28.
+- Unfair collision estimate: 53.9%.
+- Top failure: `traffic_collision:4607`.
+- Read: this opt-in mode is a diagnostic bound, not a balance source. It models active on-screen traffic lifetime and transition checks deterministically, but currently overcorrects versus the tightened live autoplay matrix.
+
 Live debug-autoplay matrix after telemetry improvements:
 
 - Runs: 5.
@@ -149,8 +163,8 @@ Live tightened transition-clearance debug-autoplay matrix:
 
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Tightened live debug autoplay now also over-completes the first minute at 5/5 escapes, with terminal time aligned to the exit window but near misses still above target. Do not tune rewards or density from autoplay alone; this pass validates the transition safety model, not human difficulty.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Default GameSim over-completes at 99.1%, tightened live debug autoplay over-completes at 5/5 escapes, and the opt-in active-traffic lifetime diagnostic overcorrects to 0.0% completion. Do not tune rewards or density from either simulation mode alone; first calibrate active traffic lifetime against human/live evidence.
 
 ## Next
 
-Capture manual human runs with the tightened transition-clearance build, decide whether the horizon/padding model belongs in `GameCore`/`GameSim`, then tune rewards, near-miss rates, and completion after sim/live state agrees.
+Capture manual human runs with the tightened transition-clearance build, calibrate `GameSim --active-traffic-lifetime`, then tune rewards, near-miss rates, and completion after sim/live state agrees.

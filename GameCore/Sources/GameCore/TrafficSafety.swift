@@ -6,15 +6,31 @@ public struct TrafficHazardSnapshot: Equatable {
     public let type: TrafficVehicleType
     public let y: Double
     public let height: Double
+    public let speed: Double
     public let isRoadblock: Bool
 
-    public init(lane: Int, laneSpan: Int, type: TrafficVehicleType, y: Double, height: Double, isRoadblock: Bool) {
+    public init(lane: Int, laneSpan: Int, type: TrafficVehicleType, y: Double, height: Double, speed: Double = 0, isRoadblock: Bool) {
         self.lane = lane
         self.laneSpan = laneSpan
         self.type = type
         self.y = y
         self.height = height
+        self.speed = speed
         self.isRoadblock = isRoadblock
+    }
+}
+
+public struct TrafficTransitionSafetyConfiguration: Equatable {
+    public let laneChangeDuration: Double
+    public let predictionHorizon: Double
+    public let playerHeight: Double
+    public let verticalPadding: Double
+
+    public init(laneChangeDuration: Double = 0.3, predictionHorizon: Double = 0.3, playerHeight: Double = 72, verticalPadding: Double = 10) {
+        self.laneChangeDuration = laneChangeDuration
+        self.predictionHorizon = predictionHorizon
+        self.playerHeight = playerHeight
+        self.verticalPadding = verticalPadding
     }
 }
 
@@ -183,6 +199,31 @@ public enum TrafficSafetyAnalyzer {
         return [clamped, max(0, min(laneCount - 1, sideLane))]
     }
 
+    public static func transitionSafeSlots(
+        from currentSlot: Int,
+        candidateSlots: Set<Int>,
+        vehicleClass: VehicleClass,
+        hazards: [TrafficHazardSnapshot],
+        configuration: TrafficTransitionSafetyConfiguration = TrafficTransitionSafetyConfiguration()
+    ) -> Set<Int> {
+        guard !candidateSlots.isEmpty, !hazards.isEmpty else { return candidateSlots }
+
+        return candidateSlots.filter { targetSlot in
+            let pathSlots = pathSlots(from: currentSlot, to: targetSlot, vehicleClass: vehicleClass)
+            let duration = targetSlot == currentSlot ? 0 : configuration.laneChangeDuration
+
+            if pathIntersectsHazard(pathSlots: pathSlots, hazards: hazards, after: duration, configuration: configuration) {
+                return false
+            }
+
+            if slotIntersectsHazard(slot: targetSlot, vehicleClass: vehicleClass, hazards: hazards, after: configuration.predictionHorizon, configuration: configuration) {
+                return false
+            }
+
+            return true
+        }
+    }
+
     private static func rejected(_ reason: String, occupied: Set<Int>, open: Set<Int>, carSlots: Set<Int>, motorcycleSlots: Set<Int>) -> TrafficSafetyResult {
         TrafficSafetyResult(
             isValid: false,
@@ -272,5 +313,54 @@ public enum TrafficSafetyAnalyzer {
             }
         }
         return slots
+    }
+
+    private static func pathSlots(from currentSlot: Int, to targetSlot: Int, vehicleClass: VehicleClass) -> [Int] {
+        let start = LaneModel.clampSlot(currentSlot, for: vehicleClass)
+        let target = LaneModel.clampSlot(targetSlot, for: vehicleClass)
+        let lower = min(start, target)
+        let upper = max(start, target)
+        return Array(lower...upper)
+    }
+
+    private static func pathIntersectsHazard(
+        pathSlots: [Int],
+        hazards: [TrafficHazardSnapshot],
+        after elapsed: Double,
+        configuration: TrafficTransitionSafetyConfiguration
+    ) -> Bool {
+        pathSlots.contains { slot in
+            slotIntersectsHazard(slot: slot, vehicleClass: .motorcycle, hazards: hazards, after: elapsed, configuration: configuration)
+        }
+    }
+
+    private static func slotIntersectsHazard(
+        slot: Int,
+        vehicleClass: VehicleClass,
+        hazards: [TrafficHazardSnapshot],
+        after elapsed: Double,
+        configuration: TrafficTransitionSafetyConfiguration
+    ) -> Bool {
+        let lanes = lanesCovered(bySlot: slot, vehicleClass: vehicleClass)
+        for hazard in hazards {
+            let occupied = lanesOccupied(by: hazard.lane, span: hazard.laneSpan)
+            guard !occupied.isDisjoint(with: lanes) else { continue }
+
+            let predictedY = hazard.y - hazard.speed * elapsed
+            let clearance = (hazard.height + configuration.playerHeight) / 2 + configuration.verticalPadding
+            if abs(predictedY) <= clearance {
+                return true
+            }
+        }
+        return false
+    }
+
+    private static func lanesCovered(bySlot slot: Int, vehicleClass: VehicleClass) -> Set<Int> {
+        let clamped = LaneModel.clampSlot(slot, for: vehicleClass)
+        if vehicleClass == .motorcycle, LaneModel.isSplitSlot(clamped) {
+            let leftLane = LaneModel.clampedLane(clamped / 2)
+            return [leftLane, LaneModel.clampedLane(leftLane + 1)]
+        }
+        return [LaneModel.nearestLaneForSlot(clamped)]
     }
 }

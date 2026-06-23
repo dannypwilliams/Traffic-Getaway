@@ -9,7 +9,7 @@
 
 - Full tutorial and first-minute terminal-outcome matrix has not been completed.
 - App-local rules duplicate `GameCore`, creating drift risk.
-- Live lane-change duration/path occupancy, target-slot danger horizon, and active traffic lifetime are guarded in the live debug-autoplay adapter but are not modeled by GameSim closely enough for final balance tuning.
+- Live lane-change duration/path occupancy, target-slot danger horizon, and active traffic lifetime are guarded in the live debug-autoplay adapter; GameSim has an opt-in diagnostic for them, but it is too punitive for final balance tuning.
 
 ## P2 Important Polish
 
@@ -25,3 +25,4 @@
 - Live collision-frame telemetry now reports colliding vehicle, active traffic roster, player slot, live safe slots, overlap, and last movement decision.
 - Live lane-change parity telemetry now reports current slot, target slot, sprite x-position, path danger, active traffic intersection, and completion state during animated moves.
 - Debug autoplay now rejects predicted unsafe transition paths with a lane-change-duration horizon and padded predicted traffic hitboxes; the tightened matrix completed 5/5 sampled live runs.
+- `GameSim --active-traffic-lifetime` now exists as a deterministic diagnostic for active on-screen traffic and transition safety.

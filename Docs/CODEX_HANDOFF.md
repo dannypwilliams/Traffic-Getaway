@@ -2,7 +2,7 @@
 
 ## Milestone
 
-First-minute reliability, deterministic-core repair, live telemetry, and live lane-change transition diagnosis: partial. Tightened debug autoplay now clears the sampled live first minute, but human-controlled validation and GameSim model ownership remain open.
+First-minute reliability, deterministic-core repair, live telemetry, and live lane-change transition diagnosis: partial. Tightened debug autoplay now clears the sampled live first minute, and GameSim has an opt-in active-traffic lifetime diagnostic, but human-controlled validation and diagnostic calibration remain open.
 
 ## Verified baseline
 
@@ -22,7 +22,10 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 
 - `GameCore/Sources/GameCore/ChaseSimulator.swift`: made slot selection deterministic by sorting reachable safe slots and adding a stable tie-breaker.
 - `GameCore/Sources/GameCore/TrafficSafety.swift`: changed active-exit validation to preserve a reachable step toward the exit when the player is not yet on the exit side, and to preserve an exit-side route once they are.
+- `GameCore/Sources/GameCore/TrafficSafety.swift`: added pure transition safety filtering for active hazards, including lane-change-duration path exposure and short target-slot prediction.
+- `GameCore/Sources/GameCore/ChaseSimulator.swift`: added an opt-in active-traffic lifetime diagnostic mode that carries spawned hazards forward, checks current-slot collision, and filters decisions through transition safety.
 - `GameCore/Sources/GameCore/TrafficPatternGenerator.swift`: stopped returning invalid recovery waves as committed plans.
+- `GameSim/Sources/GameSim/main.swift`: added `--active-traffic-lifetime` to run the active on-screen traffic diagnostic without changing default balance output.
 - `Traffic Getaway/AppConfig.swift`: added off-by-default flags for rewarded revives and rewarded cash doubles.
 - `Traffic Getaway/GameScene.swift`: disabled first-crash revive offers unless `rewardedRevivesEnabled` is explicitly enabled.
 - `Traffic Getaway/ResultsScene.swift`: hid cash-doubling reward UI unless `rewardedCashDoublesEnabled` is explicitly enabled.
@@ -98,6 +101,10 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --runs 5 --level la_01 --vehicle starter_compact --app '' --output-dir PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/telemetry --timeout 120`: passed after explicitly installing the verified build.
 - `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/telemetry`: passed.
 - Direct plist verification confirmed the debug auto-start/autoplay keys were missing after the tightened transition-clearance capture.
+- `cd GameCore && swift test` after active-traffic lifetime diagnostic: passed, 20 tests, 0 failures.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345` after active-traffic diagnostic: passed; default output remains 99.1% completion, 35.3 near misses/run, 998 cash/run.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`: passed; diagnostic output is 0.0% completion, 5.1s average survival, 4.8s median survival, 1.5 near misses/run, 45 cash/run, 53.9% unfair collision estimate, top failure `traffic_collision:4607`.
+- `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress` after active-traffic diagnostic: passed; 160,000 waves, 0 impossible committed waves, 0 exit reachability failures.
 
 ## Simulator/device evidence
 
@@ -137,6 +144,9 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - Tightened transition-clearance matrix notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/notes.md`.
 - Tightened transition-clearance matrix result: 5 iPhone 17e debug-autoplay runs, 5/5 completed, avg terminal time 42.8s, median terminal time 42.7s, avg traffic waves 36.2, avg near misses 14.0, 1079 lane-change probes across 183 transitions, 0 lane-change intersection probes, 2 unsafe-path probes, and 18 `no_transition_safe_slots` decisions.
 - Tightened transition-clearance read: the longer transition horizon plus padded predicted traffic hitboxes closed the sampled live autoplay failure, but it is still debug-autoplay evidence rather than human difficulty evidence.
+- GameSim active-traffic lifetime diagnostic command: `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`.
+- GameSim active-traffic lifetime diagnostic result: 10,000 runs, 0.0% completed, avg survival 5.1s, median survival 4.8s, first crash p10/p50/p90 2.8s / 4.8s / 7.8s, avg near misses 1.5/run, avg cash/XP 45/28, unfair collision estimate 53.9%, top failure `traffic_collision:4607`.
+- GameSim active-traffic lifetime read: deterministic and useful as a red diagnostic, but much too punitive versus tightened live autoplay, so it must be calibrated before balance tuning.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -146,7 +156,7 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 
 | Metric | Before | After |
 |---|---:|---:|
-| GameCore tests | 18 tests, 3 failures | 18 tests, 0 failures |
+| GameCore tests | 18 tests, 3 failures | 20 tests, 0 failures |
 | Traffic stress impossible waves | 9,432 / 160,000 | 0 / 160,000 |
 | Traffic stress exit failures | 9,432 / 160,000 | 0 / 160,000 |
 | Level 1 completion | 98.7% | 99.1% |
@@ -161,12 +171,13 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 | Collision-analysis telemetry | Not present | 5/5 sampled terminal crashes include colliding vehicle, active roster, safe slots, overlap, and last movement decision |
 | Lane-change parity telemetry | Not present | 163 lane-change probes captured; 3/5 last pre-crash probes intersected traffic |
 | Transition-clearance autoplay | Not present | Baseline transition clearance: 1/5 completed, avg terminal time 26.7s. Tightened transition clearance: 5/5 completed, avg terminal time 42.8s, 0 lane-change intersection probes |
+| Active-traffic GameSim diagnostic | Not present | Opt-in mode exists; 0.0% completion and 5.1s avg survival, so calibration is required |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
-- P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 live runs, but human-controlled validation and GameSim model ownership are still unresolved.
+- P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 live runs, but human-controlled validation and active-traffic diagnostic calibration are still unresolved.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 
@@ -179,4 +190,4 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 
 ## Next highest-priority action
 
-Capture one human-controlled iPhone 17e matrix and one Dynamic Island-class layout/input run with the tightened transition-clearance build. Then decide whether the successful horizon/padding model belongs in `GameCore`/`GameSim`, the live safety adapter, or both before retuning Sunset Merge.
+Capture one human-controlled iPhone 17e matrix and one Dynamic Island-class layout/input run with the tightened transition-clearance build. Then calibrate `GameSim --active-traffic-lifetime` against live telemetry before retuning Sunset Merge.

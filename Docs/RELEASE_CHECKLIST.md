@@ -6,6 +6,7 @@
 - [x] Mac iOS Simulator build passes.
 - [x] `GameCore` tests pass.
 - [x] Current traffic stress gate passes.
+- [x] Active-traffic lifetime diagnostic command exists.
 - [ ] Release configuration profiling.
 
 ## First Session
@@ -26,5 +27,5 @@
 ## Release Blockers
 
 - Level 1 balance remains a blocker.
-- Sim/live telemetry gap remains a blocker.
+- Sim/live model calibration remains a blocker; active-traffic lifetime diagnostic is currently too punitive.
 - App-local duplicate rules remain a drift risk.
