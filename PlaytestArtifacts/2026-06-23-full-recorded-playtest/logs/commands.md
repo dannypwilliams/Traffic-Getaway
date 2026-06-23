@@ -45,3 +45,11 @@ Commit: 3c2431d
 - xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_existing-save_garage-vehicle-selection_session01.mp4`
 - Computer Use tapped `GARAGE` from the result screen, switched between Cars and Bikes tabs, observed selected `SUNSET CRUISER`, observed locked `STARTER BIKE` with `NEED $107 MORE`, then tapped `BACK` to return to the main menu
 - xcrun simctl io <iPhone 17e> screenshot for Garage current-car, locked-bike, and menu-return checkpoints in vehicle-selection session 01
+- xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_existing-save_relaunch-restoration_session01.mp4`
+- xcrun simctl terminate / launch for `com.danielwilliams.TrafficGetaway` to test existing-save relaunch restoration from the visible save state
+- xcrun simctl io <iPhone 17e> screenshot for relaunch restoration before-terminate and after-relaunch start-screen checkpoints
+- Debug defaults cleanup attempted and logged at `build-validation/relaunch-restoration-debug-defaults-cleanup.log`; this first cleanup occurred while the app was alive, so cached debug defaults reappeared after launch
+- Debug defaults cleanup after termination logged at `build-validation/relaunch-restoration-debug-defaults-cleanup-after-terminate.log`
+- xcrun simctl io <iPhone 17e> recordVideo for clean relaunch cycle `2026-06-23_iphone17e_existing-save_relaunch-restoration-clean_session02.mp4`
+- xcrun simctl io <iPhone 17e> screenshot for clean relaunch before-terminate and after-relaunch checkpoints
+- Final post-capture debug-default cleanup logged at `build-validation/relaunch-restoration-debug-defaults-final-clean-after-capture.log`

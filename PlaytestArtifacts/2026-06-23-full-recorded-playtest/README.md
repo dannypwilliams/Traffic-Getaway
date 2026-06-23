@@ -6,7 +6,7 @@ Evidence-based Traffic Getaway playtest pass for responsiveness, understandabili
 
 This directory is the authoritative artifact root for the full recorded playtest requested on 2026-06-23. Do not mark a matrix row complete unless matching video, telemetry, summary, screenshots, and written observations exist.
 
-Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete, failure/retry has recorded evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, the City Select / Level Select progression screen has recorded evidence, and Garage/vehicle browsing has partial recorded evidence. The broader all-city/all-device playtest remains incomplete.
+Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete, failure/retry has recorded evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, the City Select / Level Select progression screen has recorded evidence, Garage/vehicle browsing has partial recorded evidence, and relaunch/save restoration has partial recorded evidence. The broader all-city/all-device playtest remains incomplete.
 
 ## Starting State
 
@@ -45,6 +45,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - Existing-save Level Select to LA01 active progression evidence is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_level-select-la01_active-progression_attempt02.mp4`. It has 3 lane changes and 3 near misses, but ended as a traffic collision at 8.5s, so complete Los Angeles city progression remains open.
 - Existing-save LA01 progression attempt 03 is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_la01_active-progression_attempt03.mp4` with start/result screenshots and telemetry, but is invalid for active-run and city-progression coverage because telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s.
 - Existing-save Garage/vehicle browsing is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_garage-vehicle-selection_session01.mp4`; it proves Garage access, selected Sunset Cruiser display, Cars/Bikes tab switching, locked Starter Bike messaging, and return navigation, but does not prove selecting an alternate unlocked vehicle.
+- Existing-save relaunch restoration is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_relaunch-restoration-clean_session02.mp4`; it proves high score, cash, selected vehicle, and Los Angeles start context survive termination/relaunch, but it does not prove OS background/foreground behavior or full main-menu progression restoration.
 
 ## Artifact Structure
 
