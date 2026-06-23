@@ -1,0 +1,60 @@
+## 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E
+Monitoring boot status for iPhone 17e (8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E).
+[2026-06-23 15:49:03 +0000] Status=2, isTerminal=NO, Elapsed=00:03.
+	Waiting on Data Migration
+		Reason:(null)
+		Migration Elapsed:00:00 seconds
+
+[2026-06-23 15:49:05 +0000] Status=4, isTerminal=NO, Elapsed=00:05.
+	Waiting on System App
+
+[2026-06-23 15:49:05 +0000] Status=4, isTerminal=NO, Elapsed=00:06.
+	Waiting on System App
+
+[2026-06-23 15:49:08 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:08.
+	Finished
+
+installed
+## 90D3514A-BDE2-412C-8238-8ECC17BD86B6
+Monitoring boot status for iPhone 17 Pro (90D3514A-BDE2-412C-8238-8ECC17BD86B6).
+[2026-06-23 15:49:29 +0000] Status=1, isTerminal=NO, Elapsed=00:02.
+	Waiting on BackBoard
+
+[2026-06-23 15:49:29 +0000] Status=2, isTerminal=NO, Elapsed=00:03.
+	Waiting on Data Migration
+		Reason:(null)
+		Migration Elapsed:00:00 seconds
+
+[2026-06-23 15:49:30 +0000] Status=4, isTerminal=NO, Elapsed=00:04.
+	Waiting on System App
+
+[2026-06-23 15:49:32 +0000] Status=4, isTerminal=NO, Elapsed=00:06.
+	Waiting on System App
+
+[2026-06-23 15:49:33 +0000] Status=4, isTerminal=NO, Elapsed=00:07.
+	Waiting on System App
+
+[2026-06-23 15:49:34 +0000] Status=4, isTerminal=NO, Elapsed=00:08.
+	Waiting on System App
+
+[2026-06-23 15:49:34 +0000] Status=4, isTerminal=NO, Elapsed=00:08.
+	Waiting on System App
+
+[2026-06-23 15:49:35 +0000] Status=4, isTerminal=NO, Elapsed=00:09.
+	Waiting on System App
+
+[2026-06-23 15:49:37 +0000] Status=4, isTerminal=NO, Elapsed=00:11.
+	Waiting on System App
+
+[2026-06-23 15:49:40 +0000] Status=4, isTerminal=NO, Elapsed=00:14.
+	Waiting on System App
+
+[2026-06-23 15:49:41 +0000] Status=4, isTerminal=NO, Elapsed=00:15.
+	Waiting on System App
+
+[2026-06-23 15:49:42 +0000] Status=4294967295, isTerminal=YES, Elapsed=00:16.
+	Finished
+
+installed
+iPhone 17e 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E: debug defaults=[]
+iPhone 17 Pro 90D3514A-BDE2-412C-8238-8ECC17BD86B6: debug defaults=[]

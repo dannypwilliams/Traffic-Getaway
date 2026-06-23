@@ -1,0 +1,66 @@
+{
+  "artifact_root": "PlaytestArtifacts/2026-06-23-full-recorded-playtest",
+  "scope": "Full recorded evidence-based Traffic Getaway playtest",
+  "status": "partial_recorded_playtest_in_progress",
+  "test_date": "2026-06-23",
+  "branch": "main",
+  "starting_commit": "3c2431d",
+  "physical_hardware_available": false,
+  "build_configuration": "Debug iOS Simulator playtest build",
+  "manual_capture_command": "python3 -u scripts/capture_live_telemetry.py --manual --wait-for-start-tap",
+  "devices": [
+    {
+      "name": "iPhone 17e",
+      "os": "iOS 26.5",
+      "udid": "8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E",
+      "role": "primary compact/non-Dynamic-Island simulator"
+    },
+    {
+      "name": "iPhone 17 Pro",
+      "os": "iOS 26.5",
+      "udid": "90D3514A-BDE2-412C-8238-8ECC17BD86B6",
+      "role": "Dynamic Island-class simulator"
+    }
+  ],
+  "cities": [
+    "Los Angeles",
+    "New York",
+    "Miami"
+  ],
+  "levels": [
+    { "id": "la_01", "name": "Sunset Merge", "city": "Los Angeles", "stage": "early" },
+    { "id": "la_02", "name": "405 Afterburn", "city": "Los Angeles", "stage": "middle" },
+    { "id": "la_03", "name": "Valley Cut", "city": "Los Angeles", "stage": "middle" },
+    { "id": "la_04", "name": "Freeway Riot", "city": "Los Angeles", "stage": "late" },
+    { "id": "la_05", "name": "Last Exit West", "city": "Los Angeles", "stage": "late" },
+    { "id": "ny_01", "name": "Brooklyn Warmup", "city": "New York", "stage": "early" },
+    { "id": "ny_02", "name": "FDR Squeeze", "city": "New York", "stage": "middle" },
+    { "id": "ny_03", "name": "Midtown Split", "city": "New York", "stage": "middle" },
+    { "id": "ny_04", "name": "Queensboro Heat", "city": "New York", "stage": "late" },
+    { "id": "ny_05", "name": "Tunnel Break", "city": "New York", "stage": "late" },
+    { "id": "mia_01", "name": "Ocean Drive Run", "city": "Miami", "stage": "early" },
+    { "id": "mia_02", "name": "Neon Causeway", "city": "Miami", "stage": "middle" },
+    { "id": "mia_03", "name": "Thunder Strip", "city": "Miami", "stage": "middle" },
+    { "id": "mia_04", "name": "Vice Lockdown", "city": "Miami", "stage": "late" },
+    { "id": "mia_05", "name": "Crown Escape", "city": "Miami", "stage": "late" }
+  ],
+  "required_vehicles": [
+    { "id": "starter_compact", "name": "Starter Compact", "class": "car" },
+    { "id": "starter_bike", "name": "Starter Bike", "class": "motorcycle" }
+  ],
+  "control_modes": [
+    "SWIPE + TAP",
+    "SWIPE ONLY",
+    "TAP ONLY"
+  ],
+  "current_counts": {
+    "planned_tests": 73,
+    "passed": 12,
+    "failed": 0,
+    "partial": 4,
+    "blocked": 0,
+    "invalid": 0,
+    "not_tested": 57,
+    "valid_active_input_runs": 1
+  }
+}

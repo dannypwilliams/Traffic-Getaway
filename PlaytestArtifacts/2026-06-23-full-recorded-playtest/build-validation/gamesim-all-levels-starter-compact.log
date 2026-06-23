@@ -1,0 +1,24 @@
+[0/1] Planning build
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'GameSim' complete! (0.11s)
+Traffic Getaway GameSim
+Runs per configuration: 1000
+Base seed: 12345
+
+levelID,levelName,vehicleID,vehicleName,class,runs,seed,avgSurvival,medianSurvival,firstCrashDistribution,exitAppeared,exitReached,completed,nearMisses,laneSplits,avgMaxCombo,maxCombo,avgCash,avgXP,unfairCollision,topFailure,recommendation
+la_01,Sunset Merge,starter_compact,Starter Compact,car,1000,12345,43.4,43.8,p10 14.8s / p50 34.8s / p90 42.2s,99.3%,99.1%,99.1%,35.2,0.0,34.0,42,995,390,0.9%,no reachable safe slot:9,Level 1 may be too easy; increase traffic only after 25s
+la_02,405 Afterburn,starter_compact,Starter Compact,car,1000,12345,58.5,59.2,p10 21.8s / p50 54.8s / p90 59.2s,96.8%,95.7%,95.7%,49.6,0.0,46.1,58,1339,516,4.3%,no reachable safe slot:43,Likely too easy; consider later-run pressure only
+la_03,Valley Cut,starter_compact,Starter Compact,car,1000,12345,66.4,69.0,p10 37.8s / p50 55.5s / p90 66.0s,83.2%,82.0%,82.0%,55.2,0.0,45.4,72,1438,532,18.0%,no reachable safe slot:180,Inspect traffic wave safety before tuning difficulty
+la_04,Freeway Riot,starter_compact,Starter Compact,car,1000,12345,69.7,76.0,p10 31.8s / p50 50.5s / p90 73.8s,73.5%,72.4%,72.4%,61.3,0.0,46.8,82,1566,572,27.6%,no reachable safe slot:276,Inspect traffic wave safety before tuning difficulty
+la_05,Last Exit West,starter_compact,Starter Compact,car,1000,12345,74.5,84.8,p10 27.8s / p50 54.0s / p90 81.8s,67.8%,65.4%,65.4%,67.6,0.0,49.5,97,1718,612,34.6%,no reachable safe slot:346,Inspect traffic wave safety before tuning difficulty
+ny_01,Brooklyn Warmup,starter_compact,Starter Compact,car,1000,12345,64.6,69.2,p10 27.8s / p50 52.0s / p90 67.0s,76.5%,74.6%,74.6%,52.4,0.0,41.0,70,1541,560,25.4%,no reachable safe slot:254,Inspect traffic wave safety before tuning difficulty
+ny_02,FDR Squeeze,starter_compact,Starter Compact,car,1000,12345,68.3,78.2,p10 23.8s / p50 51.2s / p90 74.5s,66.3%,64.5%,64.5%,59.5,0.0,45.6,86,1686,595,35.5%,no reachable safe slot:355,Inspect traffic wave safety before tuning difficulty
+ny_03,Midtown Split,starter_compact,Starter Compact,car,1000,12345,73.6,89.2,p10 21.8s / p50 48.0s / p90 81.0s,61.1%,59.8%,59.7%,66.0,0.0,47.9,100,1846,634,40.1%,no reachable safe slot:401,Inspect traffic wave safety before tuning difficulty
+ny_04,Queensboro Heat,starter_compact,Starter Compact,car,1000,12345,69.7,87.6,p10 5.8s / p50 48.2s / p90 87.2s,45.2%,44.7%,44.7%,64.8,0.0,46.4,113,1770,605,55.3%,no reachable safe slot:553,Inspect traffic wave safety before tuning difficulty
+ny_05,Tunnel Break,starter_compact,Starter Compact,car,1000,12345,68.8,73.8,p10 8.8s / p50 55.0s / p90 94.0s,32.1%,31.3%,31.3%,65.1,0.0,45.3,127,1694,573,68.7%,no reachable safe slot:686,Inspect traffic wave safety before tuning difficulty
+mia_01,Ocean Drive Run,starter_compact,Starter Compact,car,1000,12345,60.0,76.2,p10 4.8s / p50 38.0s / p90 72.5s,57.9%,56.7%,56.5%,55.2,0.0,42.2,88,1882,624,43.5%,no reachable safe slot:433,Inspect traffic wave safety before tuning difficulty
+mia_02,Neon Causeway,starter_compact,Starter Compact,car,1000,12345,66.3,84.2,p10 6.8s / p50 48.2s / p90 82.8s,46.9%,45.4%,45.4%,63.1,0.0,45.9,106,1988,648,54.6%,no reachable safe slot:546,Inspect traffic wave safety before tuning difficulty
+mia_03,Thunder Strip,starter_compact,Starter Compact,car,1000,12345,65.0,71.8,p10 5.8s / p50 47.8s / p90 86.8s,35.9%,35.4%,35.3%,64.5,0.0,45.0,123,1921,618,64.4%,no reachable safe slot:644,Inspect traffic wave safety before tuning difficulty
+mia_04,Vice Lockdown,starter_compact,Starter Compact,car,1000,12345,68.9,73.2,p10 7.2s / p50 53.8s / p90 100.2s,27.1%,25.9%,25.9%,68.3,0.0,46.1,138,1919,612,72.1%,no reachable safe slot:721,Inspect traffic wave safety before tuning difficulty
+mia_05,Crown Escape,starter_compact,Starter Compact,car,1000,12345,69.1,68.8,p10 8.8s / p50 53.8s / p90 101.8s,21.1%,20.6%,20.5%,68.0,0.0,45.2,153,1893,597,76.3%,no reachable safe slot:763,Inspect traffic wave safety before tuning difficulty

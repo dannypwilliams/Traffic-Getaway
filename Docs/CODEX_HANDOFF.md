@@ -2,7 +2,7 @@
 
 ## Milestone
 
-First-minute reliability, deterministic-core repair, live telemetry, live lane-change transition diagnosis, active-traffic diagnostic calibration, first-escape payoff evidence, and manual-capture tooling: partial. Tightened debug autoplay now clears the sampled iPhone 17e first minute, Dynamic Island debug autoplay is improved but not locked, the Starter Bike result-screen payoff and `USE BIKE` tap-through into 405 Afterburn are smoke-validated, start-gated manual capture tooling is ready, and GameSim's opt-in active-traffic lifetime diagnostic has moved toward live evidence but remains too punitive for balance.
+First-minute reliability, deterministic-core repair, live telemetry, live lane-change transition diagnosis, active-traffic diagnostic calibration, first-escape payoff evidence, manual-capture tooling, and full recorded playtest setup: partial. Tightened debug autoplay now clears the sampled iPhone 17e first minute, Dynamic Island debug autoplay is improved but not locked, the Starter Bike result-screen payoff and `USE BIKE` tap-through into 405 Afterburn are smoke-validated, start-gated manual capture tooling is ready, the full recorded playtest artifact root exists with one valid iPhone 17e active run, and GameSim's opt-in active-traffic lifetime diagnostic has moved toward live evidence but remains too punitive for balance.
 
 ## Verified baseline
 
@@ -70,6 +70,8 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `scripts/capture_progression_payoff.py`: clears the new start-gate debug key during cleanup.
 - Captured an attempted active iPhone 17e manual matrix; it recorded 0 autoplay decisions but only 1/5 active-input runs, so it is partial/failed evidence and not a balance source.
 - Captured a one-run iPhone 17e manual start-gate smoke sample; it paused on `Tap to Start`, then recorded 1/1 active-input run, 3 lane changes, and 0 autoplay decisions.
+- Created the full recorded playtest artifact root at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/` with README, metadata, test matrix, findings, bugs ledger, balance observations, acceptance report, screenshots/videos/telemetry/log/build-validation folders.
+- Captured one valid start-gated active iPhone 17e `la_01` / `starter_compact` run with full-screen video, start/result screenshots, raw telemetry, telemetry summary, and written observations.
 
 ## Tests run
 
@@ -181,6 +183,16 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
   - `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345`: passed; completion 99.1%, near misses/run 35.3, avg cash 998, recommendation still says Level 1 may be too easy.
   - `bash Tools/mac/verify_on_mac.sh`: passed, iOS Simulator Debug build succeeded.
   - Direct plist verification confirmed no remaining `TrafficGetaway.debug.*` defaults on iPhone 17e after cleanup.
+- Full recorded playtest setup validation:
+  - `python3 -m py_compile scripts/capture_live_telemetry.py scripts/summarize_run_telemetry.py scripts/capture_progression_payoff.py scripts/validate_use_bike_tap_through.py`: passed; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/python-py-compile.log`.
+  - `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"`: passed; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/pbxproj-validation.log`.
+  - `git diff --check`: passed; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/git-diff-check.log`.
+  - `swift test --package-path GameCore`: passed, 22 tests, 0 failures; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/gamecore-swift-test.log`.
+  - `swift run --package-path GameSim GameSim --level all --vehicle starter_compact --runs 1000 --seed 12345`: passed across all 15 levels; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/gamesim-all-levels-starter-compact.log`.
+  - `swift run --package-path GameSim GameSim --level all --vehicle starter_bike --runs 1000 --seed 12345`: passed across all 15 levels; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/gamesim-all-levels-starter-bike.log`.
+  - `bash Tools/mac/verify_on_mac.sh`: passed; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/verify-on-mac.log`.
+  - Installed verified build on iPhone 17e and iPhone 17 Pro simulators and confirmed `debug defaults=[]`; log saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/build-validation/install-and-debug-defaults-check.log`.
+  - `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-full-recorded-playtest/telemetry/raw`: passed for Run 01; summary saved at `PlaytestArtifacts/2026-06-23-full-recorded-playtest/telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01-summary.md`.
 
 ## Simulator/device evidence
 
@@ -258,6 +270,10 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - Manual start-gate smoke artifact: `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/`.
 - Manual start-gate smoke result: 1 run, 0/1 completed, active-input runs 1/1, lane changed events 3, terminal reason `traffic` at 5.1s, autoplay decisions 0.
 - Manual start-gate smoke read: `--wait-for-start-tap` proves the next active-steering matrix can begin from the existing start screen when the player is ready; it is tooling evidence, not balance evidence.
+- Full recorded playtest artifact root: `PlaytestArtifacts/2026-06-23-full-recorded-playtest/`.
+- Full recorded playtest current counts: planned tests 73, passed 12, partial 4, not tested 57, valid active-input runs 1, invalid runs 0.
+- Full recorded playtest Run 01: iPhone 17e, `la_01`, `starter_compact`, default `SWIPE + TAP` using tap input, seed `17033032432948256308`, traffic collision at 9.0s, 2 lane changes, 1 near miss, 14 cash, 0 autoplay decisions, collision analysis present.
+- Full recorded playtest Run 01 evidence: video `PlaytestArtifacts/2026-06-23-full-recorded-playtest/videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01.mp4`, telemetry `PlaytestArtifacts/2026-06-23-full-recorded-playtest/telemetry/raw/01-2026-06-23_09-12-16-la_01-starter_compact-17033032432948256308.jsonl`, summary `PlaytestArtifacts/2026-06-23-full-recorded-playtest/telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01-summary.md`, observations `PlaytestArtifacts/2026-06-23-full-recorded-playtest/logs/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01-observations.md`.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -287,12 +303,14 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 | Passive no-input outcome | Traffic/roadblock terminals | iPhone 17e and iPhone 17 Pro post-fix matrices both produce 5/5 `police_caught` terminals at 9.0s with autoplay disabled |
 | First escape payoff | Smoke validated | Result-screen screenshot shows `ESCAPED`, `Starter Bike unlocked: split lanes`, and `USE BIKE`; save state selects `starter_bike`, completes `la_01`, leaves debug defaults cleared, and real tap-through starts `la_02` with motorcycle split-slot input |
 | Manual active capture | Ungated direct-start only | Ungated 17e attempt produced only 1/5 active-input runs; start-gated smoke produced 1/1 active-input run with 3 lane changes and autoplay disabled |
+| Full recorded playtest | Not started | Artifact scaffold exists; automated validation passed; one valid iPhone 17e active run is recorded with video, screenshots, telemetry, summary, and observations |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
 - P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency fallback, passive no-input manual matrices are captured, but active steering validation is still missing and the active-traffic diagnostic still overcorrects. The latest active iPhone 17e attempt is partial/failed evidence because only 1/5 runs had active input.
+- P1 milestone blocker: Full recorded playtest is incomplete. Current full-playtest artifact has only 1 valid active-input run; New York, Miami, Starter Bike, tutorial, progression, Dynamic Island active play, pause/retry/backgrounding, and most required videos are still not tested.
 - P1 milestone blocker: Starter Bike payoff is smoke-validated through `USE BIKE` into 405 Afterburn, but full 405 Afterburn active-input completion and balance have not been validated.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
@@ -306,4 +324,4 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 
 ## Next highest-priority action
 
-Capture start-gated active-steering iPhone 17e and Dynamic Island-class matrices with the tightened transition-clearance and passive-capture build, then run a fuller 405 Afterburn Starter Bike completion/balance pass. Continue calibrating `GameSim --active-traffic-lifetime` against live telemetry before retuning Sunset Merge.
+Continue `PlaytestArtifacts/2026-06-23-full-recorded-playtest/`: capture the remaining four valid start-gated iPhone 17e `la_01` / `starter_compact` runs with video, telemetry, summaries, screenshots, and observations, then move to Los Angeles Starter Bike and Dynamic Island active coverage before retuning Sunset Merge.

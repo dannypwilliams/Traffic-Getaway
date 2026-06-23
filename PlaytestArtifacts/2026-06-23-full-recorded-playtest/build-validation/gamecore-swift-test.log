@@ -1,0 +1,61 @@
+[0/1] Planning build
+Building for debugging...
+[0/2] Write swift-version--58304C5D6DBC2206.txt
+Build complete! (0.17s)
+Test Suite 'All tests' started at 2026-06-23 08:45:35.332.
+Test Suite 'GameCorePackageTests.xctest' started at 2026-06-23 08:45:35.334.
+Test Suite 'GameCoreTests' started at 2026-06-23 08:45:35.334.
+Test Case '-[GameCoreTests.GameCoreTests testBatchSimulationCollectsExpectedMetrics]' started.
+Test Case '-[GameCoreTests.GameCoreTests testBatchSimulationCollectsExpectedMetrics]' passed (0.022 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testCollisionAndNearMissModelsArePureRules]' started.
+Test Case '-[GameCoreTests.GameCoreTests testCollisionAndNearMissModelsArePureRules]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testFirstSunsetMergeEscapeUnlocksStarterBikeOnce]' started.
+Test Case '-[GameCoreTests.GameCoreTests testFirstSunsetMergeEscapeUnlocksStarterBikeOnce]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesCleanExit]' started.
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesCleanExit]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesMissedExit]' started.
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesMissedExit]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesMultiNearMissCombo]' started.
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesMultiNearMissCombo]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesPassiveCapture]' started.
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesPassiveCapture]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesTrafficCollisionEvent]' started.
+Test Case '-[GameCoreTests.GameCoreTests testFixedStepReplayMatchesTrafficCollisionEvent]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testLaneModelSeparatesCarsAndMotorcycles]' started.
+Test Case '-[GameCoreTests.GameCoreTests testLaneModelSeparatesCarsAndMotorcycles]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testLaneStaleFlowAndPursuitPressure]' started.
+Test Case '-[GameCoreTests.GameCoreTests testLaneStaleFlowAndPursuitPressure]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testLevelOneMatchesCurrentAppBalance]' started.
+Test Case '-[GameCoreTests.GameCoreTests testLevelOneMatchesCurrentAppBalance]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testMotorcycleReplayCanEscapeThroughInterstitialExitSlot]' started.
+Test Case '-[GameCoreTests.GameCoreTests testMotorcycleReplayCanEscapeThroughInterstitialExitSlot]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testProgressionModelUnlocksVehiclesAndLevels]' started.
+Test Case '-[GameCoreTests.GameCoreTests testProgressionModelUnlocksVehiclesAndLevels]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testScoringModelRewardsNearMissesAndFinalRuns]' started.
+Test Case '-[GameCoreTests.GameCoreTests testScoringModelRewardsNearMissesAndFinalRuns]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testSeededRNGDerivedStreamsDoNotConsumeGameplayStream]' started.
+Test Case '-[GameCoreTests.GameCoreTests testSeededRNGDerivedStreamsDoNotConsumeGameplayStream]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testSimulationIsDeterministic]' started.
+Test Case '-[GameCoreTests.GameCoreTests testSimulationIsDeterministic]' passed (0.008 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testSunsetMergeTrafficStressCommitsReachableWaves]' started.
+Test Case '-[GameCoreTests.GameCoreTests testSunsetMergeTrafficStressCommitsReachableWaves]' passed (0.178 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testTrafficWaveProducesReachableSafety]' started.
+Test Case '-[GameCoreTests.GameCoreTests testTrafficWaveProducesReachableSafety]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testTransitionRiskScoresEmergencyMoveBelowStayingPut]' started.
+Test Case '-[GameCoreTests.GameCoreTests testTransitionRiskScoresEmergencyMoveBelowStayingPut]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testTransitionSafetyAllowsMovingAwayFromStartLaneHazard]' started.
+Test Case '-[GameCoreTests.GameCoreTests testTransitionSafetyAllowsMovingAwayFromStartLaneHazard]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testTransitionSafetyPredictsTrafficMovingIntoTargetSlot]' started.
+Test Case '-[GameCoreTests.GameCoreTests testTransitionSafetyPredictsTrafficMovingIntoTargetSlot]' passed (0.000 seconds).
+Test Case '-[GameCoreTests.GameCoreTests testTransitionSafetyRejectsAnimatedPathThroughActiveTraffic]' started.
+Test Case '-[GameCoreTests.GameCoreTests testTransitionSafetyRejectsAnimatedPathThroughActiveTraffic]' passed (0.000 seconds).
+Test Suite 'GameCoreTests' passed at 2026-06-23 08:45:35.546.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.211 (0.212) seconds
+Test Suite 'GameCorePackageTests.xctest' passed at 2026-06-23 08:45:35.546.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.211 (0.212) seconds
+Test Suite 'All tests' passed at 2026-06-23 08:45:35.546.
+	 Executed 22 tests, with 0 failures (0 unexpected) in 0.211 (0.215) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64e-apple-macos14.0
+✔ Test run with 0 tests in 0 suites passed after 0.002 seconds.

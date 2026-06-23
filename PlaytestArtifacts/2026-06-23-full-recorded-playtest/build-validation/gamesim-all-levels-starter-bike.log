@@ -1,0 +1,23 @@
+Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'GameSim' complete! (0.11s)
+Traffic Getaway GameSim
+Runs per configuration: 1000
+Base seed: 12345
+
+levelID,levelName,vehicleID,vehicleName,class,runs,seed,avgSurvival,medianSurvival,firstCrashDistribution,exitAppeared,exitReached,completed,nearMisses,laneSplits,avgMaxCombo,maxCombo,avgCash,avgXP,unfairCollision,topFailure,recommendation
+la_01,Sunset Merge,starter_bike,Starter Bike,motorcycle,1000,12345,42.6,43.0,p10 0.8s / p50 27.8s / p90 40.8s,97.0%,96.8%,96.8%,39.7,8.7,48.2,60,1248,501,3.2%,no reachable safe slot:32,Likely too easy; consider later-run pressure only
+la_02,405 Afterburn,starter_bike,Starter Bike,motorcycle,1000,12345,57.2,59.2,p10 0.8s / p50 26.8s / p90 56.2s,94.0%,93.6%,93.6%,55.9,12.6,67.9,82,1719,681,6.4%,no reachable safe slot:64,Inspect traffic wave safety before tuning difficulty
+la_03,Valley Cut,starter_bike,Starter Bike,motorcycle,1000,12345,66.4,69.0,p10 2.8s / p50 35.8s / p90 65.2s,92.1%,91.9%,91.9%,67.3,16.1,83.1,98,2103,806,8.1%,no reachable safe slot:80,Inspect traffic wave safety before tuning difficulty
+la_04,Freeway Riot,starter_bike,Starter Bike,motorcycle,1000,12345,73.1,76.8,p10 3.8s / p50 35.8s / p90 68.5s,91.7%,91.4%,91.4%,79.9,19.1,98.7,115,2512,954,8.6%,no reachable safe slot:85,Inspect traffic wave safety before tuning difficulty
+la_05,Last Exit West,starter_bike,Starter Bike,motorcycle,1000,12345,81.2,84.8,p10 10.8s / p50 40.5s / p90 75.8s,91.4%,91.2%,91.2%,92.4,22.9,115.1,139,2961,1102,8.8%,no reachable safe slot:86,Inspect traffic wave safety before tuning difficulty
+ny_01,Brooklyn Warmup,starter_bike,Starter Bike,motorcycle,1000,12345,61.4,69.2,p10 0.8s / p50 20.8s / p90 58.0s,81.2%,81.1%,81.1%,60.4,14.0,73.7,97,2091,788,18.9%,no reachable safe slot:189,Inspect traffic wave safety before tuning difficulty
+ny_02,FDR Squeeze,starter_bike,Starter Bike,motorcycle,1000,12345,69.3,79.0,p10 0.8s / p50 25.8s / p90 65.5s,80.2%,80.0%,80.0%,74.5,17.9,92.0,119,2563,942,20.0%,no reachable safe slot:200,Inspect traffic wave safety before tuning difficulty
+ny_03,Midtown Split,starter_bike,Starter Bike,motorcycle,1000,12345,79.8,89.2,p10 0.8s / p50 39.0s / p90 78.0s,80.8%,80.4%,80.4%,91.0,22.7,113.4,140,3131,1129,19.6%,no reachable safe slot:194,Inspect traffic wave safety before tuning difficulty
+ny_04,Queensboro Heat,starter_bike,Starter Bike,motorcycle,1000,12345,86.2,96.8,p10 0.8s / p50 34.8s / p90 86.5s,81.7%,81.6%,81.6%,103.5,26.3,129.6,162,3636,1298,18.4%,no reachable safe slot:183,Inspect traffic wave safety before tuning difficulty
+ny_05,Tunnel Break,starter_bike,Starter Bike,motorcycle,1000,12345,94.1,104.8,p10 3.8s / p50 39.2s / p90 93.2s,82.1%,82.0%,82.0%,117.3,30.5,147.7,181,4194,1470,18.0%,no reachable safe slot:179,Inspect traffic wave safety before tuning difficulty
+mia_01,Ocean Drive Run,starter_bike,Starter Bike,motorcycle,1000,12345,72.9,77.0,p10 0.8s / p50 40.2s / p90 63.5s,89.9%,89.8%,89.8%,85.4,21.4,106.7,129,3497,1211,10.2%,no reachable safe slot:101,Inspect traffic wave safety before tuning difficulty
+mia_02,Neon Causeway,starter_bike,Starter Bike,motorcycle,1000,12345,84.4,88.8,p10 5.8s / p50 41.5s / p90 81.2s,90.3%,90.3%,90.3%,105.4,27.6,133.0,156,4278,1448,9.7%,no reachable safe slot:97,Inspect traffic wave safety before tuning difficulty
+mia_03,Thunder Strip,starter_bike,Starter Bike,motorcycle,1000,12345,91.8,98.5,p10 0.5s / p50 38.8s / p90 90.5s,88.4%,88.3%,88.3%,122.2,32.1,154.3,181,4916,1636,11.7%,no reachable safe slot:116,Inspect traffic wave safety before tuning difficulty
+mia_04,Vice Lockdown,starter_bike,Starter Bike,motorcycle,1000,12345,101.0,108.8,p10 2.0s / p50 41.8s / p90 92.0s,87.7%,87.6%,87.6%,135.4,36.0,171.3,200,5578,1811,12.4%,no reachable safe slot:124,Inspect traffic wave safety before tuning difficulty
+mia_05,Crown Escape,starter_bike,Starter Bike,motorcycle,1000,12345,110.6,118.8,p10 2.8s / p50 66.5s / p90 111.2s,86.3%,86.0%,86.0%,148.2,39.7,187.8,218,6322,2005,14.0%,no reachable safe slot:138,Inspect traffic wave safety before tuning difficulty
