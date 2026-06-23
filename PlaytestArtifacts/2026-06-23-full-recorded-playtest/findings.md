@@ -4,23 +4,23 @@
 
 Status: `partial`.
 
-The full recorded playtest has been scoped and scaffolded. Automated validation passed, and one valid recorded active-input iPhone 17e run exists for `la_01` / Starter Compact / default `SWIPE + TAP` using tap input. The required all-city, all-level, multi-device, multi-vehicle recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
+The full recorded playtest has been scoped and scaffolded. Automated validation passed, and the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run. All six active runs ended in traffic collisions before 10 seconds, creating a P1 first-minute gameplay signal. The required all-city, all-level, multi-device, multi-vehicle recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
 
 ## Control Feel
 
-Partial. Run 01 responded to tap steering and produced 2 lane changes, but one short failed run is not enough to validate precision, consistency, frame-rate behavior, or every materially different control mode.
+Partial. Tap steering produced lane changes in six recorded runs, with 15 lane-change events total. This proves the default `SWIPE + TAP` path can accept tap input, but it does not validate precision, consistency, frame-rate behavior, or every materially different control mode.
 
 ## First-Minute Experience
 
-Partial. Run 01 started from the explicit start tap, recorded active input, and ended in a traffic collision at 9.0s. This is valid evidence, but it is too narrow to validate the first minute.
+Fail/partial signal. Six valid active LA01 Starter Compact runs started from the explicit start tap and all ended in traffic collisions before 10 seconds, far before exit activation. This contradicts the intended first-minute experience and is logged as `FTG-P1-001`.
 
 ## Difficulty Progression
 
-Partial. Automated all-level simulations were captured for Starter Compact and Starter Bike. Manual difficulty progression is not validated yet.
+Partial. Automated all-level simulations were captured for Starter Compact and Starter Bike. Manual difficulty progression is not validated yet. The recorded LA01 Starter Compact slice suggests opening live play is much harsher than default GameSim predicts.
 
 ## Procedural Fairness
 
-Partial. Run 01 captured collision analysis, active traffic context, lane-change probes, and terminal reason. The sample is too small for a procedural fairness conclusion.
+Partial. The six LA01 runs captured collision analysis, active traffic context, lane-change probes, and terminal reasons. Every terminal was `traffic`; aggregate telemetry shows 6/6 collision analyses, 27 lane-change probes, and 4 unsafe-path probes. Broader fairness is still unproven.
 
 ## City Differentiation
 
@@ -32,8 +32,8 @@ Not tested in this artifact set beyond the result screen reached after Run 01. P
 
 ## Performance
 
-Partial. The Mac/iOS Simulator build passed and Run 01 recorded successfully while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet.
+Partial. The Mac/iOS Simulator build passed and six recorded runs succeeded while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet.
 
 ## Release Readiness
 
-Not release-ready. Required human-play evidence, video recordings, all-city coverage, full tutorial coverage, progression coverage, and final matrix documentation are incomplete.
+Not release-ready. Required human-play evidence, all-city coverage, full tutorial coverage, progression coverage, Starter Bike coverage, Dynamic Island active coverage, and final matrix documentation are incomplete. The current LA01 Starter Compact evidence also raises a P1 first-minute crash-rate concern.

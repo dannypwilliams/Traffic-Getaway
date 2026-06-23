@@ -6,6 +6,8 @@ Evidence-based Traffic Getaway playtest pass for responsiveness, understandabili
 
 This directory is the authoritative artifact root for the full recorded playtest requested on 2026-06-23. Do not mark a matrix row complete unless matching video, telemetry, summary, screenshots, and written observations exist.
 
+Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice is complete; the broader all-city/all-vehicle/all-device playtest remains incomplete.
+
 ## Starting State
 
 - Branch: `main`
@@ -32,7 +34,9 @@ This directory is the authoritative artifact root for the full recorded playtest
 - No physical-device validation has been performed.
 - Previous artifacts include simulator screenshots and telemetry, but this full pass requires video in addition to screenshots; old screenshot-only evidence is reference material, not proof of a completed required test.
 - The latest active iPhone 17e manual attempt outside this folder produced only 1/5 active-input runs and is invalid for balance conclusions.
-- Start-gated manual capture tooling exists, but the required full active-run matrix in this directory is not complete yet.
+- Start-gated manual capture tooling exists, and `--leave-app-running` was added during this pass so result-screen screenshots can be captured before the app is terminated. When this flag is used, terminate the app and verify debug defaults afterward.
+- Post-run cleanup was verified after the LA Starter Compact capture set; `build-validation/post-run-debug-defaults-check.log` shows iPhone 17e debug defaults cleared to `[]`.
+- Six valid active-input LA01 Starter Compact runs are recorded; five have complete screenshot evidence and one supplemental run is missing the result screenshot.
 
 ## Artifact Structure
 
@@ -48,4 +52,3 @@ This directory is the authoritative artifact root for the full recorded playtest
 - `telemetry/summaries/`: generated telemetry summaries.
 - `logs/`: command logs and runtime logs.
 - `build-validation/`: build/test outputs.
-

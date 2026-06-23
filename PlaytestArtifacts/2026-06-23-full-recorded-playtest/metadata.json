@@ -55,12 +55,13 @@
   ],
   "current_counts": {
     "planned_tests": 73,
-    "passed": 12,
+    "passed": 15,
     "failed": 0,
-    "partial": 4,
+    "partial": 2,
     "blocked": 0,
     "invalid": 0,
-    "not_tested": 57,
-    "valid_active_input_runs": 1
+    "not_tested": 56,
+    "valid_active_input_runs": 6,
+    "valid_complete_evidence_runs_for_la_starter_compact": 5
   }
 }

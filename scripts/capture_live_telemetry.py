@@ -168,7 +168,13 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
             captured.append(destination)
             print(f"captured {destination}", flush=True)
     finally:
-        simctl(args.device, "terminate", args.bundle_id, check=False)
+        if not args.leave_app_running:
+            simctl(args.device, "terminate", args.bundle_id, check=False)
+        else:
+            print(
+                "note: --leave-app-running preserves the result UI; after screenshots, terminate the app and verify debug defaults are clear.",
+                flush=True,
+            )
         if args.clear_defaults:
             time.sleep(0.5)
             clear_debug_defaults(args.device, container, args.bundle_id)
@@ -190,6 +196,7 @@ def main() -> None:
     parser.add_argument("--manual", dest="autoplay", action="store_false", help="Direct-start the level but leave control to the player instead of debug autoplay")
     parser.add_argument("--autoplay", dest="autoplay", action="store_true", help="Direct-start and drive the run with debug autoplay (default)")
     parser.add_argument("--wait-for-start-tap", action="store_true", help="In debug builds, show the start screen before each run so manual input can begin when ready")
+    parser.add_argument("--leave-app-running", action="store_true", help="Do not terminate the app after capture; useful for result-screen screenshots. Terminate and verify debug defaults after screenshots.")
     parser.add_argument("--keep-defaults", dest="clear_defaults", action="store_false", help="Leave debug defaults enabled")
     parser.set_defaults(clear_defaults=True)
     parser.set_defaults(autoplay=True)

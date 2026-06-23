@@ -5,13 +5,14 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 ## Summary Counts
 
 - Planned tests: 73
-- Passed: 12
+- Passed: 15
 - Failed: 0
-- Partial: 4
+- Partial: 2
 - Blocked: 0
 - Invalid: 0
-- Not tested: 57
-- Valid active-input runs in this artifact set: 1
+- Not tested: 56
+- Valid active-input runs in this artifact set: 6
+- Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 
 ## Preparation And Automated Validation
 
@@ -25,7 +26,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | AUTO-03 | `git diff --check` | pass | `build-validation/git-diff-check.log` | Empty log with zero exit means whitespace check passed. |
 | AUTO-04 | GameCore tests | pass | `build-validation/gamecore-swift-test.log` | 22 tests, 0 failures. |
 | AUTO-05 | Mac/iOS Simulator build verification | pass | `build-validation/verify-on-mac.log` | Build succeeded. |
-| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01-summary.md` | Summary generated from raw telemetry. |
+| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md` | Summary generated from raw telemetry. |
 | AUTO-07 | Representative GameSim runs for all levels with starter vehicle | pass | `build-validation/gamesim-all-levels-starter-compact.log` | 15 levels x 1,000 runs. |
 | AUTO-08 | Representative GameSim runs for all levels with Starter Bike | pass | `build-validation/gamesim-all-levels-starter-bike.log` | 15 levels x 1,000 runs. |
 | AUTO-09 | Traffic stress/procedural fairness validation | pass | `build-validation/gamecore-swift-test.log`, `build-validation/gamesim-all-levels-starter-compact.log`, `build-validation/gamesim-all-levels-starter-bike.log` | Automated stress/fairness signals exist; manual fairness remains unproven. |
@@ -42,7 +43,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | FUNC-05 | Vehicle selection | iPhone 17e | not tested | | | |
 | FUNC-06 | Pause and resume | iPhone 17e | not tested | | | |
 | FUNC-07 | Restart after pause | iPhone 17e | not tested | | | |
-| FUNC-08 | Failure screen and retry | iPhone 17e | not tested | | | |
+| FUNC-08 | Failure screen and retry | iPhone 17e | partial | `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run05.mp4` | `telemetry/raw/01-2026-06-23_09-21-03-la_01-starter_compact-17033032432948287984.jsonl` | Failure screen captured; retry action not exercised. |
 | FUNC-09 | Completion screen and reward screen | iPhone 17e | not tested | | | |
 | FUNC-10 | Background and relaunch restoration | iPhone 17e | not tested | | | |
 | FUNC-11 | Existing-save progression restoration | iPhone 17e | not tested | | | |
@@ -52,7 +53,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 
 | ID | Control Mode | Device | Level | Vehicle | Status | Evidence |
 |---|---|---|---|---|---|---|
-| CTRL-01 | SWIPE + TAP | iPhone 17e | la_01 | starter_compact | partial | `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01.mp4`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01-summary.md` |
+| CTRL-01 | SWIPE + TAP | iPhone 17e | la_01 | starter_compact | pass | `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run02.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run04.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run05.mp4`, `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run06.mp4`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md` |
 | CTRL-02 | SWIPE ONLY | iPhone 17e | la_01 | starter_compact | not tested | |
 | CTRL-03 | TAP ONLY | iPhone 17e | la_01 | starter_compact | not tested | |
 | CTRL-04 | SWIPE + TAP | iPhone 17 Pro | la_01 | starter_compact | not tested | |
@@ -65,7 +66,7 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 
 | ID | City | Requirement | Device | Status | Valid Runs | Evidence |
 |---|---|---|---|---|---:|---|
-| LA-STARTER | Los Angeles | Five valid active-input Starter Compact runs | iPhone 17e | partial | 1 | `logs/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run01-observations.md` |
+| LA-STARTER | Los Angeles | Five valid active-input Starter Compact runs | iPhone 17e | pass | 5 | Runs 01, 02, 04, 05, and 06 have video, start/result screenshots, telemetry, summary, and observations. Run 03 is supplemental active evidence but is missing result screenshot. |
 | LA-BIKE | Los Angeles | Three valid active-input Starter Bike runs | iPhone 17e | not tested | 0 | |
 | LA-PROGRESSION | Los Angeles | Complete recorded progression attempt | iPhone 17e | not tested | 0 | |
 | LA-STRESS | Los Angeles | Deliberate difficult stress run | iPhone 17e | not tested | 0 | |
@@ -82,7 +83,7 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 
 | Level | City | Stage | Starter Compact Status | Starter Bike Status | Evidence |
 |---|---|---|---|---|---|
-| la_01 Sunset Merge | Los Angeles | early | partial | not tested | Starter Compact run 01 captured with video/telemetry; 4 more starter runs still needed for city requirement. |
+| la_01 Sunset Merge | Los Angeles | early | pass | not tested | Starter Compact requirement complete for iPhone 17e: five complete-evidence active runs plus one supplemental active run. Starter Bike still not tested. |
 | la_02 405 Afterburn | Los Angeles | middle | not tested | not tested | |
 | la_03 Valley Cut | Los Angeles | middle | not tested | not tested | |
 | la_04 Freeway Riot | Los Angeles | late | not tested | not tested | |
@@ -100,4 +101,4 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 
 ## Invalid Runs
 
-No invalid runs have been captured inside this artifact set yet. Invalid runs must be listed here with rejection reason and must not be used for balance conclusions.
+No invalid runs have been captured inside this artifact set yet. Run 03 is valid active telemetry/video evidence but is excluded from the five complete-evidence count because the result screenshot is missing.
