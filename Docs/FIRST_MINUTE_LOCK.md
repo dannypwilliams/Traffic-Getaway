@@ -4,7 +4,7 @@
 
 Not locked.
 
-The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, tightened debug autoplay can escape Sunset Merge 5/5 times on iPhone 17e, Dynamic Island-class debug autoplay improved to 4/5 with a strict emergency-transition fallback, passive no-input play now resolves as police capture on both sampled devices, the Starter Bike result-screen payoff is screenshot-verified, `USE BIKE` tap-through into 405 Afterburn is smoke-validated, and the active-traffic GameSim diagnostic has begun moving toward live behavior. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, full 405 Afterburn motorcycle validation, and GameSim/live model ownership are incomplete.
+The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, tightened debug autoplay can escape Sunset Merge 5/5 times on iPhone 17e, Dynamic Island-class debug autoplay improved to 4/5 with a strict emergency-transition fallback, passive no-input play now resolves as police capture on both sampled devices, the Starter Bike result-screen payoff is screenshot-verified, `USE BIKE` tap-through into 405 Afterburn is smoke-validated, and the active-traffic GameSim diagnostic has begun moving toward live behavior. Manual active capture now has a start-gated tool path, but the actual active-steering matrices are still incomplete. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, full 405 Afterburn motorcycle validation, and GameSim/live model ownership are incomplete.
 
 ## Locked So Far
 
@@ -18,12 +18,13 @@ The first minute has stronger evidence than the original baseline: launch presen
 - First Sunset Merge escape payoff is visually verified through the result screen: `ESCAPED`, `Starter Bike unlocked: split lanes`, primary `USE BIKE`, selected `starter_bike`, completed `la_01`, and debug defaults cleared after capture.
 - `USE BIKE` tap-through is smoke-validated: real button click launched `la_02` / 405 Afterburn with `starter_bike`, and active input recorded motorcycle movement into interstitial split slot `11`.
 - `GameSim --active-traffic-lifetime` now uses a deterministic transition-risk score and emergency move fallback, improving average diagnostic survival from 7.3s to 10.7s without changing default balance output.
+- Manual capture can now pause on the existing start screen with `--wait-for-start-tap`; smoke evidence recorded active input with autoplay disabled.
 
 ## Not Locked
 
 - Tutorial completion without `SKIP` has not been matrix-validated.
-- Human-controlled Sunset Merge runs have not been captured after tightened transition clearance.
-- Active-steering manual Sunset Merge runs have not been captured after tightened transition clearance.
+- Human-controlled Sunset Merge runs have not been matrix-captured after tightened transition clearance.
+- Active-steering manual Sunset Merge runs have not been matrix-captured after tightened transition clearance; the latest iPhone 17e attempt only produced 1/5 active-input runs before the start gate was added.
 - Dynamic Island-class active steering coverage is still missing, and debug autoplay exposed 1/5 traffic-collision terminal after `no_transition_safe_slots` decisions.
 - Crash, capture, missed-exit, retry, and return-to-menu outcomes have not been fully matrix-validated.
 - 405 Afterburn has only a Starter Bike tap-through smoke validation; no full active-input completion or balance matrix exists yet.
@@ -32,4 +33,4 @@ The first minute has stronger evidence than the original baseline: launch presen
 
 ## Current Gate
 
-Capture active-steering iPhone 17e and Dynamic Island-class first-minute runs with the tightened transition-clearance and passive-capture build. Use those results and the Dynamic Island debug-autoplay collisions to calibrate the active-traffic lifetime diagnostic before tuning Sunset Merge rewards, near misses, density, or completion rate.
+Capture start-gated active-steering iPhone 17e and Dynamic Island-class first-minute runs with the tightened transition-clearance and passive-capture build. Use those results and the Dynamic Island debug-autoplay collisions to calibrate the active-traffic lifetime diagnostic before tuning Sunset Merge rewards, near misses, density, or completion rate.

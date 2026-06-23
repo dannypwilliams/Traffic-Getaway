@@ -2,7 +2,7 @@
 
 ## Status
 
-Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e plus iPhone 17 Pro autoplay matrices now exist. Tightened transition-clearance debug autoplay completed 5/5 iPhone 17e runs, and a strict emergency-transition fallback moved iPhone 17 Pro debug autoplay from 3/5 to 4/5 completion while keeping sampled lane-change intersection probes at 0. GameSim now has an opt-in active-traffic lifetime diagnostic with risk-aware emergency movement, but it is intentionally not the default balance model yet because it remains much more punitive than the tightened live autoplay matrices.
+Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e plus iPhone 17 Pro autoplay matrices now exist. Tightened transition-clearance debug autoplay completed 5/5 iPhone 17e runs, and a strict emergency-transition fallback moved iPhone 17 Pro debug autoplay from 3/5 to 4/5 completion while keeping sampled lane-change intersection probes at 0. Start-gated manual capture now exists, but full active-steering matrices are still missing. GameSim now has an opt-in active-traffic lifetime diagnostic with risk-aware emergency movement, but it is intentionally not the default balance model yet because it remains much more punitive than the tightened live autoplay matrices.
 
 ## Known Modeling Gap
 
@@ -226,6 +226,35 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 - Collision analyses: 0/5, expected for police capture terminals.
 - Interpretation: Dynamic Island passive no-input play now matches the police-capture target.
 
+### Attempted Active Manual iPhone 17e Matrix
+
+- Capture command: `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/telemetry --timeout 150`
+- Summary: `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/summary.md`
+- Notes: `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/notes.md`
+- Simulator: iPhone 17e, iOS 26.5.
+- Runs: 5.
+- Completed: 0/5.
+- Active-input runs: 1/5.
+- Lane changed events: 5.
+- Avg terminal time: 12.6s.
+- Terminal reasons: `police_caught` 4, `roadblock` 1.
+- Autoplay decisions: 0.
+- Interpretation: this is not a usable active-steering balance matrix. It exposed a capture problem: direct-start manual runs can become passive samples before the player is ready.
+
+### Manual Start-Gate Smoke
+
+- Capture command: `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --manual --wait-for-start-tap --runs 1 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/telemetry --timeout 90`
+- Summary: `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/summary.md`
+- Notes: `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/notes.md`
+- Simulator: iPhone 17e, iOS 26.5.
+- Runs: 1.
+- Completed: 0/1.
+- Active-input runs: 1/1.
+- Lane changed events: 3.
+- Terminal reason: `traffic` at 5.1s.
+- Autoplay decisions: 0.
+- Interpretation: this proves the capture path can pause on the start screen and record active manual steering without autoplay. It is a tooling smoke test, not balance evidence.
+
 ### Dynamic Island Transition-Clearance Matrix
 
 - Capture command: `python3 -u scripts/capture_live_telemetry.py --device 90D3514A-BDE2-412C-8238-8ECC17BD86B6 --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/telemetry --timeout 120`
@@ -291,7 +320,7 @@ Manual smoke result:
 
 ## Current Read
 
-Do not retune Sunset Merge from the autoplay matrix yet. The default core simulator says the route policy can escape almost every run, tightened debug autoplay escapes 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency transition handling, passive no-input now resolves as police capture on both sampled devices, and the opt-in active-traffic lifetime diagnostic still crashes almost every run before the exit even after improving average survival to 10.7s. That bracket is useful evidence, not a lock: the diagnostic direction is validated, but the active-lifetime geometry, steering cadence, collision timing, and device-shape sensitivity still need calibration against live/human runs.
+Do not retune Sunset Merge from the autoplay matrix yet. The default core simulator says the route policy can escape almost every run, tightened debug autoplay escapes 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency transition handling, passive no-input now resolves as police capture on both sampled devices, and the opt-in active-traffic lifetime diagnostic still crashes almost every run before the exit even after improving average survival to 10.7s. The latest active manual attempt is not a balance source because only 1/5 runs had active input, but the start-gated smoke test proves the next matrix can begin when the player is ready. That bracket is useful evidence, not a lock: the diagnostic direction is validated, but the active-lifetime geometry, steering cadence, collision timing, and device-shape sensitivity still need calibration against live/human runs.
 
 ## Debug Rendering
 
@@ -299,9 +328,9 @@ The `OPEN PATHS` debug preference now draws lane centers, slot centers, safe-slo
 
 ## Next Instrumentation
 
-- Capture one human-controlled iPhone 17e matrix with the tightened transition-clearance build.
-- Capture human-controlled iPhone 17e and Dynamic Island-class runs with the same live-safety behavior.
-- Use `scripts/capture_live_telemetry.py --manual` to direct-start the level without debug autoplay and wait for `run_ended` telemetry.
+- Capture one start-gated human-controlled iPhone 17e matrix with the tightened transition-clearance build.
+- Capture start-gated human-controlled iPhone 17e and Dynamic Island-class runs with the same live-safety behavior.
+- Use `scripts/capture_live_telemetry.py --manual --wait-for-start-tap` to configure the level without debug autoplay, pause on the existing start screen, and wait for `run_ended` telemetry.
 - Passive no-input manual matrices are captured and now pass as police-capture outcomes; next manual evidence should include active human steering styles.
 - Calibrate `GameSim --active-traffic-lifetime` against tightened live telemetry before using it for balance.
 - Compare live terminal outcomes, active traffic, collision rectangles, near misses, and exit progress against GameSim before retuning.

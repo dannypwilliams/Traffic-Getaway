@@ -40,6 +40,8 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - The final tutorial exit-ramp page had an impossible sign-rendering gate from an older six-page flow. The current build now renders `EXIT RIGHT` on the five-step final page and can auto-advance after the exit-side practice predicate and read gate are satisfied.
 - A debug first-escape payoff capture on iPhone 17e showed `ESCAPED`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`; save-state verification showed `selectedCarID=starter_bike`, unlocked `[starter_compact, starter_bike]`, completed `[la_01]`, `totalRuns=1`, and no remaining debug defaults.
 - A real `USE BIKE` tap-through was smoke-tested on iPhone 17e. The button launched 405 Afterburn, telemetry recorded `levelID=la_02`, `vehicleID=starter_bike`, `vehicleClass=motorcycle`, and active input produced a `lane_changed` event into interstitial split slot `11`.
+- An ungated active-steering manual attempt on iPhone 17e produced 5 runs with 0 autoplay decisions, but only 1/5 runs had active input; the rest effectively became passive police-capture samples before sustained input began.
+- A debug-only manual start gate was added and smoke-tested on iPhone 17e. With `--manual --wait-for-start-tap`, the app paused on the existing start screen, then captured 1/1 active-input smoke run with 3 lane changes and 0 autoplay decisions.
 - No full clean-install tutorial matrix, human-controlled terminal outcome matrix, or full 405 Afterburn completion/balance matrix was performed in this pass.
 
 ## Evidence
@@ -94,6 +96,12 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-telemetry.jsonl`
 - `PlaytestArtifacts/2026-06-23-use-bike-tap-through/metadata.json`
 - `PlaytestArtifacts/2026-06-23-use-bike-tap-through/notes.md`
+- `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/summary.md`
+- `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/telemetry/`
+- `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/notes.md`
+- `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/summary.md`
+- `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/telemetry/`
+- `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/notes.md`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`
