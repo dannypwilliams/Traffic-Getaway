@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session and one Dynamic Island-class active sample. A fresh-install tutorial-to-run sample exists but is invalid for balance because it recorded 0 lane changes. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session, one Dynamic Island-class active sample, and one existing-save active progression sample. A fresh-install tutorial-to-run sample exists but is invalid for balance because it recorded 0 lane changes. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -58,6 +58,14 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Result: police capture at 9.0s, 0 near misses, 0 lane changes, 12 cash, wanted level 3, 0 autoplay decisions.
 - Functional read: valid first-run tutorial and progression-flow evidence.
 - Balance use: invalid. The gameplay portion had 0 active lane changes and should not be used for active-run, fairness, or city-progression conclusions.
+
+## Supplemental Existing-Save Progression Sample
+
+- Device: iPhone 17e simulator.
+- Flow: result screen to Level Select, selected Sunset Merge, played active `la_01` sample.
+- Result: traffic collision at 8.5s, 3 near misses, 3 lane changes, 19 telemetry cash, wanted level 3, 0 autoplay decisions.
+- Functional read: valid City Select / Level Select evidence and valid active-input navigation-to-gameplay sample.
+- Balance use: supplemental only. It reinforces early LA01 failure pressure but is one short existing-save sample, not a complete city progression attempt.
 
 ## Simulation Comparison
 

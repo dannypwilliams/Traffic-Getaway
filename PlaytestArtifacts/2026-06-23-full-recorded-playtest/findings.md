@@ -4,11 +4,11 @@
 
 Status: `partial`.
 
-The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, the Los Angeles Starter Bike slice has three complete-evidence active-input runs, failure/retry now has a recorded functional session, one iPhone 17 Pro Dynamic Island active sample has been captured, and fresh-install tutorial completion has recorded evidence. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The iPhone 17 Pro sample failed the Dynamic Island safe-area check and exposed a vehicle identity mismatch. The fresh-install tutorial-to-run sample ended as passive police capture with 0 lane changes, so it does not prove active progression. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
+The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, the Los Angeles Starter Bike slice has three complete-evidence active-input runs, failure/retry now has a recorded functional session, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, and City Select / Level Select progression has recorded evidence. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The iPhone 17 Pro sample failed the Dynamic Island safe-area check and exposed a vehicle identity mismatch. The fresh-install tutorial-to-run sample ended as passive police capture with 0 lane changes. The existing-save Level Select-to-LA sample recorded active input but still ended at 8.5s. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
 
 ## Control Feel
 
-Partial. Tap steering produced lane changes in eleven valid active-input runs, with 34 lane-change events across the counted Starter Compact/Starter Bike slices, the retry functional session, and the Dynamic Island active sample. This proves the default `SWIPE + TAP` path can accept tap input on both sampled simulator classes, but it does not validate precision, consistency, frame-rate behavior, or every materially different control mode. The iPhone 17 Pro sample is partial for vehicle-specific coverage because the requested, visible, and telemetry vehicle identities did not agree.
+Partial. Tap steering produced lane changes in twelve valid active-input runs, with 37 lane-change events across the counted Starter Compact/Starter Bike slices, the retry functional session, the Dynamic Island active sample, and the existing-save progression sample. This proves the default `SWIPE + TAP` path can accept tap input on both sampled simulator classes, but it does not validate precision, consistency, frame-rate behavior, or every materially different control mode. The iPhone 17 Pro sample is partial for vehicle-specific coverage because the requested, visible, and telemetry vehicle identities did not agree.
 
 ## First-Minute Experience
 
@@ -20,7 +20,7 @@ Partial. Automated all-level simulations were captured for Starter Compact and S
 
 ## Procedural Fairness
 
-Partial. The counted LA01 runs captured collision analysis, active traffic context, lane-change probes, and terminal reasons. Starter Compact aggregate telemetry shows 6/6 collision analyses, 27 lane-change probes, and 4 unsafe-path probes. Starter Bike counted telemetry shows 3/3 collision analyses, 43 lane-change probes, 0 lane-change intersection probes, and terminal reasons `traffic` twice and `roadblock` once. The failure/retry functional session and Dynamic Island active sample each add one more active collision-analysis sample. Broader fairness is still unproven.
+Partial. The counted LA01 runs captured collision analysis, active traffic context, lane-change probes, and terminal reasons. Starter Compact aggregate telemetry shows 6/6 collision analyses, 27 lane-change probes, and 4 unsafe-path probes. Starter Bike counted telemetry shows 3/3 collision analyses, 43 lane-change probes, 0 lane-change intersection probes, and terminal reasons `traffic` twice and `roadblock` once. The failure/retry functional session, Dynamic Island active sample, and existing-save progression sample each add one more active collision-analysis sample. Broader fairness is still unproven.
 
 ## City Differentiation
 
@@ -28,11 +28,11 @@ Not tested through recorded active play. The content inventory confirms three ci
 
 ## Progression And Rewards
 
-Partial. Starter Bike Runs 04 and 05 showed XP/progress advancement on failure screens, including Level 5 to 6 progress. The failure/retry session proved `RETRY LEVEL` returns to the ready start state after failure. A fresh-install tutorial-to-run recording proves onboarding can complete without skip and transition into Los Angeles gameplay, but its gameplay portion had 0 lane changes and ended as police capture at 9.0s. No full city progression attempt has been completed. Previous reference evidence shows first Sunset Merge escape can unlock Starter Bike and `USE BIKE` can start 405 Afterburn, but the full progression pass remains open.
+Partial. Starter Bike Runs 04 and 05 showed XP/progress advancement on failure screens, including Level 5 to 6 progress. The failure/retry session proved `RETRY LEVEL` returns to the ready start state after failure. A fresh-install tutorial-to-run recording proves onboarding can complete without skip and transition into Los Angeles gameplay, but its gameplay portion had 0 lane changes and ended as police capture at 9.0s. Existing-save Level Select-to-LA evidence proves the city/progression screen is reachable and the failed active run can level the player from Level 1 to 2, but it does not complete Sunset Merge. No full city progression attempt has been completed. Previous reference evidence shows first Sunset Merge escape can unlock Starter Bike and `USE BIKE` can start 405 Afterburn, but the full progression pass remains open.
 
 ## Performance
 
-Partial. The Mac/iOS Simulator build passed and eleven valid active-input recordings succeeded while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet. The required Dynamic Island-class sample revealed top-HUD clipping under the Dynamic Island.
+Partial. The Mac/iOS Simulator build passed and twelve valid active-input recordings succeeded while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet. The required Dynamic Island-class sample revealed top-HUD clipping under the Dynamic Island.
 
 ## Release Readiness
 

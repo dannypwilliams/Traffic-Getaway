@@ -4,7 +4,7 @@
 
 PARTIAL.
 
-The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, and fresh-install tutorial completion has recorded evidence. The required all-city/all-device recorded active-play matrix is not complete.
+The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, and City Select / Level Select progression has recorded evidence. The required all-city/all-device recorded active-play matrix is not complete.
 
 ## Commit Range
 
@@ -14,13 +14,13 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 ## Counts
 
 - Planned tests: 73
-- Passed: 19
+- Passed: 20
 - Failed: 1
 - Partial: 4
 - Blocked: 0
 - Invalid: 3
-- Not tested: 49
-- Valid active-input runs: 11
+- Not tested: 48
+- Valid active-input runs: 12
 - Valid complete-evidence runs counted for LA Starter Compact: 5
 - Valid complete-evidence runs counted for LA Starter Bike: 3
 
@@ -31,9 +31,9 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 - Vehicle coverage: Starter Compact and Starter Bike each have one completed iPhone 17e Los Angeles city slice.
 - Tutorial result: pass for recorded first-run onboarding completion without skip; launch-frame still capture is partial because the screenshot caught tutorial page 1 rather than the branded launch frame.
 - First-minute result: fail/partial signal; six valid active Starter Compact LA01 runs all crashed before 10 seconds, and three complete-evidence Starter Bike LA01 runs all failed before completion.
-- Control-feel result: partial; tap steering produced lane changes in eleven valid active-input runs, but other control modes are untested and the iPhone 17 Pro vehicle-specific sample is weakened by a vehicle identity mismatch.
-- Difficulty-progression result: partial automated simulation plus one fresh-install tutorial-to-LA attempt; manual city progression is not validated because the gameplay portion had 0 lane changes and ended as police capture at 9.0s.
-- Procedural-fairness result: partial; eleven active samples exist and the Dynamic Island active sample includes collision analysis, but broader levels/cities/vehicles are untested.
+- Control-feel result: partial; tap steering produced lane changes in twelve valid active-input runs, but other control modes are untested and the iPhone 17 Pro vehicle-specific sample is weakened by a vehicle identity mismatch.
+- Difficulty-progression result: partial automated simulation plus recorded tutorial-to-LA and Level Select-to-LA attempts. Manual city progression is not validated because the fresh-install gameplay portion had 0 lane changes, and the existing-save active attempt ended as traffic collision at 8.5s.
+- Procedural-fairness result: partial; twelve active samples exist and the Dynamic Island and existing-save active progression samples include collision analysis, but broader levels/cities/vehicles are untested.
 - City-differentiation result: not tested.
 - Performance result: partial; build and multiple recorded runs succeeded, but frame pacing was not measured. Dynamic Island HUD layout failed on iPhone 17 Pro.
 
@@ -54,7 +54,7 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 
 ## Exact Next Recommended Task
 
-Capture a true active Los Angeles progression attempt next, using an input path that reliably records lane changes after the tutorial-to-run transition. Separately investigate the Dynamic Island HUD overlap and iPhone 17 Pro vehicle identity mismatch before relying on more iPhone 17 Pro vehicle-specific rows.
+Capture a longer active Los Angeles progression attempt next, using the now-verified coordinate tap path and aiming to reach the exit phase or complete Sunset Merge. Separately investigate the Dynamic Island HUD overlap and iPhone 17 Pro vehicle identity mismatch before relying on more iPhone 17 Pro vehicle-specific rows.
 
 ## Remote Alignment
 

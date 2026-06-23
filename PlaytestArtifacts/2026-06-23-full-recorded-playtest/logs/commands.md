@@ -34,3 +34,7 @@ Commit: 3c2431d
 - xcrun simctl io <iPhone 17e> screenshot for tutorial pages, completed practice states, and the result screen
 - python3 scripts/summarize_run_telemetry.py for fresh-install tutorial/progression attempt 01
 - avconvert --preset Preset960x540 compressed the original 107 MB simulator recording to a 42 MB evidence video before commit
+- xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_existing-save_level-select-la01_active-progression_attempt02.mp4`
+- Computer Use selected `LEVEL SELECT`, selected `1. SUNSET MERGE`, tapped `Tap to Start`, and used coordinate taps during gameplay for active lane changes
+- xcrun simctl io <iPhone 17e> screenshot for City Select, start screen, and result screen checkpoints in existing-save active progression attempt 02
+- python3 scripts/summarize_run_telemetry.py for existing-save active progression attempt 02

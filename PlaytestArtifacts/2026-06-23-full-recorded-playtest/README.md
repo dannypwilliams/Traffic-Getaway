@@ -6,7 +6,7 @@ Evidence-based Traffic Getaway playtest pass for responsiveness, understandabili
 
 This directory is the authoritative artifact root for the full recorded playtest requested on 2026-06-23. Do not mark a matrix row complete unless matching video, telemetry, summary, screenshots, and written observations exist.
 
-Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete, failure/retry has recorded evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, and fresh-install tutorial completion has recorded evidence. The broader all-city/all-device playtest remains incomplete.
+Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run slice and Los Angeles Starter Bike three-run slice are complete, failure/retry has recorded evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, and the City Select / Level Select progression screen has recorded evidence. The broader all-city/all-device playtest remains incomplete.
 
 ## Starting State
 
@@ -42,6 +42,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - Dynamic Island-class coverage is recorded in `videos/dynamic-island/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02.mp4`, but the safe-area check failed because the Dynamic Island overlaps the top HUD. See `FTG-P2-001`.
 - The iPhone 17 Pro Dynamic Island capture also exposed a vehicle identity mismatch: the run requested Starter Bike, telemetry reported `starter_compact`, and visible UI/result labels showed Sunset Cruiser. See `FTG-P2-002`. Treat the sample as valid for Dynamic Island safe-area evidence, but only partial for vehicle-specific control coverage.
 - Fresh-install tutorial completion is recorded in `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4`. The follow-on gameplay run had 0 lane changes and ended as police capture at 9.0s, so it is valid tutorial/progression-flow evidence but invalid for active-run, balance, or complete city-progression coverage.
+- Existing-save Level Select to LA01 active progression evidence is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_level-select-la01_active-progression_attempt02.mp4`. It has 3 lane changes and 3 near misses, but ended as a traffic collision at 8.5s, so complete Los Angeles city progression remains open.
 
 ## Artifact Structure
 
