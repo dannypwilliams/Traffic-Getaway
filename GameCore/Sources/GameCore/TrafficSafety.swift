@@ -224,6 +224,37 @@ public enum TrafficSafetyAnalyzer {
         }
     }
 
+    public static func transitionRiskScore(
+        from currentSlot: Int,
+        to targetSlot: Int,
+        vehicleClass: VehicleClass,
+        hazards: [TrafficHazardSnapshot],
+        configuration: TrafficTransitionSafetyConfiguration = TrafficTransitionSafetyConfiguration()
+    ) -> Double {
+        guard !hazards.isEmpty else { return 0 }
+
+        let start = LaneModel.clampSlot(currentSlot, for: vehicleClass)
+        let target = LaneModel.clampSlot(targetSlot, for: vehicleClass)
+        let duration = start == target ? 0 : configuration.laneChangeDuration
+        let totalTime = max(duration + configuration.predictionHorizon, 0.016)
+        let samples = max(4, Int(ceil(totalTime / 0.025)))
+        var risk = 0.0
+
+        for step in 0...samples {
+            let elapsed = totalTime * Double(step) / Double(samples)
+            let progress = duration > 0 ? min(1, max(0, elapsed / duration)) : 1
+            let easedProgress = 1 - pow(1 - progress, 2)
+            let interpolated = Double(start) + Double(target - start) * easedProgress
+            let sampledSlot = LaneModel.clampRawSlot(Int(interpolated.rounded()))
+            risk += slotRiskScore(slot: sampledSlot, vehicleClass: vehicleClass, hazards: hazards, after: elapsed, totalTime: totalTime, configuration: configuration)
+            if risk > 1_000 {
+                return risk
+            }
+        }
+
+        return risk
+    }
+
     private static func rejected(_ reason: String, occupied: Set<Int>, open: Set<Int>, carSlots: Set<Int>, motorcycleSlots: Set<Int>) -> TrafficSafetyResult {
         TrafficSafetyResult(
             isValid: false,
@@ -358,6 +389,34 @@ public enum TrafficSafetyAnalyzer {
             }
         }
         return false
+    }
+
+    private static func slotRiskScore(
+        slot: Int,
+        vehicleClass: VehicleClass,
+        hazards: [TrafficHazardSnapshot],
+        after elapsed: Double,
+        totalTime: Double,
+        configuration: TrafficTransitionSafetyConfiguration
+    ) -> Double {
+        let lanes = lanesCovered(bySlot: slot, vehicleClass: vehicleClass)
+        var risk = 0.0
+
+        for hazard in hazards {
+            let occupied = lanesOccupied(by: hazard.lane, span: hazard.laneSpan)
+            guard !occupied.isDisjoint(with: lanes) else { continue }
+
+            let predictedY = hazard.y - hazard.speed * elapsed
+            let clearance = (hazard.height + configuration.playerHeight) / 2 + configuration.verticalPadding
+            let overlap = max(0, clearance - abs(predictedY))
+            guard overlap > 0 else { continue }
+
+            let overlapRatio = min(1, overlap / max(clearance, 1))
+            let urgency = 1 + (1 - min(1, elapsed / totalTime))
+            risk += urgency * (1 + overlapRatio * 4)
+        }
+
+        return risk
     }
 
     private static func lanesCovered(bySlot slot: Int, vehicleClass: VehicleClass) -> Set<Int> {

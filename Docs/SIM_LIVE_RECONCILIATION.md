@@ -2,7 +2,7 @@
 
 ## Status
 
-Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e plus iPhone 17 Pro autoplay matrices now exist. Tightened transition-clearance debug autoplay completed 5/5 iPhone 17e runs, and a strict emergency-transition fallback moved iPhone 17 Pro debug autoplay from 3/5 to 4/5 completion while keeping sampled lane-change intersection probes at 0. GameSim now has an opt-in active-traffic lifetime diagnostic, but it is intentionally not the default balance model yet because it is much more punitive than the tightened live autoplay matrices and needs calibration.
+Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e plus iPhone 17 Pro autoplay matrices now exist. Tightened transition-clearance debug autoplay completed 5/5 iPhone 17e runs, and a strict emergency-transition fallback moved iPhone 17 Pro debug autoplay from 3/5 to 4/5 completion while keeping sampled lane-change intersection probes at 0. GameSim now has an opt-in active-traffic lifetime diagnostic with risk-aware emergency movement, but it is intentionally not the default balance model yet because it remains much more punitive than the tightened live autoplay matrices.
 
 ## Known Modeling Gap
 
@@ -13,10 +13,10 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 | Metric | GameSim | iOS live | Difference | Cause | Resolution |
 |---|---:|---:|---:|---|---|
 | Exit activation time | 42s target from config | Reached in 5/5 tightened transition-clearance autoplay runs | Aligned in debug autoplay | Longer transition horizon plus padded predicted traffic checks | Validate with human input |
-| First crash time | p50 36.8s default / p50 4.8s active-lifetime diagnostic | no crashes in tightened 5-run autoplay matrix | Default sim omits active lifetime; diagnostic overcorrects | Active lifetime and steering cadence are not calibrated | Calibrate before tuning |
+| First crash time | p50 36.8s default / p50 8.8s active-lifetime diagnostic | no crashes in tightened 5-run autoplay matrix | Default sim omits active lifetime; diagnostic still overcorrects | Active lifetime, collision timing, and steering cadence need more calibration | Calibrate before tuning |
 | Traffic waves before terminal event | Stress: 0 impossible / 160,000 | avg 36.2 waves before escape | Much closer to sim | Live still tracks active on-screen traffic directly | Compare manual matrix before tuning |
 | Near misses | 35.3/run | 14.0/run | Live remains below sim but above target band | Longer runs plus safer transition filtering | Do not tune rewards from autoplay alone |
-| Completion | 99.1% default / 0.0% active-lifetime diagnostic | 5/5 iPhone 17e autoplay, 4/5 iPhone 17 Pro autoplay after emergency fallback | Sim bounds bracket live instead of matching it | Diagnostic mode is too punitive; autoplay is not human input; device shape still affects outcomes | Capture manual matrix |
+| Completion | 99.1% default / 0.3% active-lifetime diagnostic | 5/5 iPhone 17e autoplay, 4/5 iPhone 17 Pro autoplay after emergency fallback | Sim bounds still bracket live instead of matching it | Diagnostic mode is too punitive; autoplay is not human input; device shape still affects outcomes | Capture manual matrix |
 | Collision box overlap | Unfair estimate 0.0% | Rects logged on every collision | Data available | App collision code separate | Review active traffic snapshots |
 | Reachable path at failure | Stress clean | Safe slots, active traffic, colliding vehicle, overlap, last decision, and lane-change probes logged | Lane-change samples available | Latest safe slot can be logically safe while the animated car is still exposed on the lane-change path | Keep tightened live guard; evaluate GameSim parity |
 | Police pressure at failure | Highest wanted 3 | Wanted mostly 1, one sample not above 2 | Live crashes before police peak | Early input/traffic interaction dominates | Keep police tuning unchanged |
@@ -163,16 +163,10 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 
 - Command: `swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`
 - Runs: 10,000.
-- Completed: 0.0%.
-- Avg survival: 7.3s.
-- Median survival: 6.5s.
-- First crash distribution: p10 4.8s / p50 6.5s / p90 11.5s.
-- Exit appeared/reached/completed: 0.0% / 0.0% / 0.0%.
-- Near misses: 2.1/run.
-- Avg cash/XP: 58 / 33.
-- Unfair collision estimate: 33.3%.
-- Top failure: `traffic_collision:6668`.
-- Interpretation: the opt-in diagnostic proves GameSim can now exercise active traffic lifetime and transition-horizon checks deterministically. Sampling the moving lane-change path and narrowing recent-spawn hazards improved it from 5.1s to 7.3s average survival, but the geometry/timing calibration is still not credible enough for balance. It still overcorrects relative to the tightened live autoplay matrix, which escaped 5/5 runs.
+- Before this calibration: 0.0% completed, 7.3s average survival, 6.5s median survival, 2.1 near misses/run, 58 cash/run, 33.3% unfair collision estimate.
+- After this calibration: 0.3% completed, 10.7s average survival, 8.8s median survival, first crash p10/p50/p90 4.8s / 8.8s / 19.8s, exit appeared/reached/completed 0.4% / 0.4% / 0.3%, 2.8 near misses/run, 75 cash/run, 59.4% unfair collision estimate, top failure `traffic_collision:4032`.
+- Calibration change: `TrafficSafetyAnalyzer.transitionRiskScore` now provides a deterministic lower-risk emergency comparison, and the active diagnostic uses live-like transition timing for the starter car and motorcycle. Default GameSim output did not change.
+- Interpretation: the opt-in diagnostic now moves in the same direction as the tightened live safety work, but the geometry/timing calibration is still not credible enough for balance. It still overcorrects relative to the tightened live autoplay matrix, which escaped 5/5 iPhone 17e runs.
 
 ### Dynamic Island Transition-Clearance Matrix
 
@@ -239,7 +233,7 @@ Manual smoke result:
 
 ## Current Read
 
-Do not retune Sunset Merge from the autoplay matrix yet. The default core simulator says the route policy can escape almost every run, tightened debug autoplay escapes 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency transition handling, and the opt-in active-traffic lifetime diagnostic crashes almost every run before the exit. That bracket is useful evidence, not a lock: the diagnostic direction is validated, but the active-lifetime geometry, steering cadence, collision timing, and device-shape sensitivity still need calibration against live/human runs.
+Do not retune Sunset Merge from the autoplay matrix yet. The default core simulator says the route policy can escape almost every run, tightened debug autoplay escapes 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency transition handling, and the opt-in active-traffic lifetime diagnostic still crashes almost every run before the exit even after improving average survival to 10.7s. That bracket is useful evidence, not a lock: the diagnostic direction is validated, but the active-lifetime geometry, steering cadence, collision timing, and device-shape sensitivity still need calibration against live/human runs.
 
 ## Debug Rendering
 

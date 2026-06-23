@@ -4,7 +4,7 @@
 
 Not locked.
 
-The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, tightened debug autoplay can escape Sunset Merge 5/5 times on iPhone 17e, and Dynamic Island-class debug autoplay improved to 4/5 with a strict emergency-transition fallback. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, Starter Bike payoff flow, and GameSim/live model ownership are incomplete.
+The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, tightened debug autoplay can escape Sunset Merge 5/5 times on iPhone 17e, Dynamic Island-class debug autoplay improved to 4/5 with a strict emergency-transition fallback, and the active-traffic GameSim diagnostic has begun moving toward live behavior. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, Starter Bike payoff flow, and GameSim/live model ownership are incomplete.
 
 ## Locked So Far
 
@@ -14,6 +14,7 @@ The first minute has stronger evidence than the original baseline: launch presen
 - Debug live-run telemetry records traffic waves, decisions, collisions, active traffic, and terminal outcomes.
 - Tightened debug autoplay guards animated lane-change exposure with transition horizon and predicted traffic padding.
 - iPhone 17 Pro debug autoplay preserved 0 lane-change intersection probes across 191 transitions after the emergency fallback, and completed 4/5 sampled runs.
+- `GameSim --active-traffic-lifetime` now uses a deterministic transition-risk score and emergency move fallback, improving average diagnostic survival from 7.3s to 10.7s without changing default balance output.
 
 ## Not Locked
 
@@ -22,7 +23,7 @@ The first minute has stronger evidence than the original baseline: launch presen
 - Dynamic Island-class coverage is still debug-autoplay only, and it exposed 1/5 traffic-collision terminal after `no_transition_safe_slots` decisions.
 - Crash, capture, missed-exit, retry, and return-to-menu outcomes have not been fully matrix-validated.
 - First escape to Starter Bike unlock to `USE BIKE` to 405 Afterburn has not been validated.
-- Default GameSim still reports Level 1 as too easy, while the opt-in active-traffic lifetime diagnostic is too punitive and needs calibration.
+- Default GameSim still reports Level 1 as too easy, while the opt-in active-traffic lifetime diagnostic remains too punitive despite the first calibration pass.
 - Placeholder art and release-device layout/performance checks remain outside the first-minute lock.
 
 ## Current Gate

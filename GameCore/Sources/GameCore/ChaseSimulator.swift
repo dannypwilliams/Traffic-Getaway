@@ -530,8 +530,15 @@ public enum ChaseSimulator {
             configuration: transitionSafetyConfiguration(for: vehicle)
         ).sorted()
         guard !transitionSafeCandidates.isEmpty else {
-            if reachableCandidates.contains(current) {
-                return (current, false, "no transition-safe slot")
+            if let emergencyTarget = emergencyTransitionTarget(
+                from: current,
+                reachableCandidates: reachableCandidates,
+                vehicle: vehicle,
+                exitActive: exitActive,
+                exitSide: exitSide,
+                activeHazards: activeHazards
+            ) {
+                return (emergencyTarget, true, nil)
             }
             return (nil, false, "no transition-safe slot")
         }
@@ -554,6 +561,57 @@ public enum ChaseSimulator {
         }
         let risky = target.map { abs($0 - current) <= 2 && $0 != current } ?? false
         return (target, risky, nil)
+    }
+
+    private static func emergencyTransitionTarget(
+        from current: Int,
+        reachableCandidates: [Int],
+        vehicle: VehicleDefinition,
+        exitActive: Bool,
+        exitSide: ExitSide,
+        activeHazards: [TrafficHazardSnapshot]
+    ) -> Int? {
+        let configuration = transitionSafetyConfiguration(for: vehicle)
+        let currentRisk = TrafficSafetyAnalyzer.transitionRiskScore(
+            from: current,
+            to: current,
+            vehicleClass: vehicle.vehicleClass,
+            hazards: activeHazards,
+            configuration: configuration
+        )
+        guard currentRisk > 0 else { return nil }
+
+        let desired: Int
+        if exitActive {
+            let targetSlots = LaneModel.exitSlots(for: exitSide, vehicleClass: vehicle.vehicleClass)
+            desired = exitSide == .left ? targetSlots.min() ?? 0 : targetSlots.max() ?? (LaneModel.slotCount - 1)
+        } else {
+            desired = LaneModel.startSlot
+        }
+
+        return reachableCandidates
+            .filter { $0 != current }
+            .compactMap { candidate -> (slot: Int, risk: Double, routeScore: Int)? in
+                let risk = TrafficSafetyAnalyzer.transitionRiskScore(
+                    from: current,
+                    to: candidate,
+                    vehicleClass: vehicle.vehicleClass,
+                    hazards: activeHazards,
+                    configuration: configuration
+                )
+                guard risk < currentRisk else { return nil }
+                return (slot: candidate, risk: risk, routeScore: abs(candidate - desired))
+            }
+            .min { lhs, rhs in
+                if abs(lhs.risk - rhs.risk) > 0.001 {
+                    return lhs.risk < rhs.risk
+                }
+                if lhs.routeScore != rhs.routeScore {
+                    return lhs.routeScore < rhs.routeScore
+                }
+                return lhs.slot < rhs.slot
+            }?
+            .slot
     }
 
     private static func reachableSlots(vehicle: VehicleDefinition, boosted: Bool) -> Int {
@@ -687,7 +745,7 @@ public enum ChaseSimulator {
 
     private static func transitionSafetyConfiguration(for vehicle: VehicleDefinition) -> TrafficTransitionSafetyConfiguration {
         TrafficTransitionSafetyConfiguration(
-            laneChangeDuration: vehicle.vehicleClass == .motorcycle ? 0.24 : 0.3,
+            laneChangeDuration: vehicle.vehicleClass == .motorcycle ? 0.13 : 0.18,
             predictionHorizon: 0.3,
             playerHeight: vehicle.vehicleClass == .motorcycle ? 62 : 72,
             verticalPadding: 10

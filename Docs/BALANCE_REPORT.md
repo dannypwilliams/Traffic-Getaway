@@ -44,16 +44,11 @@ After core fixes:
 Active-traffic lifetime diagnostic:
 
 - Command: `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`.
-- Avg survival: 7.3s.
-- Median survival: 6.5s.
-- First crash p10/p50/p90: 4.8s / 6.5s / 11.5s.
-- Exit appeared/reached/completed: 0.0% / 0.0% / 0.0%.
-- Near misses: 2.1/run.
-- Avg max combo: 1.9.
-- Avg cash/XP: 58 / 33.
-- Unfair collision estimate: 33.3%.
-- Top failure: `traffic_collision:6668`.
-- Read: this opt-in mode is a diagnostic bound, not a balance source. It models active on-screen traffic lifetime and transition checks deterministically, and this calibration pass improved average survival from 5.1s to 7.3s. It still overcorrects versus the tightened live autoplay matrix.
+- Before this calibration: avg survival 7.3s, median survival 6.5s, exit appeared/reached/completed 0.0% / 0.0% / 0.0%, near misses 2.1/run, avg cash/XP 58 / 33.
+- After this calibration: avg survival 10.7s, median survival 8.8s, first crash p10/p50/p90 4.8s / 8.8s / 19.8s, exit appeared/reached/completed 0.4% / 0.4% / 0.3%, near misses 2.8/run, avg max combo 2.1, avg cash/XP 75 / 40.
+- Top failure after calibration: `traffic_collision:4032`.
+- Unfair collision estimate after calibration: 59.4%.
+- Read: this opt-in mode is a diagnostic bound, not a balance source. It now uses deterministic transition-risk scoring and a strict emergency movement comparison, improving average survival from 7.3s to 10.7s. It still overcorrects versus the tightened live autoplay matrix.
 
 Live debug-autoplay matrix after telemetry improvements:
 
@@ -181,7 +176,7 @@ Dynamic Island emergency-transition debug-autoplay matrix:
 
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Default GameSim over-completes at 99.1%, tightened iPhone 17e debug autoplay over-completes at 5/5 escapes, iPhone 17 Pro debug autoplay is now 4/5 after emergency transition handling, and the opt-in active-traffic lifetime diagnostic overcorrects to 0.0% completion. Do not tune rewards or density from either simulation mode alone; first calibrate active traffic lifetime against human/live evidence.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Default GameSim over-completes at 99.1%, tightened iPhone 17e debug autoplay over-completes at 5/5 escapes, iPhone 17 Pro debug autoplay is now 4/5 after emergency transition handling, and the opt-in active-traffic lifetime diagnostic still overcorrects to 0.3% completion after its first calibration pass. Do not tune rewards or density from either simulation mode alone; first calibrate active traffic lifetime against human/live evidence.
 
 ## Next
 

@@ -127,6 +127,45 @@ final class GameCoreTests: XCTestCase {
         XCTAssertTrue(safe.contains(target))
     }
 
+    func testTransitionRiskScoresEmergencyMoveBelowStayingPut() {
+        let hazards = [
+            TrafficHazardSnapshot(
+                lane: LaneModel.startLane,
+                laneSpan: 1,
+                type: .sedan,
+                y: 120,
+                height: 86,
+                speed: 360,
+                isRoadblock: false
+            )
+        ]
+        let target = LaneModel.startSlot + 2
+        let configuration = TrafficTransitionSafetyConfiguration(
+            laneChangeDuration: 0.18,
+            predictionHorizon: 0.3,
+            playerHeight: 72,
+            verticalPadding: 10
+        )
+
+        let stayRisk = TrafficSafetyAnalyzer.transitionRiskScore(
+            from: LaneModel.startSlot,
+            to: LaneModel.startSlot,
+            vehicleClass: .car,
+            hazards: hazards,
+            configuration: configuration
+        )
+        let moveRisk = TrafficSafetyAnalyzer.transitionRiskScore(
+            from: LaneModel.startSlot,
+            to: target,
+            vehicleClass: .car,
+            hazards: hazards,
+            configuration: configuration
+        )
+
+        XCTAssertGreaterThan(stayRisk, 0)
+        XCTAssertLessThan(moveRisk, stayRisk)
+    }
+
     func testSimulationIsDeterministic() throws {
         let level = try XCTUnwrap(LevelCatalog.level(id: "la_01"))
         let vehicle = VehicleCatalog.vehicle(id: VehicleCatalog.starterCarID)

@@ -31,6 +31,7 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - Dynamic Island read: the transition-path fix held, but 2/5 traffic collisions show that device-shape/live timing sensitivity is still not locked.
 - A strict emergency-transition fallback was added to debug autoplay and rerun on iPhone 17 Pro. It improved the Dynamic Island sample to 4/5 escapes, 38.4s average terminal time, 42.4s median terminal time, 15.8 near misses/run, 0 lane-change intersection probes across 191 transitions, 1 `emergency_move`, and 19 `no_transition_safe_slots` decisions.
 - Emergency-transition read: the fallback helps when strict transition filtering would freeze in a dangerous lane, but the remaining 1/5 traffic collision means this is not first-minute lock evidence.
+- The active-traffic lifetime GameSim diagnostic was partially calibrated from the live transition evidence. It now uses deterministic transition-risk scoring and an emergency movement comparison, improving average survival from 7.3s to 10.7s, but it remains much too punitive versus live debug autoplay.
 - The final tutorial exit-ramp page had an impossible sign-rendering gate from an older six-page flow. The current build now renders `EXIT RIGHT` on the five-step final page and can auto-advance after the exit-side practice predicate and read gate are satisfied.
 - No full clean-install tutorial matrix or human-controlled terminal outcome matrix was performed in this pass.
 
@@ -65,6 +66,7 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/summary.md`
 - `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/telemetry/`
 - `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/notes.md`
+- `PlaytestArtifacts/2026-06-23-gamesim-active-lifetime-calibration/notes.md`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`
