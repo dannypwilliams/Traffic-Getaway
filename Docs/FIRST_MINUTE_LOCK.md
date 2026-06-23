@@ -4,7 +4,7 @@
 
 Not locked.
 
-The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, tightened debug autoplay can escape Sunset Merge 5/5 times on iPhone 17e, Dynamic Island-class debug autoplay improved to 4/5 with a strict emergency-transition fallback, passive no-input play now resolves as police capture on both sampled devices, the Starter Bike result-screen payoff is screenshot-verified, and the active-traffic GameSim diagnostic has begun moving toward live behavior. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, tap-through Starter Bike payoff flow, and GameSim/live model ownership are incomplete.
+The first minute has stronger evidence than the original baseline: launch presentation is fixed in simulator capture, fake reward actions are hidden, debug live telemetry exists, tightened debug autoplay can escape Sunset Merge 5/5 times on iPhone 17e, Dynamic Island-class debug autoplay improved to 4/5 with a strict emergency-transition fallback, passive no-input play now resolves as police capture on both sampled devices, the Starter Bike result-screen payoff is screenshot-verified, `USE BIKE` tap-through into 405 Afterburn is smoke-validated, and the active-traffic GameSim diagnostic has begun moving toward live behavior. It is still not locked because the human-controlled matrix, full tutorial matrix, result-outcome matrix, full 405 Afterburn motorcycle validation, and GameSim/live model ownership are incomplete.
 
 ## Locked So Far
 
@@ -16,6 +16,7 @@ The first minute has stronger evidence than the original baseline: launch presen
 - iPhone 17 Pro debug autoplay preserved 0 lane-change intersection probes across 191 transitions after the emergency fallback, and completed 4/5 sampled runs.
 - Passive no-input manual matrices now end as police capture pressure on iPhone 17e and iPhone 17 Pro, each with 5/5 `police_caught` terminals at 9.0s.
 - First Sunset Merge escape payoff is visually verified through the result screen: `ESCAPED`, `Starter Bike unlocked: split lanes`, primary `USE BIKE`, selected `starter_bike`, completed `la_01`, and debug defaults cleared after capture.
+- `USE BIKE` tap-through is smoke-validated: real button click launched `la_02` / 405 Afterburn with `starter_bike`, and active input recorded motorcycle movement into interstitial split slot `11`.
 - `GameSim --active-traffic-lifetime` now uses a deterministic transition-risk score and emergency move fallback, improving average diagnostic survival from 7.3s to 10.7s without changing default balance output.
 
 ## Not Locked
@@ -25,7 +26,7 @@ The first minute has stronger evidence than the original baseline: launch presen
 - Active-steering manual Sunset Merge runs have not been captured after tightened transition clearance.
 - Dynamic Island-class active steering coverage is still missing, and debug autoplay exposed 1/5 traffic-collision terminal after `no_transition_safe_slots` decisions.
 - Crash, capture, missed-exit, retry, and return-to-menu outcomes have not been fully matrix-validated.
-- Tap-through from the `USE BIKE` payoff into 405 Afterburn and an active-input Starter Bike lane-splitting run has not been validated.
+- 405 Afterburn has only a Starter Bike tap-through smoke validation; no full active-input completion or balance matrix exists yet.
 - Default GameSim still reports Level 1 as too easy, while the opt-in active-traffic lifetime diagnostic remains too punitive despite the first calibration pass.
 - Placeholder art and release-device layout/performance checks remain outside the first-minute lock.
 

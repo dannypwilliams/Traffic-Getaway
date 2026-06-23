@@ -8,7 +8,7 @@ Validate the tightened transition-clearance model with human input before tuning
 
 1. Capture active-steering manual iPhone 17e runs; passive no-input coverage now exists and is green.
 2. Capture active-steering manual Dynamic Island-class runs; passive no-input iPhone 17 Pro coverage now exists and is green.
-3. Tap through from the verified `USE BIKE` payoff into 405 Afterburn and capture an active-input Starter Bike lane-splitting smoke run.
+3. Run a fuller 405 Afterburn Starter Bike completion/balance pass; `USE BIKE` tap-through and split-slot active input are now smoke-validated.
 4. Continue calibrating `GameSim --active-traffic-lifetime` against live telemetry; the first calibration improved average survival from 7.3s to 10.7s, but the mode is still too punitive.
 5. Investigate the remaining iPhone 17 Pro debug-autoplay traffic collision after `no_transition_safe_slots`; the strict emergency fallback reduced this from 2/5 to 1/5.
 6. Retune Level 1 completion, near misses, and rewards only after sim/live state agrees.

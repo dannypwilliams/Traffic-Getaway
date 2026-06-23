@@ -2,7 +2,7 @@
 
 ## Milestone
 
-First-minute reliability, deterministic-core repair, live telemetry, live lane-change transition diagnosis, active-traffic diagnostic calibration, and first-escape payoff evidence: partial. Tightened debug autoplay now clears the sampled iPhone 17e first minute, Dynamic Island debug autoplay is improved but not locked, the Starter Bike result-screen payoff is screenshot-verified, and GameSim's opt-in active-traffic lifetime diagnostic has moved toward live evidence but remains too punitive for balance.
+First-minute reliability, deterministic-core repair, live telemetry, live lane-change transition diagnosis, active-traffic diagnostic calibration, and first-escape payoff evidence: partial. Tightened debug autoplay now clears the sampled iPhone 17e first minute, Dynamic Island debug autoplay is improved but not locked, the Starter Bike result-screen payoff and `USE BIKE` tap-through into 405 Afterburn are smoke-validated, and GameSim's opt-in active-traffic lifetime diagnostic has moved toward live evidence but remains too punitive for balance.
 
 ## Verified baseline
 
@@ -62,6 +62,8 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `scripts/capture_progression_payoff.py`: added a repeatable simulator capture script for the first-escape Starter Bike payoff screenshot, metadata, save-state proof, and debug-default cleanup.
 - `scripts/capture_live_telemetry.py`: added the result-scenario debug key to cleanup and hardened remaining debug-default cleanup with simulator shutdown/boot plist fallback.
 - Captured the first Sunset Merge escape payoff on iPhone 17e; the result screen shows `ESCAPED`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`, with `starter_bike` selected and `la_01` completed in save state afterward.
+- `scripts/validate_use_bike_tap_through.py`: added a telemetry validator for the real `USE BIKE` tap-through smoke artifact.
+- Captured `USE BIKE` tap-through on iPhone 17e via the visible Simulator UI; telemetry proves 405 Afterburn launched with `starter_bike` as a motorcycle and active input reached interstitial split slot `11`.
 
 ## Tests run
 
@@ -156,6 +158,9 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"` after first-escape payoff tooling: passed, 99 unique IDs.
 - `python3 scripts/capture_progression_payoff.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --output-dir PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike`: passed.
 - Direct plist/save-state verification confirmed selected `starter_bike`, unlocked `[starter_compact, starter_bike]`, completed `[la_01]`, `totalRuns=1`, and no remaining debug defaults after the payoff capture.
+- `python3 -m py_compile scripts/capture_progression_payoff.py scripts/validate_use_bike_tap_through.py`: passed.
+- `python3 scripts/validate_use_bike_tap_through.py PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-telemetry.jsonl`: passed; 26 events, `run_started` `la_02` / `starter_bike` / `motorcycle`, 2 lane changes, 1 split-slot lane change.
+- Direct plist verification confirmed no remaining `TrafficGetaway.debug.*` defaults after the tap-through smoke run.
 
 ## Simulator/device evidence
 
@@ -224,7 +229,9 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - Passive police-capture matrix read: passive/no-input play now resolves as police capture pressure on both sampled devices before traffic or roadblocks become terminal.
 - Starter Bike payoff capture: `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/starter-bike-use-bike-results.png`.
 - Starter Bike payoff notes: `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/notes.md`.
-- Starter Bike payoff read: the first Sunset Merge escape payoff now has visual and save-state proof for result-screen unlock copy, selected Starter Bike state, completed Sunset Merge state, and primary `USE BIKE`; tap-through into 405 Afterburn is not yet validated.
+- Starter Bike payoff read: the first Sunset Merge escape payoff now has visual and save-state proof for result-screen unlock copy, selected Starter Bike state, completed Sunset Merge state, and primary `USE BIKE`.
+- `USE BIKE` tap-through artifact: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/`.
+- `USE BIKE` tap-through read: the real result-button click launched 405 Afterburn with `starter_bike`; telemetry recorded `vehicleClass=motorcycle` and an active-input lane change into split slot `11`. This is not a full 405 Afterburn completion or balance matrix.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -252,14 +259,14 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 | Active-traffic GameSim diagnostic | Not present | Opt-in mode exists; first calibration improved avg survival from 7.3s to 10.7s, but 0.3% completion remains too punitive |
 | Dynamic Island debug autoplay | Not present | iPhone 17 Pro tightened transition clearance: 3/5 completed. Emergency fallback: 4/5 completed, 42.4s median terminal time, 0 lane-change intersection probes, 1 traffic collision |
 | Passive no-input outcome | Traffic/roadblock terminals | iPhone 17e and iPhone 17 Pro post-fix matrices both produce 5/5 `police_caught` terminals at 9.0s with autoplay disabled |
-| First escape payoff | Partially validated | Result-screen screenshot shows `ESCAPED`, `Starter Bike unlocked: split lanes`, and `USE BIKE`; save state selects `starter_bike`, completes `la_01`, and leaves debug defaults cleared |
+| First escape payoff | Smoke validated | Result-screen screenshot shows `ESCAPED`, `Starter Bike unlocked: split lanes`, and `USE BIKE`; save state selects `starter_bike`, completes `la_01`, leaves debug defaults cleared, and real tap-through starts `la_02` with motorcycle split-slot input |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
 - P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency fallback, passive no-input manual matrices are captured, but active steering validation is still missing and the active-traffic diagnostic still overcorrects.
-- P1 milestone blocker: Starter Bike payoff is verified through the result screen and save state, but tap-through from `USE BIKE` into 405 Afterburn has not been validated.
+- P1 milestone blocker: Starter Bike payoff is smoke-validated through `USE BIKE` into 405 Afterburn, but full 405 Afterburn active-input completion and balance have not been validated.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 
@@ -272,4 +279,4 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 
 ## Next highest-priority action
 
-Tap `USE BIKE` from the verified Starter Bike payoff into 405 Afterburn and capture an active-input Starter Bike lane-splitting smoke run, then capture active-steering iPhone 17e and Dynamic Island-class matrices with the tightened transition-clearance and passive-capture build. Continue calibrating `GameSim --active-traffic-lifetime` against live telemetry before retuning Sunset Merge.
+Capture active-steering iPhone 17e and Dynamic Island-class matrices with the tightened transition-clearance and passive-capture build, then run a fuller 405 Afterburn Starter Bike completion/balance pass. Continue calibrating `GameSim --active-traffic-lifetime` against live telemetry before retuning Sunset Merge.

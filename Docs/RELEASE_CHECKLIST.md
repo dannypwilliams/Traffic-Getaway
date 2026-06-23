@@ -14,9 +14,10 @@
 - [x] No white launch frame in latest iPhone 17e capture.
 - [x] Fake revive/cash-double actions hidden by default.
 - [x] Starter Bike unlock/result payoff screenshot and save-state verification.
+- [x] `USE BIKE` tap-through into 405 Afterburn smoke validation.
 - [ ] Full tutorial completion matrix.
 - [ ] Crash/capture/missed-exit/retry/manual result validation.
-- [ ] Tap-through from `USE BIKE` into 405 Afterburn validation.
+- [ ] Full 405 Afterburn active-input completion/balance matrix.
 
 ## Balance
 

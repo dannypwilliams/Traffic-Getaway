@@ -1,0 +1,25 @@
+{
+  "bundle_id": "com.danielwilliams.TrafficGetaway",
+  "device": "8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E",
+  "event_count": 26,
+  "first_split_slot_event": {
+    "distance": 284,
+    "nearMisses": 0,
+    "playerLane": 6,
+    "playerSlot": 11,
+    "score": 296,
+    "time": 8.161507791666372
+  },
+  "lane_changed_events": 2,
+  "run_started": {
+    "levelID": "la_02",
+    "playerSlot": 10,
+    "time": 0,
+    "vehicleClass": "motorcycle",
+    "vehicleID": "starter_bike"
+  },
+  "screenshot": "PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-active-input.png",
+  "source_telemetry": "/Users/danielwilliams/Library/Developer/CoreSimulator/Devices/8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E/data/Containers/Data/Application/654145D4-914D-46E5-A369-88EB99A89C0E/Documents/RunTelemetry/2026-06-22_22-28-14-la_02-starter_bike-13253805439186582232.jsonl",
+  "split_slot_lane_changed_events": 1,
+  "telemetry": "PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-telemetry.jsonl"
+}

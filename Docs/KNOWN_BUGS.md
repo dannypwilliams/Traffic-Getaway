@@ -32,3 +32,4 @@
 - The active-traffic GameSim diagnostic now uses live-like transition timing and a deterministic transition-risk score; default GameSim remains unchanged while active-lifetime average survival improved to 10.7s.
 - Manual direct-start telemetry capture works with debug autoplay disabled, and passive matrices were captured on iPhone 17e and iPhone 17 Pro.
 - Passive no-input first-minute runs now end as police capture pressure on both sampled devices: iPhone 17e and iPhone 17 Pro each produced 5/5 `police_caught` manual no-input terminals at 9.0s average with autoplay disabled.
+- Starter Bike payoff tap-through is smoke-validated: the real `USE BIKE` button starts 405 Afterburn with `starter_bike`, and active input can move into an interstitial motorcycle slot.

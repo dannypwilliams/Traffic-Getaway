@@ -32,6 +32,7 @@ Partial.
 - Passive police-capture fix was captured on iPhone 17e: 5 no-input manual runs, 0/5 completed, `police_caught` terminal in all 5, 9.0s average terminal time, 0 autoplay decisions.
 - Passive police-capture fix was captured on iPhone 17 Pro: 5 no-input manual runs, 0/5 completed, `police_caught` terminal in all 5, 9.0s average terminal time, 0 autoplay decisions.
 - Debug first-escape payoff scenario captured on iPhone 17e. The screenshot shows `ESCAPED`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`; save-state verification showed `selectedCarID=starter_bike`, unlocked `[starter_compact, starter_bike]`, completed `[la_01]`, `totalRuns=1`, and debug defaults cleared.
+- `USE BIKE` tap-through smoke-validated on iPhone 17e with the real ResultsScene button. Telemetry recorded `run_started.levelID=la_02`, `vehicleID=starter_bike`, `vehicleClass=motorcycle`, and active input produced a `lane_changed` event into interstitial split slot `11`.
 
 ## Evidence
 
@@ -80,6 +81,10 @@ Partial.
 - Starter Bike payoff screenshot: `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/starter-bike-use-bike-results.png`
 - Starter Bike payoff metadata: `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/metadata.txt`
 - Starter Bike payoff notes: `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/notes.md`
+- `USE BIKE` tap-through screenshot: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-active-input.png`
+- `USE BIKE` tap-through telemetry: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-telemetry.jsonl`
+- `USE BIKE` tap-through metadata: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/metadata.json`
+- `USE BIKE` tap-through notes: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/notes.md`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -92,7 +97,7 @@ Partial.
 - Active human steering matrices; current manual active-input matrices are still missing.
 - Slow taps, rapid taps, repeated right movement, extra movement after target.
 - Crash, capture, missed-exit, retry, return to menu.
-- Tap-through from `USE BIKE` into 405 Afterburn and active-input motorcycle lane-splitting run.
+- Full 405 Afterburn completion/balance matrix; current evidence is only a tap-through and active-input split-slot smoke validation.
 - Human-controlled live matrix; debug autoplay is useful for repeatability but is not a proxy for player input yet.
 
 ## Current First-Minute Fixes
@@ -116,6 +121,7 @@ Partial.
 - Passive manual no-input matrices now pass on iPhone 17e and iPhone 17 Pro after the passive police-capture threshold; both sampled devices ended 5/5 runs as `police_caught` at 9.0s with autoplay disabled.
 - Final tutorial exit-ramp signage is visible on the current five-step flow, and the final lesson advances automatically after the exit-side predicate and read gate are both satisfied.
 - Debug first-escape payoff capture now proves the result-screen unlock copy, selected Starter Bike save state, completed Sunset Merge save state, and primary `USE BIKE` affordance.
+- The real `USE BIKE` button now has smoke evidence for launching 405 Afterburn with Starter Bike selected and accepting active split-slot motorcycle input.
 
 ## Manual Capture Command
 

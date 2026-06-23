@@ -39,7 +39,8 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - Passive read after fix: the passive-driver outcome now reads as police capture pressure before traffic or roadblocks can become the terminal failure on the sampled devices.
 - The final tutorial exit-ramp page had an impossible sign-rendering gate from an older six-page flow. The current build now renders `EXIT RIGHT` on the five-step final page and can auto-advance after the exit-side practice predicate and read gate are satisfied.
 - A debug first-escape payoff capture on iPhone 17e showed `ESCAPED`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`; save-state verification showed `selectedCarID=starter_bike`, unlocked `[starter_compact, starter_bike]`, completed `[la_01]`, `totalRuns=1`, and no remaining debug defaults.
-- No full clean-install tutorial matrix, human-controlled terminal outcome matrix, or tap-through from `USE BIKE` into 405 Afterburn was performed in this pass.
+- A real `USE BIKE` tap-through was smoke-tested on iPhone 17e. The button launched 405 Afterburn, telemetry recorded `levelID=la_02`, `vehicleID=starter_bike`, `vehicleClass=motorcycle`, and active input produced a `lane_changed` event into interstitial split slot `11`.
+- No full clean-install tutorial matrix, human-controlled terminal outcome matrix, or full 405 Afterburn completion/balance matrix was performed in this pass.
 
 ## Evidence
 
@@ -89,6 +90,10 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/starter-bike-use-bike-results.png`
 - `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/metadata.txt`
 - `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/notes.md`
+- `PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-active-input.png`
+- `PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-telemetry.jsonl`
+- `PlaytestArtifacts/2026-06-23-use-bike-tap-through/metadata.json`
+- `PlaytestArtifacts/2026-06-23-use-bike-tap-through/notes.md`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`
