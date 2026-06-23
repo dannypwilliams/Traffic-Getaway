@@ -87,7 +87,7 @@ def configure_debug_defaults(container: Path, bundle_id: str, level_id: str, veh
     write_preferences(path, preferences)
 
 
-def clear_debug_defaults(container: Path, bundle_id: str) -> None:
+def clear_debug_defaults(device: str, container: Path, bundle_id: str) -> None:
     keys = [
         "TrafficGetaway.debug.autoStartLevelID",
         "TrafficGetaway.debug.autoStartVehicleID",
@@ -99,6 +99,10 @@ def clear_debug_defaults(container: Path, bundle_id: str) -> None:
     for key in keys:
         preferences.pop(key, None)
     write_preferences(path, preferences)
+    simctl(device, "spawn", "killall", "cfprefsd", check=False)
+    remaining = [key for key in keys if key in read_preferences(path)]
+    if remaining:
+        raise RuntimeError(f"Debug defaults still present after cleanup: {', '.join(remaining)}")
 
 
 def capture_runs(args: argparse.Namespace) -> list[Path]:
@@ -145,7 +149,7 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
         simctl(args.device, "terminate", args.bundle_id, check=False)
         if args.clear_defaults:
             time.sleep(0.5)
-            clear_debug_defaults(container, args.bundle_id)
+            clear_debug_defaults(args.device, container, args.bundle_id)
 
     return captured
 

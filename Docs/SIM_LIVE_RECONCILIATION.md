@@ -168,6 +168,34 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 - Calibration change: `TrafficSafetyAnalyzer.transitionRiskScore` now provides a deterministic lower-risk emergency comparison, and the active diagnostic uses live-like transition timing for the starter car and motorcycle. Default GameSim output did not change.
 - Interpretation: the opt-in diagnostic now moves in the same direction as the tightened live safety work, but the geometry/timing calibration is still not credible enough for balance. It still overcorrects relative to the tightened live autoplay matrix, which escaped 5/5 iPhone 17e runs.
 
+### Passive Manual iPhone 17e Matrix
+
+- Capture command: `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-manual-passive-17e-matrix/telemetry --timeout 120`
+- Summary: `PlaytestArtifacts/2026-06-23-manual-passive-17e-matrix/summary.md`
+- Simulator: iPhone 17e, iOS 26.5.
+- Runs: 5.
+- Completed: 0/5.
+- Avg terminal time: 21.6s.
+- Median terminal time: 21.5s.
+- Terminal reasons: `traffic` 5.
+- Autoplay decisions: 0.
+- Collision analyses: 5/5.
+- Interpretation: passive no-input play ends in traffic crashes around 21-22s. The passive-driver target remains red because the outcome is not primarily capture pressure.
+
+### Passive Manual iPhone 17 Pro Matrix
+
+- Capture command: `python3 -u scripts/capture_live_telemetry.py --device 90D3514A-BDE2-412C-8238-8ECC17BD86B6 --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/telemetry --timeout 120`
+- Summary: `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/summary.md`
+- Simulator: iPhone 17 Pro, iOS 26.5.
+- Runs: 5.
+- Completed: 0/5.
+- Avg terminal time: 32.9s.
+- Median terminal time: 23.7s.
+- Terminal reasons: `traffic` 4, `roadblock` 1.
+- Autoplay decisions: 0.
+- Collision analyses: 5/5.
+- Interpretation: Dynamic Island passive no-input runs are more variable, including one missed-exit-then-crash sample, but still fail as traffic/roadblock rather than capture pressure.
+
 ### Dynamic Island Transition-Clearance Matrix
 
 - Capture command: `python3 -u scripts/capture_live_telemetry.py --device 90D3514A-BDE2-412C-8238-8ECC17BD86B6 --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-dynamic-island-transition-clearance/telemetry --timeout 120`
@@ -244,5 +272,6 @@ The `OPEN PATHS` debug preference now draws lane centers, slot centers, safe-slo
 - Capture one human-controlled iPhone 17e matrix with the tightened transition-clearance build.
 - Capture human-controlled iPhone 17e and Dynamic Island-class runs with the same live-safety behavior.
 - Use `scripts/capture_live_telemetry.py --manual` to direct-start the level without debug autoplay and wait for `run_ended` telemetry.
+- Passive no-input manual matrices are captured; next manual evidence should include active human steering styles.
 - Calibrate `GameSim --active-traffic-lifetime` against tightened live telemetry before using it for balance.
 - Compare live terminal outcomes, active traffic, collision rectangles, near misses, and exit progress against GameSim before retuning.

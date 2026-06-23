@@ -27,6 +27,8 @@ Partial.
 - Dynamic Island-class debug autoplay was rerun after adding a strict emergency-transition fallback. It completed 4/5 runs, kept lane-change intersection probes at 0 across 191 transitions, recorded 1 `emergency_move`, and reduced terminal traffic collisions from 2 to 1.
 - `GameSim --active-traffic-lifetime` was partially calibrated with deterministic transition-risk scoring and a strict emergency movement comparison. The diagnostic improved from 7.3s to 10.7s average survival, but remains too punitive for balance tuning.
 - `scripts/capture_live_telemetry.py --manual` now supports direct-start manual telemetry capture without enabling debug autoplay.
+- iPhone 17e passive manual matrix captured 5 no-input runs: 0/5 completed, traffic terminal in all 5, 21.6s average terminal time, 0 autoplay decisions, collision analysis in 5/5.
+- iPhone 17 Pro passive manual matrix captured 5 no-input runs: 0/5 completed, 4 traffic terminals and 1 roadblock terminal, 32.9s average terminal time, 0 autoplay decisions, collision analysis in 5/5.
 
 ## Evidence
 
@@ -60,6 +62,12 @@ Partial.
 - Dynamic Island emergency-transition telemetry: `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/telemetry/`
 - Dynamic Island emergency-transition notes: `PlaytestArtifacts/2026-06-23-dynamic-island-emergency-transition/notes.md`
 - GameSim active-lifetime calibration notes: `PlaytestArtifacts/2026-06-23-gamesim-active-lifetime-calibration/notes.md`
+- Passive iPhone 17e manual summary: `PlaytestArtifacts/2026-06-23-manual-passive-17e-matrix/summary.md`
+- Passive iPhone 17e manual telemetry: `PlaytestArtifacts/2026-06-23-manual-passive-17e-matrix/telemetry/`
+- Passive iPhone 17e manual notes: `PlaytestArtifacts/2026-06-23-manual-passive-17e-matrix/notes.md`
+- Passive iPhone 17 Pro manual summary: `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/summary.md`
+- Passive iPhone 17 Pro manual telemetry: `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/telemetry/`
+- Passive iPhone 17 Pro manual notes: `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/notes.md`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -69,7 +77,7 @@ Partial.
 
 - 20 clean-install tutorial completions.
 - Compact and large-height simulator matrices.
-- Human-controlled Dynamic Island validation; current Dynamic Island evidence is debug-autoplay only.
+- Active human steering matrices; current manual matrices are passive no-input only.
 - Slow taps, rapid taps, repeated right movement, extra movement after target.
 - Crash, capture, missed-exit, retry, return to menu.
 - First escape to Starter Bike unlock to `USE BIKE` to 405 Afterburn.
@@ -93,6 +101,7 @@ Partial.
 - Debug autoplay now has a strict emergency fallback for cases where staying is predicted dangerous and every normal transition candidate is rejected.
 - The active-lifetime GameSim diagnostic now has a deterministic risk-score equivalent for emergency movement comparison.
 - Direct-start manual capture mode now exists for first-minute human matrices.
+- Passive manual no-input matrices now exist for iPhone 17e and iPhone 17 Pro; both remain red because passive play ends in traffic/roadblock crashes instead of capture pressure.
 - Final tutorial exit-ramp signage is visible on the current five-step flow, and the final lesson advances automatically after the exit-side predicate and read gate are both satisfied.
 
 ## Manual Capture Command

@@ -4,6 +4,7 @@
 
 - Sunset Merge balance is far outside target: about 99% sim completion, about 35 near misses/run, and about 998 cash/run.
 - Sim/live behavior is not fully reconciled; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after a strict emergency fallback, and the active-traffic GameSim diagnostic improved from 7.3s to 10.7s average survival, but human-controlled validation and GameSim model ownership are still unresolved.
+- Passive no-input first-minute runs end in traffic/roadblock crashes instead of capture pressure: iPhone 17e 0/5 traffic at 21.6s average, iPhone 17 Pro 0/5 with 4 traffic and 1 roadblock at 32.9s average.
 
 ## P1 Milestone Blockers
 
@@ -30,3 +31,4 @@
 - Final tutorial exit-ramp signage is visible again on the current five-step tutorial, and the final practice can advance from the explicit exit-side predicate after the read gate opens.
 - Debug autoplay has a strict emergency transition fallback that improved the sampled iPhone 17 Pro matrix from 3/5 to 4/5 escapes without lane-change intersection probes.
 - The active-traffic GameSim diagnostic now uses live-like transition timing and a deterministic transition-risk score; default GameSim remains unchanged while active-lifetime average survival improved to 10.7s.
+- Manual direct-start telemetry capture works with debug autoplay disabled, and passive matrices were captured on iPhone 17e and iPhone 17 Pro.

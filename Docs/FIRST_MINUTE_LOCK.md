@@ -20,7 +20,9 @@ The first minute has stronger evidence than the original baseline: launch presen
 
 - Tutorial completion without `SKIP` has not been matrix-validated.
 - Human-controlled Sunset Merge runs have not been captured after tightened transition clearance.
-- Dynamic Island-class coverage is still debug-autoplay only, and it exposed 1/5 traffic-collision terminal after `no_transition_safe_slots` decisions.
+- Active-steering manual Sunset Merge runs have not been captured after tightened transition clearance.
+- Passive no-input manual matrices on iPhone 17e and iPhone 17 Pro end in traffic/roadblock crashes rather than capture pressure.
+- Dynamic Island-class active steering coverage is still missing, and debug autoplay exposed 1/5 traffic-collision terminal after `no_transition_safe_slots` decisions.
 - Crash, capture, missed-exit, retry, and return-to-menu outcomes have not been fully matrix-validated.
 - First escape to Starter Bike unlock to `USE BIKE` to 405 Afterburn has not been validated.
 - Default GameSim still reports Level 1 as too easy, while the opt-in active-traffic lifetime diagnostic remains too punitive despite the first calibration pass.
@@ -28,4 +30,4 @@ The first minute has stronger evidence than the original baseline: launch presen
 
 ## Current Gate
 
-Capture human-controlled iPhone 17e and Dynamic Island-class first-minute runs with the tightened transition-clearance build. Use those results and the Dynamic Island debug-autoplay collisions to calibrate the active-traffic lifetime diagnostic before tuning Sunset Merge rewards, near misses, density, or completion rate.
+Capture active-steering iPhone 17e and Dynamic Island-class first-minute runs with the tightened transition-clearance build, then fix the passive no-input crash pattern so it reads as capture pressure. Use those results and the Dynamic Island debug-autoplay collisions to calibrate the active-traffic lifetime diagnostic before tuning Sunset Merge rewards, near misses, density, or completion rate.
