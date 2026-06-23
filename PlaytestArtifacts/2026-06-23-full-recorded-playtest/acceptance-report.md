@@ -4,7 +4,7 @@
 
 PARTIAL.
 
-The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, City Select / Level Select progression has recorded evidence, Garage/vehicle browsing has partial recorded evidence, relaunch/save restoration has partial recorded evidence, pause/restart-after-pause has recorded negative evidence, completion/reward UI has debug-assisted result evidence, and New York/Miami start gates have start-screen-only evidence. The required all-city/all-device recorded active-play matrix is not complete.
+The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, City Select / Level Select progression has recorded evidence, Garage/vehicle browsing has partial recorded evidence, relaunch/save restoration has partial recorded evidence, pause/restart-after-pause has recorded negative evidence, completion/reward UI has debug-assisted result evidence, and all non-`la_01` Starter Compact levels now have configured start-gate-only evidence. The required all-city/all-device recorded active-play matrix is not complete.
 
 ## Commit Range
 
@@ -16,10 +16,10 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 - Planned tests: 73
 - Passed: 20
 - Failed: 3
-- Partial: 10
+- Partial: 22
 - Blocked: 0
 - Invalid: 6
-- Not tested: 40
+- Not tested: 28
 - Valid active-input runs: 12
 - Valid complete-evidence runs counted for LA Starter Compact: 5
 - Valid complete-evidence runs counted for LA Starter Bike: 3
@@ -27,7 +27,7 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 ## Coverage
 
 - Device coverage: iPhone 17e has two completed recorded active-run slices plus one recorded retry functional session; iPhone 17 Pro has one Dynamic Island active sample that failed the safe-area check; no physical hardware.
-- City coverage: Los Angeles has completed Starter Compact and Starter Bike active-run slices for `la_01`; New York and Miami now have start-gate-only simulator evidence for `ny_01` and `mia_01`, but no active human-play runs, city progression, stress runs, or balance evidence.
+- City coverage: Los Angeles has completed Starter Compact and Starter Bike active-run slices for `la_01`; every remaining Starter Compact level now has configured start-gate-only simulator evidence, but New York/Miami still have no active human-play runs, city progression, stress runs, or balance evidence.
 - Vehicle coverage: Starter Compact and Starter Bike each have one completed iPhone 17e Los Angeles city slice. Garage browsing is partially recorded: selected Sunset Cruiser, Cars/Bikes tab switching, and locked Starter Bike messaging are proven, but alternate unlocked-vehicle selection is still unproven.
 - Save/relaunch coverage: partial. App termination/relaunch, true Home-screen background/foreground, and active-gameplay background/foreground are recorded. Active-gameplay foreground returned to a terminal `CAPTURED` result with telemetry, but the sample had 0 lane changes and full main-menu Level 2 XP restoration remains unproven.
 - Pause/restart-after-pause coverage: fail. Pre-game Settings opens and returns, but active gameplay exposes no app-level pause/resume/restart-after-pause path on iPhone 17e.

@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session, one Dynamic Island-class active sample, and one existing-save active progression sample. Fresh-install tutorial-to-run, existing-save attempt 03, active-gameplay background/foreground, and pause/settings probe samples exist but are invalid for balance because each recorded 0 lane changes. New York and Miami start-gate videos/screenshots exist, but they are start-screen-only and not balance evidence. A debug-assisted first-escape completion/reward result exists but is also not balance evidence because it is synthetic result UI, not a real active-input completion. Garage/vehicle browsing and relaunch restoration evidence exists, but it is not gameplay balance evidence; it shows the current save at `$443`, selected Sunset Cruiser, high score 741, and locked Starter Bike at `NEED $107 MORE`. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session, one Dynamic Island-class active sample, and one existing-save active progression sample. Fresh-install tutorial-to-run, existing-save attempt 03, active-gameplay background/foreground, and pause/settings probe samples exist but are invalid for balance because each recorded 0 lane changes. Configured start-gate videos/screenshots exist for every remaining Starter Compact level, but they are start-screen-only and not balance evidence. A debug-assisted first-escape completion/reward result exists but is also not balance evidence because it is synthetic result UI, not a real active-input completion. Garage/vehicle browsing and relaunch restoration evidence exists, but it is not gameplay balance evidence; it shows the current save at `$443`, selected Sunset Cruiser, high score 741, and locked Starter Bike at `NEED $107 MORE`. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -91,11 +91,11 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Functional read: valid completion/reward/unlock presentation evidence.
 - Balance use: invalid. It is not a real active-input completion, has no raw run telemetry, and should not inform completion rate, reward tuning, or fairness conclusions.
 
-## City Start-Gate Reference
+## City And Level Start-Gate Reference
 
-- New York: `ny_01` / Starter Compact start gate captured in `videos/city-2/2026-06-23_iphone17e_ny01_starter-compact_start-gate.mp4`.
-- Miami: `mia_01` / Starter Compact start gate captured in `videos/city-3/2026-06-23_iphone17e_mia01_starter-compact_start-gate.mp4`.
-- Functional read: these prove the debug direct-start path can present New York and Miami start screens on iPhone 17e with `waitForStartTap`.
+- Scope: every non-`la_01` Starter Compact level has configured start-gate video/screenshot evidence under `videos/city-*/*starter-compact_start-gate.mp4` and `screenshots/city-*/*starter-compact_start-gate.png`.
+- Functional read: these prove the debug direct-start path can present Los Angeles, New York, and Miami start screens on iPhone 17e with `waitForStartTap`.
+- Limitation: the visible start screen shows city and vehicle, not the exact level name, so level-specific proof depends on the corresponding debug-default probe log.
 - Balance use: invalid. No start tap, active input, raw run telemetry, result screen, traffic sample, or terminal outcome was captured.
 
 ## Simulation Comparison

@@ -7,10 +7,10 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 - Planned tests: 73
 - Passed: 20
 - Failed: 3
-- Partial: 10
+- Partial: 22
 - Blocked: 0
 - Invalid: 6
-- Not tested: 40
+- Not tested: 28
 - Valid active-input runs in this artifact set: 12
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 - Valid complete-evidence runs counted for LA Starter Bike requirement: 3
@@ -85,20 +85,20 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 | Level | City | Stage | Starter Compact Status | Starter Bike Status | Evidence |
 |---|---|---|---|---|---|
 | la_01 Sunset Merge | Los Angeles | early | pass | pass | Starter Compact requirement complete for iPhone 17e: five complete-evidence active runs plus one supplemental active run. Starter Bike requirement complete for iPhone 17e: three complete-evidence active runs. |
-| la_02 405 Afterburn | Los Angeles | middle | not tested | not tested | |
-| la_03 Valley Cut | Los Angeles | middle | not tested | not tested | |
-| la_04 Freeway Riot | Los Angeles | late | not tested | not tested | |
-| la_05 Last Exit West | Los Angeles | late | not tested | not tested | |
+| la_02 405 Afterburn | Los Angeles | middle | partial | not tested | Configured start-gate-only evidence: `videos/city-1/2026-06-23_iphone17e_la_02_starter-compact_start-gate.mp4`, `screenshots/city-1/2026-06-23_iphone17e_la_02_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_la_02_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| la_03 Valley Cut | Los Angeles | middle | partial | not tested | Configured start-gate-only evidence: `videos/city-1/2026-06-23_iphone17e_la_03_starter-compact_start-gate.mp4`, `screenshots/city-1/2026-06-23_iphone17e_la_03_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_la_03_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| la_04 Freeway Riot | Los Angeles | late | partial | not tested | Configured start-gate-only evidence: `videos/city-1/2026-06-23_iphone17e_la_04_starter-compact_start-gate.mp4`, `screenshots/city-1/2026-06-23_iphone17e_la_04_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_la_04_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| la_05 Last Exit West | Los Angeles | late | partial | not tested | Configured start-gate-only evidence: `videos/city-1/2026-06-23_iphone17e_la_05_starter-compact_start-gate.mp4`, `screenshots/city-1/2026-06-23_iphone17e_la_05_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_la_05_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
 | ny_01 Brooklyn Warmup | New York | early | partial | not tested | Start-gate-only evidence: `videos/city-2/2026-06-23_iphone17e_ny01_starter-compact_start-gate.mp4`, `screenshots/city-2/2026-06-23_iphone17e_ny01_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_ny01_starter-compact_start-gate_probe.log`. No active run, telemetry summary, result screen, or balance evidence. |
-| ny_02 FDR Squeeze | New York | middle | not tested | not tested | |
-| ny_03 Midtown Split | New York | middle | not tested | not tested | |
-| ny_04 Queensboro Heat | New York | late | not tested | not tested | |
-| ny_05 Tunnel Break | New York | late | not tested | not tested | |
+| ny_02 FDR Squeeze | New York | middle | partial | not tested | Configured start-gate-only evidence: `videos/city-2/2026-06-23_iphone17e_ny_02_starter-compact_start-gate.mp4`, `screenshots/city-2/2026-06-23_iphone17e_ny_02_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_ny_02_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| ny_03 Midtown Split | New York | middle | partial | not tested | Configured start-gate-only evidence: `videos/city-2/2026-06-23_iphone17e_ny_03_starter-compact_start-gate.mp4`, `screenshots/city-2/2026-06-23_iphone17e_ny_03_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_ny_03_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| ny_04 Queensboro Heat | New York | late | partial | not tested | Configured start-gate-only evidence: `videos/city-2/2026-06-23_iphone17e_ny_04_starter-compact_start-gate.mp4`, `screenshots/city-2/2026-06-23_iphone17e_ny_04_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_ny_04_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| ny_05 Tunnel Break | New York | late | partial | not tested | Configured start-gate-only evidence: `videos/city-2/2026-06-23_iphone17e_ny_05_starter-compact_start-gate.mp4`, `screenshots/city-2/2026-06-23_iphone17e_ny_05_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_ny_05_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
 | mia_01 Ocean Drive Run | Miami | early | partial | not tested | Start-gate-only evidence: `videos/city-3/2026-06-23_iphone17e_mia01_starter-compact_start-gate.mp4`, `screenshots/city-3/2026-06-23_iphone17e_mia01_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_mia01_starter-compact_start-gate_probe.log`. No active run, telemetry summary, result screen, or balance evidence. |
-| mia_02 Neon Causeway | Miami | middle | not tested | not tested | |
-| mia_03 Thunder Strip | Miami | middle | not tested | not tested | |
-| mia_04 Vice Lockdown | Miami | late | not tested | not tested | |
-| mia_05 Crown Escape | Miami | late | not tested | not tested | |
+| mia_02 Neon Causeway | Miami | middle | partial | not tested | Configured start-gate-only evidence: `videos/city-3/2026-06-23_iphone17e_mia_02_starter-compact_start-gate.mp4`, `screenshots/city-3/2026-06-23_iphone17e_mia_02_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_mia_02_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| mia_03 Thunder Strip | Miami | middle | partial | not tested | Configured start-gate-only evidence: `videos/city-3/2026-06-23_iphone17e_mia_03_starter-compact_start-gate.mp4`, `screenshots/city-3/2026-06-23_iphone17e_mia_03_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_mia_03_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| mia_04 Vice Lockdown | Miami | late | partial | not tested | Configured start-gate-only evidence: `videos/city-3/2026-06-23_iphone17e_mia_04_starter-compact_start-gate.mp4`, `screenshots/city-3/2026-06-23_iphone17e_mia_04_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_mia_04_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
+| mia_05 Crown Escape | Miami | late | partial | not tested | Configured start-gate-only evidence: `videos/city-3/2026-06-23_iphone17e_mia_05_starter-compact_start-gate.mp4`, `screenshots/city-3/2026-06-23_iphone17e_mia_05_starter-compact_start-gate.png`, `logs/2026-06-23_iphone17e_mia_05_starter-compact_start-gate_probe.log`. Start screen shows city/vehicle but not level name; no active run, telemetry summary, result screen, or balance evidence. |
 
 ## Invalid Runs
 
