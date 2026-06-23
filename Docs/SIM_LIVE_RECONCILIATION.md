@@ -243,5 +243,6 @@ The `OPEN PATHS` debug preference now draws lane centers, slot centers, safe-slo
 
 - Capture one human-controlled iPhone 17e matrix with the tightened transition-clearance build.
 - Capture human-controlled iPhone 17e and Dynamic Island-class runs with the same live-safety behavior.
+- Use `scripts/capture_live_telemetry.py --manual` to direct-start the level without debug autoplay and wait for `run_ended` telemetry.
 - Calibrate `GameSim --active-traffic-lifetime` against tightened live telemetry before using it for balance.
 - Compare live terminal outcomes, active traffic, collision rectangles, near misses, and exit progress against GameSim before retuning.

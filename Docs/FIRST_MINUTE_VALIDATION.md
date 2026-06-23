@@ -26,6 +26,7 @@ Partial.
 - Dynamic Island-class debug autoplay was captured on iPhone 17 Pro. It completed 3/5 runs, reached a 42.3s median terminal time, recorded 0 lane-change intersection probes across 198 transitions, and still produced 2 traffic-collision terminals after `no_transition_safe_slots` decisions.
 - Dynamic Island-class debug autoplay was rerun after adding a strict emergency-transition fallback. It completed 4/5 runs, kept lane-change intersection probes at 0 across 191 transitions, recorded 1 `emergency_move`, and reduced terminal traffic collisions from 2 to 1.
 - `GameSim --active-traffic-lifetime` was partially calibrated with deterministic transition-risk scoring and a strict emergency movement comparison. The diagnostic improved from 7.3s to 10.7s average survival, but remains too punitive for balance tuning.
+- `scripts/capture_live_telemetry.py --manual` now supports direct-start manual telemetry capture without enabling debug autoplay.
 
 ## Evidence
 
@@ -91,4 +92,12 @@ Partial.
 - Debug autoplay now rejects predicted unsafe transition paths before moving, using a lane-change-duration horizon and small vertical padding on predicted traffic hitboxes.
 - Debug autoplay now has a strict emergency fallback for cases where staying is predicted dangerous and every normal transition candidate is rejected.
 - The active-lifetime GameSim diagnostic now has a deterministic risk-score equivalent for emergency movement comparison.
+- Direct-start manual capture mode now exists for first-minute human matrices.
 - Final tutorial exit-ramp signage is visible on the current five-step flow, and the final lesson advances automatically after the exit-side predicate and read gate are both satisfied.
+
+## Manual Capture Command
+
+```bash
+python3 -u scripts/capture_live_telemetry.py --device <SIMULATOR_UDID> --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/<timestamp>-manual-first-minute/telemetry --timeout 180
+python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/<timestamp>-manual-first-minute/telemetry > PlaytestArtifacts/<timestamp>-manual-first-minute/summary.md
+```

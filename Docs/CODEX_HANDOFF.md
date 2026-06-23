@@ -52,6 +52,7 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `Traffic Getaway.xcodeproj/project.pbxproj`: added the telemetry recorder to the iOS target.
 - `scripts/summarize_run_telemetry.py`: added a repeatable JSONL summarizer for live-run telemetry exports, including autoplay target, move-target, applied-slot mismatch, decision-source, decision-status, collision-analysis counts, and lane-change probe counts.
 - `scripts/capture_live_telemetry.py`: added a repeatable simulator capture loop for debug autoplay live-run matrices, with flushed progress output, a working empty `--app ''` skip-install path, and direct plist debug-default writes to avoid flaky simulator `defaults write` hangs.
+- `scripts/capture_live_telemetry.py`: added `--manual` mode so the same direct-start telemetry loop can capture human-controlled runs with debug autoplay disabled.
 
 ## Tests run
 
@@ -123,6 +124,9 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345` after active-lifetime emergency-risk calibration: passed; default output remains 99.1% completion, 35.3 near misses/run, 998 cash/run.
 - `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime` after active-lifetime emergency-risk calibration: passed; diagnostic output improved to 0.3% completion, 10.7s average survival, 8.8s median survival, 2.8 near misses/run, 75 cash/run, 59.4% unfair collision estimate, top failure `traffic_collision:4032`.
 - `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress` after active-lifetime emergency-risk calibration: passed; 160,000 waves, 0 impossible committed waves, 0 exit reachability failures.
+- `python3 -m py_compile scripts/capture_live_telemetry.py scripts/summarize_run_telemetry.py` after manual capture mode: passed.
+- `python3 scripts/capture_live_telemetry.py --help` after manual capture mode: passed and lists `--manual`.
+- Manual defaults self-check after manual capture mode: passed; `TrafficGetaway.debug.autoplay` is written as `false` for manual capture and debug defaults are cleared afterward.
 
 ## Simulator/device evidence
 
@@ -191,7 +195,7 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 | Level 1 near misses | 32.1/run | 35.3/run |
 | Level 1 avg cash | 909 | 998 |
 | Level 1 avg XP | 359 | 391 |
-| Live telemetry | Not present | 1 manual smoke run, 5 active-traffic autoplay runs, 5 corrected decision-matrix autoplay runs, 5 live-hazard autoplay runs, 5 lane-change parity runs, 5 transition-clearance runs, and 5 tightened transition-clearance runs captured |
+| Live telemetry | Not present | 1 manual smoke run, multiple debug-autoplay matrices captured, and repeatable manual direct-start capture tooling added |
 | Debug visualization | Not present | Open-path overlay screenshot captured |
 | Active traffic telemetry | Not present | Present in new collision samples |
 | Autoplay decision telemetry | Not present | 207 decisions captured; 36 target-policy mismatches, 2 move-target mismatches, 2 applied-slot mismatches |
@@ -206,7 +210,7 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
-- P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency fallback, but human-controlled validation is missing and the active-traffic diagnostic still overcorrects.
+- P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency fallback, manual capture tooling now exists, but human-controlled validation is still missing and the active-traffic diagnostic still overcorrects.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 

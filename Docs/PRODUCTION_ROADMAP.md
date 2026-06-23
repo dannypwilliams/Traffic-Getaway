@@ -12,6 +12,7 @@
 - Final tutorial exit-ramp signage and completion flow were repaired in code; full clean-install tutorial matrix remains open.
 - Dynamic Island-class iPhone 17 Pro debug-autoplay telemetry now exists for the tightened transition-clearance build: 4/5 completed after emergency fallback, median terminal time 42.4s, 0 lane-change intersection probes.
 - `GameSim --active-traffic-lifetime` is partially calibrated against live transition evidence: average survival improved from 7.3s to 10.7s and exit appearance from 0.0% to 0.4%, but it remains too punitive for balance tuning.
+- Manual direct-start telemetry tooling now exists, but the human-controlled matrix has not yet been captured.
 
 ## Issue Matrix
 

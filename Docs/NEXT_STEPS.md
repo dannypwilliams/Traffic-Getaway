@@ -12,6 +12,15 @@ Validate the tightened transition-clearance model with human input before tuning
 4. Investigate the remaining iPhone 17 Pro debug-autoplay traffic collision after `no_transition_safe_slots`; the strict emergency fallback reduced this from 2/5 to 1/5.
 5. Retune Level 1 completion, near misses, and rewards only after sim/live state agrees.
 
+## Manual Matrix Command
+
+Use the direct-start manual capture mode so the run starts on `la_01` with `starter_compact`, but player input remains manual:
+
+```bash
+python3 -u scripts/capture_live_telemetry.py --device <SIMULATOR_UDID> --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/<timestamp>-manual-first-minute/telemetry --timeout 180
+python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/<timestamp>-manual-first-minute/telemetry > PlaytestArtifacts/<timestamp>-manual-first-minute/summary.md
+```
+
 ## Do Not Start Yet
 
 - New routes.
