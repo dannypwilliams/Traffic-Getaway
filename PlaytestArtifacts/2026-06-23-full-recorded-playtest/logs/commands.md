@@ -53,3 +53,8 @@ Commit: 3c2431d
 - xcrun simctl io <iPhone 17e> recordVideo for clean relaunch cycle `2026-06-23_iphone17e_existing-save_relaunch-restoration-clean_session02.mp4`
 - xcrun simctl io <iPhone 17e> screenshot for clean relaunch before-terminate and after-relaunch checkpoints
 - Final post-capture debug-default cleanup logged at `build-validation/relaunch-restoration-debug-defaults-final-clean-after-capture.log`
+- xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_existing-save_background-foreground_session01.mp4`
+- osascript sent Simulator keyboard shortcut Command-Shift-H to reach the iOS Home screen after `xcrun simctl ui ... pressButton home` proved unsupported on this runtime
+- xcrun simctl launch foregrounded `com.danielwilliams.TrafficGetaway` after Home-screen backgrounding
+- xcrun simctl io <iPhone 17e> screenshot for background/foreground before-home, actual-home-screen, and actual-after-foreground checkpoints
+- Final post-background cleanup logged at `build-validation/background-foreground-debug-defaults-final-clean-after-capture.log`

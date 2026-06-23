@@ -46,6 +46,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - Existing-save LA01 progression attempt 03 is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_la01_active-progression_attempt03.mp4` with start/result screenshots and telemetry, but is invalid for active-run and city-progression coverage because telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s.
 - Existing-save Garage/vehicle browsing is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_garage-vehicle-selection_session01.mp4`; it proves Garage access, selected Sunset Cruiser display, Cars/Bikes tab switching, locked Starter Bike messaging, and return navigation, but does not prove selecting an alternate unlocked vehicle.
 - Existing-save relaunch restoration is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_relaunch-restoration-clean_session02.mp4`; it proves high score, cash, selected vehicle, and Los Angeles start context survive termination/relaunch, but it does not prove OS background/foreground behavior or full main-menu progression restoration.
+- Existing-save background/foreground is recorded in `videos/progression/2026-06-23_iphone17e_existing-save_background-foreground_session01.mp4`; it proves Home-screen backgrounding and foregrounding back to the Los Angeles start state, but not active-gameplay backgrounding.
 
 ## Artifact Structure
 

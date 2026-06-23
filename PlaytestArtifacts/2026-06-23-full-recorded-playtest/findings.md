@@ -32,7 +32,7 @@ Partial. Starter Bike Runs 04 and 05 showed XP/progress advancement on failure s
 
 Garage/vehicle browsing is partially recorded from the existing-save result state. The Garage displayed selected Sunset Cruiser, Cars/Bikes tab switching, locked Starter Bike copy, cash `$443`, and return to the main menu. This supports progression understandability around vehicle availability, but it does not prove selecting an alternate unlocked vehicle.
 
-Relaunch/save restoration is partially recorded. After app termination and relaunch, the app restored high score 741, cash `$443`, selected Sunset Cruiser, and Los Angeles start context. Full OS background/foreground behavior is still untested, and relaunch did not restore to the richer main-menu view with Level 2 XP visible.
+Relaunch/save restoration is partially recorded. After app termination/relaunch and after Home-screen background/foreground, the app restored high score 741, cash `$443`, selected Sunset Cruiser, and Los Angeles start context. Active-gameplay backgrounding is still untested, and relaunch did not restore to the richer main-menu view with Level 2 XP visible.
 
 ## Performance
 
