@@ -52,6 +52,22 @@ struct RunTelemetryEvent: Codable {
         let reachableSlots: [Int]
     }
 
+    struct CollisionAnalysis: Codable {
+        let playerLane: Int
+        let playerSlot: Int
+        let collidingVehicle: ActiveTraffic?
+        let activeTraffic: [ActiveTraffic]
+        let latestPlanSafeSlots: [Int]?
+        let activeSafeSlots: [Int]
+        let activeUnsafeSlots: [Int]
+        let lastMovementDecision: MovementDecision?
+        let lastMovementDecisionAge: Double?
+        let overlapRect: RectValue?
+        let overlapArea: Double
+        let horizontalGap: Double
+        let verticalGap: Double
+    }
+
     let event: String
     let build: String
     let tuningVersion: String
@@ -87,6 +103,7 @@ struct RunTelemetryEvent: Codable {
     let collisionTrafficRect: RectValue?
     let collisionVehicleID: Int?
     let collisionVehicleType: String?
+    let collisionAnalysis: CollisionAnalysis?
     let terminalReason: String?
     let levelCompleted: Bool?
 }

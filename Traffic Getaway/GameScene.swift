@@ -277,6 +277,8 @@ final class GameScene: SKScene {
     private var trafficSpawnRNG = AppSeededRNG(seed: 2)
     private var trafficEventRNG = AppSeededRNG(seed: 3)
     private var debugAutoplayTimer: TimeInterval = 0
+    private var lastMovementDecision: RunTelemetryEvent.MovementDecision?
+    private var lastMovementDecisionTime: TimeInterval?
     private var performanceSampleTimer: TimeInterval = 0
     private var performanceFrameCounter = 0
     private var awardedLaneSplitPairs: Set<String> = []
@@ -1125,6 +1127,8 @@ final class GameScene: SKScene {
         latestTrafficPlan = nil
         trafficSpawnSerial = 0
         debugAutoplayTimer = 0
+        lastMovementDecision = nil
+        lastMovementDecisionTime = nil
         performanceSampleTimer = 0
         performanceFrameCounter = 0
         awardedLaneSplitPairs.removeAll()
@@ -1298,31 +1302,13 @@ final class GameScene: SKScene {
         }
         let vehicleType = collisionVehicle?.userData?["type"] as? String
         let vehicleID = collisionVehicle?.userData?["spawnID"] as? Int
-        let activeTraffic = trafficNode.children.compactMap { node -> RunTelemetryEvent.ActiveTraffic? in
-            guard let vehicle = node as? SKSpriteNode,
-                  let lane = vehicle.userData?["lane"] as? Int else {
-                return nil
-            }
-
-            let laneSpan = vehicle.userData?["laneSpan"] as? Int ?? 1
-            let spawnID = vehicle.userData?["spawnID"] as? Int ?? 0
-            let type = vehicle.userData?["type"] as? String ?? "unknown"
-            let speed = vehicle.userData?["speed"] as? CGFloat ?? 0
-            let spawnTime = vehicle.userData?["spawnTime"] as? TimeInterval ?? 0
-            return RunTelemetryEvent.ActiveTraffic(
-                spawnID: spawnID,
-                lane: lane,
-                slot: lane * 2,
-                laneSpan: laneSpan,
-                type: type,
-                speed: Double(speed),
-                y: Double(vehicle.position.y),
-                width: Double(vehicle.size.width),
-                height: Double(vehicle.size.height),
-                spawnTime: spawnTime,
-                isRoadblock: vehicle.userData?["roadblock"] as? Bool == true
-            )
-        }
+        let activeTraffic = activeTrafficSnapshot()
+        let collisionAnalysis = makeCollisionAnalysis(
+            collisionVehicle: collisionVehicle,
+            playerRect: playerRect,
+            trafficRect: trafficRect,
+            activeTraffic: activeTraffic
+        )
 
         RunTelemetryRecorder.shared.record(RunTelemetryEvent(
             event: event,
@@ -1360,9 +1346,97 @@ final class GameScene: SKScene {
             collisionTrafficRect: trafficRect.map(RunTelemetryEvent.RectValue.init),
             collisionVehicleID: vehicleID,
             collisionVehicleType: vehicleType,
+            collisionAnalysis: collisionAnalysis,
             terminalReason: terminalReason,
             levelCompleted: levelCompleted
         ))
+    }
+
+    private func activeTrafficSnapshot() -> [RunTelemetryEvent.ActiveTraffic] {
+        trafficNode.children.compactMap { node -> RunTelemetryEvent.ActiveTraffic? in
+            guard let vehicle = node as? SKSpriteNode else {
+                return nil
+            }
+            return activeTrafficSnapshot(for: vehicle)
+        }
+    }
+
+    private func activeTrafficSnapshot(for vehicle: SKSpriteNode) -> RunTelemetryEvent.ActiveTraffic? {
+        guard let lane = vehicle.userData?["lane"] as? Int else { return nil }
+
+        let laneSpan = vehicle.userData?["laneSpan"] as? Int ?? 1
+        let spawnID = vehicle.userData?["spawnID"] as? Int ?? 0
+        let type = vehicle.userData?["type"] as? String ?? "unknown"
+        let speed = vehicle.userData?["speed"] as? CGFloat ?? 0
+        let spawnTime = vehicle.userData?["spawnTime"] as? TimeInterval ?? 0
+        return RunTelemetryEvent.ActiveTraffic(
+            spawnID: spawnID,
+            lane: lane,
+            slot: lane * 2,
+            laneSpan: laneSpan,
+            type: type,
+            speed: Double(speed),
+            y: Double(vehicle.position.y),
+            width: Double(vehicle.size.width),
+            height: Double(vehicle.size.height),
+            spawnTime: spawnTime,
+            isRoadblock: vehicle.userData?["roadblock"] as? Bool == true
+        )
+    }
+
+    private func makeCollisionAnalysis(
+        collisionVehicle: SKSpriteNode?,
+        playerRect: CGRect?,
+        trafficRect: CGRect?,
+        activeTraffic: [RunTelemetryEvent.ActiveTraffic]
+    ) -> RunTelemetryEvent.CollisionAnalysis? {
+        guard collisionVehicle != nil || playerRect != nil || trafficRect != nil else { return nil }
+
+        let validSlots = Set(laneManager.validSlots(for: activeCar.vehicleClass))
+        let latestPlanSafeSlots: [Int]? = latestTrafficPlan.map {
+            let planned = activeCar.vehicleClass == .motorcycle ? $0.safeMotorcycleSlots : $0.safeCarSlots
+            return planned.intersection(validSlots).sorted()
+        }
+        let activeSafeSlots = validSlots
+            .filter { activeTrafficDanger(forSlot: $0) < 0.74 }
+            .sorted()
+        let activeUnsafeSlots = validSlots
+            .subtracting(Set(activeSafeSlots))
+            .sorted()
+        let overlapRect: CGRect?
+        if let playerRect, let trafficRect {
+            let intersection = playerRect.intersection(trafficRect)
+            overlapRect = intersection.isNull ? nil : intersection
+        } else {
+            overlapRect = nil
+        }
+        let overlapArea = overlapRect.map { Double($0.width * $0.height) } ?? 0
+        let horizontalGap: Double
+        let verticalGap: Double
+        if let playerCar, let collisionVehicle {
+            horizontalGap = Double(collisionVehicle.position.x - playerCar.position.x)
+            verticalGap = Double(collisionVehicle.position.y - playerCar.position.y)
+        } else {
+            horizontalGap = 0
+            verticalGap = 0
+        }
+        let decisionAge = lastMovementDecisionTime.map { max(0, runTime - $0) }
+
+        return RunTelemetryEvent.CollisionAnalysis(
+            playerLane: playerLane,
+            playerSlot: playerSlot,
+            collidingVehicle: collisionVehicle.flatMap(activeTrafficSnapshot(for:)),
+            activeTraffic: activeTraffic,
+            latestPlanSafeSlots: latestPlanSafeSlots,
+            activeSafeSlots: activeSafeSlots,
+            activeUnsafeSlots: activeUnsafeSlots,
+            lastMovementDecision: lastMovementDecision,
+            lastMovementDecisionAge: decisionAge,
+            overlapRect: overlapRect.map(RunTelemetryEvent.RectValue.init),
+            overlapArea: overlapArea,
+            horizontalGap: horizontalGap,
+            verticalGap: verticalGap
+        )
     }
 
     private var appBuildIdentifier: String {
@@ -2652,6 +2726,8 @@ final class GameScene: SKScene {
             safeSlots: safeSlots.sorted(),
             reachableSlots: reachableSlots.sorted()
         )
+        lastMovementDecision = decision
+        lastMovementDecisionTime = runTime
         recordTelemetry(event: "autoplay_decision", movementDecision: decision)
     }
 

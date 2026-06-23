@@ -86,6 +86,11 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
     completed = bool(terminal.get("levelCompleted"))
     terminal_time = float(terminal.get("time") or 0)
     first_crash_time = float(collisions[0].get("time") or 0) if collisions else 0.0
+    collision_analyses = [event.get("collisionAnalysis") for event in collisions if event.get("collisionAnalysis")]
+    first_collision_analysis = collision_analyses[0] if collision_analyses else {}
+    last_collision_decision = first_collision_analysis.get("lastMovementDecision") or {}
+    collision_overlap_area = float(first_collision_analysis.get("overlapArea") or 0)
+    collision_active_traffic_count = len(first_collision_analysis.get("activeTraffic") or [])
 
     return {
         "path": path,
@@ -111,6 +116,12 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
             or any(event.get("collisionPlayerRect") for event in collisions)
         ),
         "has_active_traffic": any(event.get("activeTraffic") for event in events),
+        "has_collision_analysis": bool(collision_analyses),
+        "collision_overlap_area": collision_overlap_area,
+        "collision_active_traffic_count": collision_active_traffic_count,
+        "collision_last_decision_source": last_collision_decision.get("source", ""),
+        "collision_last_decision_status": last_collision_decision.get("status", ""),
+        "collision_last_decision_age": first_collision_analysis.get("lastMovementDecisionAge"),
         "autoplay_decisions": len(decisions),
         "autoplay_moves": len(move_decisions),
         "autoplay_sources": decision_sources,
@@ -135,11 +146,17 @@ def print_markdown(summaries: list[dict]) -> None:
     terminal_counts: Counter = Counter()
     source_counts: Counter = Counter()
     status_counts: Counter = Counter()
+    collision_source_counts: Counter = Counter()
+    collision_status_counts: Counter = Counter()
     for item in summaries:
         pattern_counts.update(item["pattern_counts"])
         terminal_counts[item["terminal_reason"]] += 1
         source_counts.update(item["autoplay_sources"])
         status_counts.update(item["autoplay_statuses"])
+        if item["collision_last_decision_source"]:
+            collision_source_counts[item["collision_last_decision_source"]] += 1
+        if item["collision_last_decision_status"]:
+            collision_status_counts[item["collision_last_decision_status"]] += 1
 
     print(f"- Runs: {len(summaries)}")
     print(f"- Completed: {completed}/{len(summaries)} ({completed / len(summaries) * 100:.1f}%)")
@@ -156,6 +173,13 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Autoplay target mismatches: {sum(item['target_mismatches'] for item in summaries)}")
     print(f"- Autoplay move-target mismatches: {sum(item['move_target_mismatches'] for item in summaries)}")
     print(f"- Autoplay applied-slot mismatches: {sum(item['applied_mismatches'] for item in summaries)}")
+    print(f"- Collision analyses: {sum(1 for item in summaries if item['has_collision_analysis'])}/{len(summaries)}")
+    print(f"- Avg collision overlap area: {fmt_float(average([item['collision_overlap_area'] for item in summaries]))}")
+    print(f"- Avg active traffic at collision: {fmt_float(average([item['collision_active_traffic_count'] for item in summaries]))}")
+    if collision_source_counts:
+        print(f"- Collision last-decision sources: {dict(sorted(collision_source_counts.items()))}")
+    if collision_status_counts:
+        print(f"- Collision last-decision statuses: {dict(sorted(collision_status_counts.items()))}")
     if source_counts:
         print(f"- Autoplay decision sources: {dict(sorted(source_counts.items()))}")
     if status_counts:
@@ -163,8 +187,8 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Terminal reasons: {dict(sorted(terminal_counts.items()))}")
     print(f"- Pattern mix: {dict(sorted(pattern_counts.items()))}")
     print()
-    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Active traffic | Decisions | Target mismatch | Applied mismatch |")
-    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---:|---:|---:|")
+    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Decisions | Target mismatch | Applied mismatch |")
+    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|")
     for item in summaries:
         print(
             "| "
@@ -180,6 +204,7 @@ def print_markdown(summaries: list[dict]) -> None:
             f"{item['cash']} | "
             f"{item['wanted_level']} | "
             f"{str(item['has_collision_rects']).lower()} |"
+            f" {str(item['has_collision_analysis']).lower()} |"
             f" {str(item['has_active_traffic']).lower()} | "
             f"{item['autoplay_decisions']} | "
             f"{item['target_mismatches']} | "

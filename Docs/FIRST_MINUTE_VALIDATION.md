@@ -18,6 +18,7 @@ Partial.
 - New-schema collision telemetry includes active traffic snapshots.
 - Debug autoplay decision telemetry produced a five-run iPhone 17e matrix. Corrected instrumentation shows only 2 applied-slot mismatches across 18 move decisions, with the remaining sim/live gap concentrated in target-policy and no-reachable-state differences.
 - Live-hazard debug autoplay produced another five-run iPhone 17e matrix. Average terminal time improved to 8.6s, including one 24.9s run, but 5/5 runs still ended in traffic collisions before the exit.
+- Collision-analysis debug autoplay produced a five-run iPhone 17e matrix. Collision analysis was present in 5/5 terminal crashes, and every sampled crash followed a move decision, pointing to lane-change transition timing/path occupancy as the next sim/live mismatch.
 
 ## Evidence
 
@@ -32,6 +33,9 @@ Partial.
 - Autoplay decision matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/telemetry/`
 - Live-hazard autoplay matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-live-hazard-matrix/summary.md`
 - Live-hazard autoplay matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-live-hazard-matrix/telemetry/`
+- Collision-analysis autoplay matrix summary: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/summary.md`
+- Collision-analysis autoplay matrix telemetry: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/telemetry/`
+- Collision-analysis autoplay matrix notes: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/notes.md`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -58,3 +62,4 @@ Partial.
 - Debug direct-start/autoplay telemetry capture added and verified.
 - Debug autoplay movement-decision telemetry added and summarized.
 - Debug autoplay now switches to live on-screen hazard safety when immediate traffic is near, with the source recorded in telemetry.
+- Collision-frame telemetry now records the colliding vehicle, active traffic roster, player slot/lane, live safe and unsafe slots, overlap geometry, and last movement decision.

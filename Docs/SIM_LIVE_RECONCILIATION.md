@@ -2,7 +2,7 @@
 
 ## Status
 
-Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e autoplay matrices now exist. Live-hazard steering improved one run to 24.9s but still crashed 5/5 before the exit, so the remaining GameSim-vs-live gap is active traffic lifetime/collision timing rather than simple stale-wave steering.
+Partial. Core stress gates are fixed, debug live gameplay telemetry works, and iPhone 17e autoplay matrices now exist. Live-hazard steering improved one run to 24.9s but still crashed 5/5 before the exit. New crash-frame telemetry shows every sampled collision followed a move decision, often with logical slot state already updated while the sprite was still physically intersecting the departure lane or lane-change path. The remaining GameSim-vs-live gap is now narrowed to lane-change transition timing/path occupancy plus active traffic lifetime.
 
 ## Known Modeling Gap
 
@@ -12,13 +12,13 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 
 | Metric | GameSim | iOS live | Difference | Cause | Resolution |
 |---|---:|---:|---:|---|---|
-| Exit activation time | 42s target from config | Not reached in 5/5 live-hazard autoplay runs | Live ends before exit | Active traffic/collision timing still crashes early | Inspect collision frames before tuning |
-| First crash time | p50 36.8s | median 4.5s / avg 8.6s | Live autoplay much earlier | Live-hazard steering improved avg time but still 0/5 complete | Reconcile active traffic lifetime and collision timing |
-| Traffic waves before failure | Stress: 0 impossible / 160,000 | avg 8.4 waves before crash | Live ends early | GameSim does not model active on-screen traffic lifetime directly | Add per-frame/collision comparison |
+| Exit activation time | 42s target from config | Not reached in 5/5 collision-analysis autoplay runs | Live ends before exit | Lane-change transition/collision timing still crashes early | Model or guard transition path before tuning |
+| First crash time | p50 36.8s | median 4.7s / avg 5.2s | Live autoplay much earlier | Crash-frame analysis shows all sampled terminal collisions after move decisions | Reconcile lane-change timing/path occupancy |
+| Traffic waves before failure | Stress: 0 impossible / 160,000 | avg 5.4 waves before crash | Live ends early | GameSim does not model active on-screen traffic lifetime or animated lane changes directly | Add transition-aware comparison |
 | Near misses | 35.3/run | 2.6/run | Live much lower | Short live runs plus different active-traffic timing | Do not tune rewards from this sample |
 | Completion | 99.1% | 0/5 autoplay completed | Major mismatch | Live route decision/state is not equivalent to GameSim run model | Reconcile sim/live model |
 | Collision box overlap | Unfair estimate 0.0% | Rects logged on every collision | Data available | App collision code separate | Review active traffic snapshots |
-| Reachable path at failure | Stress clean | Safe slots plus active traffic logged | Pending review | Latest wave alone is insufficient; older traffic can still collide | Analyze active roster by timestamp |
+| Reachable path at failure | Stress clean | Safe slots, active traffic, colliding vehicle, overlap, and last decision logged | Collision frames available | Latest safe slot can be logically safe while the animated car is still exposed on the lane-change path | Compare transition path against GameSim route step |
 | Police pressure at failure | Highest wanted 3 | Wanted mostly 1, one sample not above 2 | Live crashes before police peak | Early input/traffic interaction dominates | Keep police tuning unchanged |
 
 ## Live Evidence
@@ -83,6 +83,25 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 - Autoplay decision statuses: `already_at_target` 205, `move` 41, `no_reachable_slots` 23.
 - Interpretation: live-hazard steering improved average terminal time versus the corrected latest-wave matrix (8.6s versus 6.3s) and produced one 24.9s run, but still did not reach the exit. Stale latest-wave steering is not the whole cause.
 
+### Collision-Analysis Autoplay Matrix
+
+- Capture command: `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --runs 5 --level la_01 --vehicle starter_compact --app '' --output-dir PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/telemetry --timeout 120`
+- Summary: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/summary.md`
+- Notes: `PlaytestArtifacts/2026-06-23-live-collision-analysis-matrix/notes.md`
+- Runs: 5.
+- Completed: 0/5.
+- Avg terminal time: 5.2s.
+- Median terminal time: 4.7s.
+- Avg traffic waves: 5.4.
+- Avg near misses: 1.0.
+- Terminal reasons: `traffic` 5.
+- Collision analyses: 5/5.
+- Avg collision overlap area: 94.2.
+- Avg active traffic at collision: 10.6.
+- Collision last-decision sources: `debug_autoplay_live_hazards` 4, `debug_autoplay_latest_wave` 1.
+- Collision last-decision statuses: `move` 5.
+- Interpretation: the remaining mismatch is not only which slot the policy chooses. The live car can still collide while moving between slots, so GameSim and/or live route safety must account for lane-change duration/path occupancy.
+
 ## Summarizer
 
 Run:
@@ -105,7 +124,7 @@ Manual smoke result:
 
 ## Current Read
 
-Do not retune Sunset Merge from the autoplay matrix yet. The core simulator says the route policy can escape almost every run, while debug autoplay dies before the exit in live runs. Corrected telemetry shows applied movement is mostly aligned on actual moves, and live-hazard steering helps but does not solve the mismatch. The next discrepancy is active traffic lifetime and collision timing: GameSim treats waves as discrete safe-slot decisions, while live keeps spawned traffic on screen and colliding over time.
+Do not retune Sunset Merge from the autoplay matrix yet. The core simulator says the route policy can escape almost every run, while debug autoplay dies before the exit in live runs. Corrected telemetry shows applied movement is mostly aligned on actual moves, and live-hazard steering helps but does not solve the mismatch. Crash-frame telemetry now shows all sampled terminal crashes after move decisions, with physical sprite collision during or immediately after lane changes. The next discrepancy is transition timing: GameSim treats route steps as discrete safe-slot decisions, while live keeps spawned traffic on screen and checks the animated sprite along its movement path.
 
 ## Debug Rendering
 
@@ -113,7 +132,7 @@ The `OPEN PATHS` debug preference now draws lane centers, slot centers, safe-slo
 
 ## Next Instrumentation
 
-- Add collision-frame analysis that reports the colliding vehicle, active traffic roster, player slot, safe slots, and last movement decision for each terminal live run.
-- Decide whether GameSim should model live traffic lifetime/collision timing more directly, or whether live safety selection needs a longer route horizon.
+- Decide whether GameSim should model live lane-change duration/path occupancy, or whether live safety selection/autoplay needs a transition-clearance check and longer lead time before moving.
+- Add a small parity probe that compares current-slot, target-slot, interpolated sprite position, and colliding vehicle across each lane-change tick.
 - Capture one manual human-controlled iPhone 17e matrix and one Dynamic Island-class layout run.
 - Compare live terminal outcomes, active traffic, collision rectangles, near misses, and exit progress against GameSim before retuning.
