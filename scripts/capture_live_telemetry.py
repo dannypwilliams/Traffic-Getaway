@@ -95,11 +95,13 @@ def clear_debug_defaults(device: str, container: Path, bundle_id: str) -> None:
         "TrafficGetaway.debug.showOpenLaneAnalysis",
     ]
     path = preferences_path(container, bundle_id)
+    simctl(device, "spawn", "killall", "cfprefsd", check=False)
     preferences = read_preferences(path)
     for key in keys:
         preferences.pop(key, None)
     write_preferences(path, preferences)
     simctl(device, "spawn", "killall", "cfprefsd", check=False)
+    time.sleep(0.2)
     remaining = [key for key in keys if key in read_preferences(path)]
     if remaining:
         raise RuntimeError(f"Debug defaults still present after cleanup: {', '.join(remaining)}")
