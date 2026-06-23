@@ -28,3 +28,9 @@ Commit: 3c2431d
 - xcrun simctl io <iPhone 17 Pro> screenshot for Dynamic Island start and result checkpoints
 - python3 scripts/summarize_run_telemetry.py for Dynamic Island run 01 and run 02
 - Post-run cleanup after Dynamic Island `--leave-app-running`: terminate app, clear debug defaults, then verify iPhone 17 Pro preferences; output confirmed `[]`
+- Fresh-install tutorial/progression setup: terminate app, uninstall `com.danielwilliams.TrafficGetaway`, install the verified Debug simulator app on iPhone 17e, then launch from a reset save state
+- xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4`
+- Computer Use clicks through onboarding pages 1-5, completing lane-change, police-pressure, near-miss, and exit-ramp practice without using skip
+- xcrun simctl io <iPhone 17e> screenshot for tutorial pages, completed practice states, and the result screen
+- python3 scripts/summarize_run_telemetry.py for fresh-install tutorial/progression attempt 01
+- avconvert --preset Preset960x540 compressed the original 107 MB simulator recording to a 42 MB evidence video before commit

@@ -55,12 +55,12 @@
   ],
   "current_counts": {
     "planned_tests": 73,
-    "passed": 17,
+    "passed": 19,
     "failed": 1,
-    "partial": 2,
+    "partial": 4,
     "blocked": 0,
-    "invalid": 2,
-    "not_tested": 53,
+    "invalid": 3,
+    "not_tested": 49,
     "valid_active_input_runs": 11,
     "valid_complete_evidence_runs_for_la_starter_compact": 5,
     "valid_complete_evidence_runs_for_la_starter_bike": 3

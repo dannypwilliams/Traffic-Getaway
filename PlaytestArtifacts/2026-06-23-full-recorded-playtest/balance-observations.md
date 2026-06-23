@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session and one Dynamic Island-class active sample. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session and one Dynamic Island-class active sample. A fresh-install tutorial-to-run sample exists but is invalid for balance because it recorded 0 lane changes. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -50,6 +50,14 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Result: traffic collision at 23.7s, 5 near misses, 2 lane changes, 49 cash, wanted level 3, 0 autoplay decisions.
 - Functional read: active input was recorded and controls remained usable, but the Dynamic Island overlaps the top HUD.
 - Balance use: supplemental only. This is valid for safe-area/device evidence, but the vehicle identity mismatch means it should not drive vehicle-specific balance conclusions.
+
+## Fresh-Install Tutorial/Progression Sample
+
+- Device: iPhone 17e simulator.
+- Flow: clean reinstall, tutorial pages 1-5 completed without skip, automatic transition into `la_01`.
+- Result: police capture at 9.0s, 0 near misses, 0 lane changes, 12 cash, wanted level 3, 0 autoplay decisions.
+- Functional read: valid first-run tutorial and progression-flow evidence.
+- Balance use: invalid. The gameplay portion had 0 active lane changes and should not be used for active-run, fairness, or city-progression conclusions.
 
 ## Simulation Comparison
 

@@ -5,12 +5,12 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 ## Summary Counts
 
 - Planned tests: 73
-- Passed: 17
+- Passed: 19
 - Failed: 1
-- Partial: 2
+- Partial: 4
 - Blocked: 0
-- Invalid: 2
-- Not tested: 53
+- Invalid: 3
+- Not tested: 49
 - Valid active-input runs in this artifact set: 11
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 - Valid complete-evidence runs counted for LA Starter Bike requirement: 3
@@ -27,7 +27,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | AUTO-03 | `git diff --check` | pass | `build-validation/git-diff-check.log` | Empty log with zero exit means whitespace check passed. |
 | AUTO-04 | GameCore tests | pass | `build-validation/gamecore-swift-test.log` | 22 tests, 0 failures. |
 | AUTO-05 | Mac/iOS Simulator build verification | pass | `build-validation/verify-on-mac.log` | Build succeeded. |
-| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01-summary.md`, `telemetry/summaries/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02-summary.md` | Summaries generated from raw telemetry. |
+| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01-summary.md`, `telemetry/summaries/2026-06-23_iphone17pro_la01_starter-compact_vehicle-mismatch_swipe-tap_dynamic-island_run02-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01-summary.md` | Summaries generated from raw telemetry. |
 | AUTO-07 | Representative GameSim runs for all levels with starter vehicle | pass | `build-validation/gamesim-all-levels-starter-compact.log` | 15 levels x 1,000 runs. |
 | AUTO-08 | Representative GameSim runs for all levels with Starter Bike | pass | `build-validation/gamesim-all-levels-starter-bike.log` | 15 levels x 1,000 runs. |
 | AUTO-09 | Traffic stress/procedural fairness validation | pass | `build-validation/gamecore-swift-test.log`, `build-validation/gamesim-all-levels-starter-compact.log`, `build-validation/gamesim-all-levels-starter-bike.log` | Automated stress/fairness signals exist; manual fairness remains unproven. |
@@ -37,9 +37,9 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 
 | ID | Test | Device | Status | Video | Telemetry | Notes |
 |---|---|---|---|---|---|---|
-| FUNC-01 | Launch screen screenshot/video | iPhone 17e | not tested | | | |
-| FUNC-02 | Tutorial instructions | iPhone 17e | not tested | | | |
-| FUNC-03 | Tutorial completion without skip | iPhone 17e | not tested | | | |
+| FUNC-01 | Launch screen screenshot/video | iPhone 17e | partial | `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4` | | Recording began before first launch, but the still screenshot is already on tutorial page 1 rather than the branded launch frame. |
+| FUNC-02 | Tutorial instructions | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4` | | Tutorial pages 1-5 captured under `screenshots/tutorial/2026-06-23_iphone17e_fresh-install_tutorial-progression_attempt01_*.png`. |
+| FUNC-03 | Tutorial completion without skip | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4` | `telemetry/raw/01-2026-06-23_10-02-16-la_01-starter_compact-fresh-install-progression-17033032432948192956.jsonl` | Onboarding completed without skip and transitioned into Los Angeles gameplay. Gameplay portion is invalid for active-run coverage because telemetry recorded 0 lane changes. |
 | FUNC-04 | City/progression screen | iPhone 17e | not tested | | | |
 | FUNC-05 | Vehicle selection | iPhone 17e | not tested | | | |
 | FUNC-06 | Pause and resume | iPhone 17e | not tested | | | |
@@ -69,7 +69,7 @@ Each city requires at least five valid active-input starter-vehicle runs, three 
 |---|---|---|---|---|---:|---|
 | LA-STARTER | Los Angeles | Five valid active-input Starter Compact runs | iPhone 17e | pass | 5 | Runs 01, 02, 04, 05, and 06 have video, start/result screenshots, telemetry, summary, and observations. Run 03 is supplemental active evidence but is missing result screenshot. |
 | LA-BIKE | Los Angeles | Three valid active-input Starter Bike runs | iPhone 17e | pass | 3 | Runs 03, 04, and 05 have video, start/result screenshots, telemetry, summary, and observations. Run 02 has telemetry/result evidence but is rejected from the complete-evidence count because the start screenshot and video are missing. |
-| LA-PROGRESSION | Los Angeles | Complete recorded progression attempt | iPhone 17e | not tested | 0 | |
+| LA-PROGRESSION | Los Angeles | Complete recorded progression attempt | iPhone 17e | partial | 0 | Fresh-install tutorial-to-LA attempt recorded in `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4`; it ended as passive police capture at 9.0s with 0 lane changes, so it does not satisfy complete city-progression coverage. |
 | LA-STRESS | Los Angeles | Deliberate difficult stress run | iPhone 17e | not tested | 0 | |
 | NY-STARTER | New York | Five valid active-input Starter Compact runs | iPhone 17e | not tested | 0 | |
 | NY-BIKE | New York | Three valid active-input Starter Bike runs | iPhone 17e | not tested | 0 | |
@@ -107,3 +107,5 @@ Starter Compact Run 03 is valid active telemetry/video evidence but is excluded 
 Starter Bike Run 02 is rejected from the complete-evidence Starter Bike count because only telemetry and a result screenshot remain in the artifact directory; the start screenshot and video are missing. The valid complete-evidence Starter Bike set is Runs 03, 04, and 05.
 
 Dynamic Island Run 01 is rejected from active-input coverage because telemetry recorded 0 lane changes. It remains useful visual reference for the top-HUD safe-area issue and vehicle-label mismatch.
+
+Fresh-Install Tutorial/Progression Attempt 01 is rejected from active-input and city-progression coverage because telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s. It remains valid tutorial completion and first-run progression-flow evidence.

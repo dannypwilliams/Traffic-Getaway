@@ -4,7 +4,7 @@
 
 Status: `partial`.
 
-The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, the Los Angeles Starter Bike slice has three complete-evidence active-input runs, failure/retry now has a recorded functional session, and one iPhone 17 Pro Dynamic Island active sample has been captured. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The iPhone 17 Pro sample failed the Dynamic Island safe-area check and exposed a vehicle identity mismatch. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
+The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, the Los Angeles Starter Bike slice has three complete-evidence active-input runs, failure/retry now has a recorded functional session, one iPhone 17 Pro Dynamic Island active sample has been captured, and fresh-install tutorial completion has recorded evidence. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The iPhone 17 Pro sample failed the Dynamic Island safe-area check and exposed a vehicle identity mismatch. The fresh-install tutorial-to-run sample ended as passive police capture with 0 lane changes, so it does not prove active progression. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
 
 ## Control Feel
 
@@ -28,7 +28,7 @@ Not tested through recorded active play. The content inventory confirms three ci
 
 ## Progression And Rewards
 
-Partial result-screen evidence only. Starter Bike Runs 04 and 05 showed XP/progress advancement on failure screens, including Level 5 to 6 progress. The failure/retry session proved `RETRY LEVEL` returns to the ready start state after failure. No full city progression attempt has been recorded. Previous reference evidence shows first Sunset Merge escape can unlock Starter Bike and `USE BIKE` can start 405 Afterburn, but the full progression pass remains open.
+Partial. Starter Bike Runs 04 and 05 showed XP/progress advancement on failure screens, including Level 5 to 6 progress. The failure/retry session proved `RETRY LEVEL` returns to the ready start state after failure. A fresh-install tutorial-to-run recording proves onboarding can complete without skip and transition into Los Angeles gameplay, but its gameplay portion had 0 lane changes and ended as police capture at 9.0s. No full city progression attempt has been completed. Previous reference evidence shows first Sunset Merge escape can unlock Starter Bike and `USE BIKE` can start 405 Afterburn, but the full progression pass remains open.
 
 ## Performance
 
@@ -36,4 +36,4 @@ Partial. The Mac/iOS Simulator build passed and eleven valid active-input record
 
 ## Release Readiness
 
-Not release-ready. Required human-play evidence, all-city coverage, full tutorial coverage, progression coverage, and final matrix documentation are incomplete. The current LA01 Starter Compact and Starter Bike evidence raises P1 first-level completion and first-minute concerns, and the iPhone 17 Pro Dynamic Island sample adds a P2 top-HUD safe-area defect.
+Not release-ready. Required human-play evidence, all-city coverage, complete progression coverage, and final matrix documentation are incomplete. Tutorial completion now has recorded evidence, but the current LA01 Starter Compact and Starter Bike evidence raises P1 first-level completion and first-minute concerns, and the iPhone 17 Pro Dynamic Island sample adds a P2 top-HUD safe-area defect.
