@@ -3809,7 +3809,7 @@ final class GameScene: SKScene {
 
         let resistance = max(0.92, min(1.18, activeCar.policeResistance))
         let worldPressure = max(0.92, min(1.12, currentWorld.policePressureMultiplier))
-        let passiveMultiplier = 1 + passivePolicePressure * 1.42
+        let passiveMultiplier = passivePoliceCatchMultiplier
         policeGap = max(minPoliceGap, policeGap - (policeClosingSpeed * worldPressure * passiveMultiplier / resistance) * deltaTime)
 
         let targetX = slotCenters.indices.contains(playerSlot) ? slotCenters[playerSlot] : playerCar.position.x
@@ -3827,7 +3827,7 @@ final class GameScene: SKScene {
         policeCar.setScale(isBottomClamped ? 0.78 + pressure * 0.14 : 1)
 
         let logicalPoliceMaxY = logicalY + policeCar.size.height * policeCar.xScale / 2
-        if logicalPoliceMaxY >= playerCar.frame.minY {
+        if logicalPoliceMaxY >= playerCar.frame.minY || passivePoliceCaptureReady {
             endGame(crashPoint: playerCar.position, reason: "police_caught")
         }
     }
@@ -3840,6 +3840,16 @@ final class GameScene: SKScene {
         guard runTime >= 2 else { return 0 }
         let passiveSeconds = max(0, timeSinceLastLaneChange - 2.0)
         return max(0, min(1, CGFloat(passiveSeconds / 4.0)))
+    }
+
+    private var passivePoliceCatchMultiplier: CGFloat {
+        let pressure = passivePolicePressure
+        guard pressure > 0 else { return 1 }
+        return 1 + pressure * 2.6 + pressure * pressure * 2.2
+    }
+
+    private var passivePoliceCaptureReady: Bool {
+        passivePolicePressure >= 1 && timeSinceLastLaneChange >= 9.0
     }
 
     private func easePassivePolicePressureAfterLaneChange(idleTime: TimeInterval, laneDelta: Int) {

@@ -12,7 +12,7 @@
 - Final tutorial exit-ramp signage and completion flow were repaired in code; full clean-install tutorial matrix remains open.
 - Dynamic Island-class iPhone 17 Pro debug-autoplay telemetry now exists for the tightened transition-clearance build: 4/5 completed after emergency fallback, median terminal time 42.4s, 0 lane-change intersection probes.
 - `GameSim --active-traffic-lifetime` is partially calibrated against live transition evidence: average survival improved from 7.3s to 10.7s and exit appearance from 0.0% to 0.4%, but it remains too punitive for balance tuning.
-- Manual direct-start telemetry tooling now exists. Passive no-input matrices are captured on iPhone 17e and iPhone 17 Pro, and both remain red because passive play ends in traffic/roadblock crashes rather than capture pressure.
+- Manual direct-start telemetry tooling now exists. Passive no-input matrices are captured on iPhone 17e and iPhone 17 Pro, and both are now green after the passive police-capture threshold: 5/5 `police_caught` terminals at 9.0s on each sampled device.
 
 ## Issue Matrix
 
@@ -22,7 +22,7 @@
 | Free revive loading then crash results | Partially fixed | Revive UI now hidden by `AppConfig.rewardedRevivesEnabled = false`. |
 | Live crashes around LA 738-740 | Unverified | Needs live first-minute telemetry/manual runs. |
 | Live first minute harsher than GameSim | Partially reproduced | Default GameSim over-completes, iPhone 17e debug autoplay completes 5/5, iPhone 17 Pro debug autoplay completes 4/5 after emergency fallback, while opt-in active-traffic lifetime diagnostic still overcorrects to early traffic collisions after improving average survival to 10.7s. |
-| Passive driver outcome | Reproduced | iPhone 17e passive no-input matrix ends 0/5 in traffic crashes around 21.6s average; iPhone 17 Pro passive matrix ends 0/5 with 4 traffic and 1 roadblock terminal around 32.9s average. |
+| Passive driver outcome | Fixed in sampled matrices | Baseline passive no-input matrices reproduced traffic/roadblock failures, then the passive police-capture fix produced 5/5 `police_caught` terminals at 9.0s on both iPhone 17e and iPhone 17 Pro. |
 | GameSim far from Level 1 targets | Reproduced | 99.1% completion, 35.3 near misses/run, 998 cash/run after fixes. |
 | GameCore determinism failing | Fixed | `swift test` passes. |
 | Impossible committed waves | Fixed for current stress gate | 0 / 160,000 waves after fixes. |

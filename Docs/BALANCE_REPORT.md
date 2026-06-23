@@ -180,12 +180,20 @@ Passive no-input manual matrices:
 - iPhone 17e runs: 5, completed 0/5, terminal reasons traffic 5, average terminal time 21.6s, median terminal time 21.5s, near misses/cash 1.4 / 34, autoplay decisions 0.
 - iPhone 17 Pro summary: `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/summary.md`.
 - iPhone 17 Pro runs: 5, completed 0/5, terminal reasons traffic 4 and roadblock 1, average terminal time 32.9s, median terminal time 23.7s, near misses/cash 4.4 / 68, autoplay decisions 0.
-- Read: passive/no-input play currently fails as traffic/roadblock crashes rather than police capture pressure. This contradicts the passive-driver target and should be corrected before broad Level 1 balance tuning.
+- Baseline read: passive/no-input play failed as traffic/roadblock crashes rather than police capture pressure.
+
+Passive police-capture manual matrices after fix:
+
+- iPhone 17e summary: `PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/summary.md`.
+- iPhone 17e runs: 5, completed 0/5, terminal reasons `police_caught` 5, average terminal time 9.0s, median terminal time 9.0s, autoplay decisions 0.
+- iPhone 17 Pro summary: `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/summary.md`.
+- iPhone 17 Pro runs: 5, completed 0/5, terminal reasons `police_caught` 5, average terminal time 9.0s, median terminal time 9.0s, autoplay decisions 0.
+- Read: passive/no-input play now resolves as police capture pressure on both sampled devices before traffic or roadblocks become terminal.
 
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Default GameSim over-completes at 99.1%, tightened iPhone 17e debug autoplay over-completes at 5/5 escapes, iPhone 17 Pro debug autoplay is now 4/5 after emergency transition handling, passive no-input manual play fails as traffic/roadblock crashes, and the opt-in active-traffic lifetime diagnostic still overcorrects to 0.3% completion after its first calibration pass. Do not tune rewards or density from either simulation mode alone; first calibrate active traffic lifetime against human/live evidence and fix passive-driver outcome readability.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Default GameSim over-completes at 99.1%, tightened iPhone 17e debug autoplay over-completes at 5/5 escapes, iPhone 17 Pro debug autoplay is now 4/5 after emergency transition handling, passive no-input manual play now resolves as police capture pressure, and the opt-in active-traffic lifetime diagnostic still overcorrects to 0.3% completion after its first calibration pass. Do not tune rewards or density from either simulation mode alone; first calibrate active traffic lifetime against human/live evidence.
 
 ## Next
 
-Capture active-steering manual runs with the tightened transition-clearance build, fix passive no-input failure classification/pressure, calibrate `GameSim --active-traffic-lifetime`, then tune rewards, near-miss rates, and completion after sim/live state agrees.
+Capture active-steering manual runs with the tightened transition-clearance and passive-capture build, calibrate `GameSim --active-traffic-lifetime`, then tune rewards, near-miss rates, and completion after sim/live state agrees.

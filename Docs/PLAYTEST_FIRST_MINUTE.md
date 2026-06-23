@@ -34,7 +34,9 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - The active-traffic lifetime GameSim diagnostic was partially calibrated from the live transition evidence. It now uses deterministic transition-risk scoring and an emergency movement comparison, improving average survival from 7.3s to 10.7s, but it remains much too punitive versus live debug autoplay.
 - A manual direct-start telemetry capture mode was added to `scripts/capture_live_telemetry.py`; it leaves debug autoplay off and waits for a human-controlled `run_ended` event.
 - Passive no-input manual matrices were captured on iPhone 17e and iPhone 17 Pro. iPhone 17e ended 0/5 in traffic crashes with 21.6s average terminal time; iPhone 17 Pro ended 0/5 with 4 traffic crashes and 1 roadblock crash with 32.9s average terminal time.
-- Passive read: the passive-driver outcome is still wrong. The production target wants passive play to build toward police capture pressure; current no-input runs usually read as traffic/roadblock crashes.
+- Baseline passive read: the passive-driver outcome was wrong. The production target wants passive play to build toward police capture pressure; these baseline no-input runs usually read as traffic/roadblock crashes.
+- A passive police-capture threshold was added and rerun on iPhone 17e and iPhone 17 Pro. Both no-input manual matrices ended 5/5 as `police_caught` at 9.0s average terminal time with 0 autoplay decisions.
+- Passive read after fix: the passive-driver outcome now reads as police capture pressure before traffic or roadblocks can become the terminal failure on the sampled devices.
 - The final tutorial exit-ramp page had an impossible sign-rendering gate from an older six-page flow. The current build now renders `EXIT RIGHT` on the five-step final page and can auto-advance after the exit-side practice predicate and read gate are satisfied.
 - No full clean-install tutorial matrix or human-controlled terminal outcome matrix was performed in this pass.
 
@@ -77,6 +79,12 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/summary.md`
 - `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/telemetry/`
 - `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/notes.md`
+- `PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/summary.md`
+- `PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/telemetry/`
+- `PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/notes.md`
+- `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/summary.md`
+- `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/telemetry/`
+- `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/notes.md`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`

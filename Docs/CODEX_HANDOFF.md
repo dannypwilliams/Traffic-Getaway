@@ -55,6 +55,8 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `scripts/capture_live_telemetry.py`: added `--manual` mode so the same direct-start telemetry loop can capture human-controlled runs with debug autoplay disabled.
 - `scripts/capture_live_telemetry.py`: hardened debug-default cleanup by restarting simulator `cfprefsd` and raising if debug keys remain after capture.
 - Captured passive no-input manual matrices on iPhone 17e and iPhone 17 Pro, both with zero autoplay decisions and collision analysis in every terminal sample.
+- `Traffic Getaway/GameScene.swift`: increased passive police catch-up while the player stays idle and added an explicit passive capture threshold after max passive pressure has been ignored, so no-input play resolves as `police_caught` before traffic or roadblocks can hide the failure reason.
+- Captured post-fix passive no-input manual matrices on iPhone 17e and iPhone 17 Pro; both produced 5/5 `police_caught` terminals at 9.0s with zero autoplay decisions.
 
 ## Tests run
 
@@ -135,6 +137,14 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - `python3 -u scripts/capture_live_telemetry.py --device 90D3514A-BDE2-412C-8238-8ECC17BD86B6 --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/telemetry --timeout 120`: passed.
 - `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/telemetry`: passed.
 - Direct plist verification confirmed iPhone 17 Pro debug defaults were cleared after the passive manual matrix.
+- `bash Tools/mac/verify_on_mac.sh` after passive police-capture fix: passed.
+- `python3 -m py_compile scripts/capture_live_telemetry.py scripts/summarize_run_telemetry.py` after passive police-capture fix: passed.
+- `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"` after passive police-capture fix: passed, 99 unique IDs.
+- `git diff --check` after passive police-capture fix: passed.
+- `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/telemetry --timeout 120`: passed.
+- `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/telemetry`: passed.
+- `python3 -u scripts/capture_live_telemetry.py --device 90D3514A-BDE2-412C-8238-8ECC17BD86B6 --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/telemetry --timeout 120`: passed.
+- `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/telemetry`: passed.
 
 ## Simulator/device evidence
 
@@ -193,7 +203,14 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 - Passive iPhone 17 Pro manual matrix: `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/telemetry/`.
 - Passive iPhone 17 Pro manual matrix summary: `PlaytestArtifacts/2026-06-23-manual-passive-17pro-matrix/summary.md`.
 - Passive iPhone 17 Pro manual matrix result: 5 no-input manual runs, 0/5 completed, avg terminal time 32.9s, median terminal time 23.7s, terminal reasons `traffic` 4 and `roadblock` 1, autoplay decisions 0, collision analysis 5/5.
-- Passive manual matrix read: passive/no-input play currently fails as traffic/roadblock crashes rather than police capture pressure, so the passive-driver first-minute target remains red.
+- Passive baseline matrix read: passive/no-input play failed as traffic/roadblock crashes rather than police capture pressure.
+- Passive police-capture iPhone 17e manual matrix: `PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/telemetry/`.
+- Passive police-capture iPhone 17e manual matrix summary: `PlaytestArtifacts/2026-06-23-passive-police-capture-17e-matrix/summary.md`.
+- Passive police-capture iPhone 17e manual matrix result: 5 no-input manual runs, 0/5 completed, avg terminal time 9.0s, median terminal time 9.0s, terminal reasons `police_caught` 5, autoplay decisions 0.
+- Passive police-capture iPhone 17 Pro manual matrix: `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/telemetry/`.
+- Passive police-capture iPhone 17 Pro manual matrix summary: `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/summary.md`.
+- Passive police-capture iPhone 17 Pro manual matrix result: 5 no-input manual runs, 0/5 completed, avg terminal time 9.0s, median terminal time 9.0s, terminal reasons `police_caught` 5, autoplay decisions 0.
+- Passive police-capture matrix read: passive/no-input play now resolves as police capture pressure on both sampled devices before traffic or roadblocks become terminal.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -220,13 +237,13 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 | Transition-clearance autoplay | Not present | Baseline transition clearance: 1/5 completed, avg terminal time 26.7s. Tightened transition clearance: 5/5 completed, avg terminal time 42.8s, 0 lane-change intersection probes |
 | Active-traffic GameSim diagnostic | Not present | Opt-in mode exists; first calibration improved avg survival from 7.3s to 10.7s, but 0.3% completion remains too punitive |
 | Dynamic Island debug autoplay | Not present | iPhone 17 Pro tightened transition clearance: 3/5 completed. Emergency fallback: 4/5 completed, 42.4s median terminal time, 0 lane-change intersection probes, 1 traffic collision |
+| Passive no-input outcome | Traffic/roadblock terminals | iPhone 17e and iPhone 17 Pro post-fix matrices both produce 5/5 `police_caught` terminals at 9.0s with autoplay disabled |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
 - P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 iPhone 17e runs and 4/5 iPhone 17 Pro runs after emergency fallback, passive no-input manual matrices are captured, but active steering validation is still missing and the active-traffic diagnostic still overcorrects.
-- P1 milestone blocker: Passive no-input play fails as traffic/roadblock crashes instead of police capture pressure.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 
@@ -239,4 +256,4 @@ First-minute reliability, deterministic-core repair, live telemetry, live lane-c
 
 ## Next highest-priority action
 
-Capture active-steering iPhone 17e and Dynamic Island-class matrices with the tightened transition-clearance build. Then fix the passive no-input crash pattern so it reads as police capture pressure, continue calibrating `GameSim --active-traffic-lifetime` against live telemetry, and investigate the remaining iPhone 17 Pro `no_transition_safe_slots` traffic terminal before retuning Sunset Merge.
+Capture active-steering iPhone 17e and Dynamic Island-class matrices with the tightened transition-clearance and passive-capture build. Continue calibrating `GameSim --active-traffic-lifetime` against live telemetry, and investigate the remaining iPhone 17 Pro `no_transition_safe_slots` traffic terminal before retuning Sunset Merge.
