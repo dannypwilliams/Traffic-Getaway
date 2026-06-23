@@ -77,13 +77,14 @@ def write_preferences(path: Path, preferences: dict) -> None:
         plistlib.dump(preferences, handle)
 
 
-def configure_debug_defaults(container: Path, bundle_id: str, level_id: str, vehicle_id: str, autoplay: bool) -> None:
+def configure_debug_defaults(container: Path, bundle_id: str, level_id: str, vehicle_id: str, autoplay: bool, wait_for_start_tap: bool) -> None:
     path = preferences_path(container, bundle_id)
     preferences = read_preferences(path)
     preferences["TrafficGetaway.debug.autoStartLevelID"] = level_id
     preferences["TrafficGetaway.debug.autoStartVehicleID"] = vehicle_id
     preferences["TrafficGetaway.debug.autoplay"] = autoplay
     preferences["TrafficGetaway.debug.showOpenLaneAnalysis"] = False
+    preferences["TrafficGetaway.debug.waitForStartTap"] = wait_for_start_tap
     write_preferences(path, preferences)
 
 
@@ -94,6 +95,7 @@ def clear_debug_defaults(device: str, container: Path, bundle_id: str) -> None:
         "TrafficGetaway.debug.autoplay",
         "TrafficGetaway.debug.showOpenLaneAnalysis",
         "TrafficGetaway.debug.resultScenario",
+        "TrafficGetaway.debug.waitForStartTap",
     ]
     path = preferences_path(container, bundle_id)
     simctl(device, "spawn", "killall", "cfprefsd", check=False)
@@ -131,7 +133,7 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
         run(["xcrun", "simctl", "install", args.device, str(args.app)])
 
     container = app_container(args.device, args.bundle_id)
-    configure_debug_defaults(container, args.bundle_id, args.level, args.vehicle, args.autoplay)
+    configure_debug_defaults(container, args.bundle_id, args.level, args.vehicle, args.autoplay, args.wait_for_start_tap)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     captured: list[Path] = []
     seen = telemetry_files(container)
@@ -146,6 +148,8 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
                     f"manual mode: play run {run_index}/{args.runs} on the simulator; waiting up to {args.timeout:.0f}s for run_ended telemetry",
                     flush=True,
                 )
+                if args.wait_for_start_tap:
+                    print("manual mode: tap the start screen when ready", flush=True)
 
             deadline = time.time() + args.timeout
             completed: Path | None = None
@@ -185,6 +189,7 @@ def main() -> None:
     parser.add_argument("--poll-interval", type=float, default=1)
     parser.add_argument("--manual", dest="autoplay", action="store_false", help="Direct-start the level but leave control to the player instead of debug autoplay")
     parser.add_argument("--autoplay", dest="autoplay", action="store_true", help="Direct-start and drive the run with debug autoplay (default)")
+    parser.add_argument("--wait-for-start-tap", action="store_true", help="In debug builds, show the start screen before each run so manual input can begin when ready")
     parser.add_argument("--keep-defaults", dest="clear_defaults", action="store_false", help="Leave debug defaults enabled")
     parser.set_defaults(clear_defaults=True)
     parser.set_defaults(autoplay=True)

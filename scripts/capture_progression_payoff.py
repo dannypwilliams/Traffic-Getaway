@@ -19,6 +19,7 @@ DEBUG_KEYS = [
     "TrafficGetaway.debug.autoStartVehicleID",
     "TrafficGetaway.debug.autoplay",
     "TrafficGetaway.debug.showOpenLaneAnalysis",
+    "TrafficGetaway.debug.waitForStartTap",
 ]
 
 

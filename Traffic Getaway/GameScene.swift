@@ -361,7 +361,11 @@ final class GameScene: SKScene {
         setupPolice()
         setupScoreLabel()
         AudioManager.shared.updateTheme(currentCity.audioTheme, crossfadeDuration: 0)
-        startGame()
+        if AppConfig.debugWaitForStartTap {
+            showStartScreen()
+        } else {
+            startGame()
+        }
     }
 
     override func didChangeSize(_ oldSize: CGSize) {

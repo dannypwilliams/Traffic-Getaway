@@ -33,6 +33,8 @@ Partial.
 - Passive police-capture fix was captured on iPhone 17 Pro: 5 no-input manual runs, 0/5 completed, `police_caught` terminal in all 5, 9.0s average terminal time, 0 autoplay decisions.
 - Debug first-escape payoff scenario captured on iPhone 17e. The screenshot shows `ESCAPED`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`; save-state verification showed `selectedCarID=starter_bike`, unlocked `[starter_compact, starter_bike]`, completed `[la_01]`, `totalRuns=1`, and debug defaults cleared.
 - `USE BIKE` tap-through smoke-validated on iPhone 17e with the real ResultsScene button. Telemetry recorded `run_started.levelID=la_02`, `vehicleID=starter_bike`, `vehicleClass=motorcycle`, and active input produced a `lane_changed` event into interstitial split slot `11`.
+- Attempted active-steering iPhone 17e manual matrix captured 5 runs with 0 autoplay decisions, but only 1/5 runs had active input. This is partial/failed matrix evidence, not a completed active-steering validation.
+- Debug manual start-gate smoke passed on iPhone 17e: `--manual --wait-for-start-tap` paused on the existing `Tap to Start` screen, then recorded 1/1 active-input smoke run with 3 lane changes and 0 autoplay decisions.
 
 ## Evidence
 
@@ -85,6 +87,12 @@ Partial.
 - `USE BIKE` tap-through telemetry: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/405-afterburn-starter-bike-telemetry.jsonl`
 - `USE BIKE` tap-through metadata: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/metadata.json`
 - `USE BIKE` tap-through notes: `PlaytestArtifacts/2026-06-23-use-bike-tap-through/notes.md`
+- Attempted active iPhone 17e manual summary: `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/summary.md`
+- Attempted active iPhone 17e manual telemetry: `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/telemetry/`
+- Attempted active iPhone 17e manual notes: `PlaytestArtifacts/2026-06-23-manual-active-17e-codex-matrix/notes.md`
+- Manual start-gate smoke summary: `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/summary.md`
+- Manual start-gate smoke telemetry: `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/telemetry/`
+- Manual start-gate smoke notes: `PlaytestArtifacts/2026-06-23-manual-start-gate-smoke/notes.md`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -94,7 +102,7 @@ Partial.
 
 - 20 clean-install tutorial completions.
 - Compact and large-height simulator matrices.
-- Active human steering matrices; current manual active-input matrices are still missing.
+- Active human steering matrices; current manual active-input matrices are still missing. The latest iPhone 17e attempt produced only 1/5 active-input runs, but start-gated capture tooling now exists.
 - Slow taps, rapid taps, repeated right movement, extra movement after target.
 - Crash, capture, missed-exit, retry, return to menu.
 - Full 405 Afterburn completion/balance matrix; current evidence is only a tap-through and active-input split-slot smoke validation.
@@ -118,6 +126,7 @@ Partial.
 - Debug autoplay now has a strict emergency fallback for cases where staying is predicted dangerous and every normal transition candidate is rejected.
 - The active-lifetime GameSim diagnostic now has a deterministic risk-score equivalent for emergency movement comparison.
 - Direct-start manual capture mode now exists for first-minute human matrices.
+- Debug start-gated manual capture mode now exists for active human matrices that need the player to be ready before the run begins.
 - Passive manual no-input matrices now pass on iPhone 17e and iPhone 17 Pro after the passive police-capture threshold; both sampled devices ended 5/5 runs as `police_caught` at 9.0s with autoplay disabled.
 - Final tutorial exit-ramp signage is visible on the current five-step flow, and the final lesson advances automatically after the exit-side predicate and read gate are both satisfied.
 - Debug first-escape payoff capture now proves the result-screen unlock copy, selected Starter Bike save state, completed Sunset Merge save state, and primary `USE BIKE` affordance.
@@ -126,6 +135,6 @@ Partial.
 ## Manual Capture Command
 
 ```bash
-python3 -u scripts/capture_live_telemetry.py --device <SIMULATOR_UDID> --manual --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/<timestamp>-manual-first-minute/telemetry --timeout 180
+python3 -u scripts/capture_live_telemetry.py --device <SIMULATOR_UDID> --manual --wait-for-start-tap --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/<timestamp>-manual-first-minute/telemetry --timeout 180
 python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/<timestamp>-manual-first-minute/telemetry > PlaytestArtifacts/<timestamp>-manual-first-minute/summary.md
 ```

@@ -100,6 +100,7 @@ enum AppConfig {
         static let autoStartLevelID = "TrafficGetaway.debug.autoStartLevelID"
         static let autoStartVehicleID = "TrafficGetaway.debug.autoStartVehicleID"
         static let resultScenario = "TrafficGetaway.debug.resultScenario"
+        static let waitForStartTap = "TrafficGetaway.debug.waitForStartTap"
     }
 
     static var forcedCity: DebugCityOverride {
@@ -170,6 +171,11 @@ enum AppConfig {
     static var debugResultScenario: String {
         guard debugMode else { return "" }
         return UserDefaults.standard.string(forKey: DefaultsKey.resultScenario) ?? ""
+    }
+
+    static var debugWaitForStartTap: Bool {
+        guard debugMode else { return false }
+        return UserDefaults.standard.bool(forKey: DefaultsKey.waitForStartTap)
     }
 
     static func cycleForcedLevel() {

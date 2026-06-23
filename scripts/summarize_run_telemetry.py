@@ -61,6 +61,7 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
     ends = [event for event in events if event.get("event") == "run_ended"]
     collisions = [event for event in events if event.get("event") == "collision"]
     waves = [event for event in events if event.get("event") == "traffic_wave"]
+    lane_changes = [event for event in events if event.get("event") == "lane_changed"]
     decisions = [event.get("movementDecision") for event in events if event.get("movementDecision")]
     lane_probes = [event.get("laneChangeProbe") for event in events if event.get("laneChangeProbe")]
     move_decisions = [decision for decision in decisions if decision.get("status") == "move"]
@@ -117,6 +118,7 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
         "waves": len(waves),
         "near_misses": int(terminal.get("nearMisses") or 0),
         "lane_splits": int(terminal.get("laneSplits") or 0),
+        "lane_changes": len(lane_changes),
         "distance": int(terminal.get("distance") or 0),
         "score": int(terminal.get("score") or 0),
         "cash": int(terminal.get("cash") or 0),
@@ -190,6 +192,8 @@ def print_markdown(summaries: list[dict]) -> None:
         print(f"- Median first crash: {fmt_float(median(crash_times))}s")
     print(f"- Avg traffic waves: {fmt_float(average([item['waves'] for item in summaries]))}")
     print(f"- Avg near misses: {fmt_float(average([item['near_misses'] for item in summaries]))}")
+    print(f"- Active-input runs: {sum(1 for item in summaries if item['lane_changes'] > 0)}/{len(summaries)}")
+    print(f"- Lane changed events: {sum(item['lane_changes'] for item in summaries)}")
     print(f"- Avg cash: {fmt_float(average([item['cash'] for item in summaries]), 0)}")
     print(f"- Autoplay decisions: {sum(item['autoplay_decisions'] for item in summaries)}")
     print(f"- Autoplay move decisions: {sum(item['autoplay_moves'] for item in summaries)}")
@@ -216,8 +220,8 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Terminal reasons: {dict(sorted(terminal_counts.items()))}")
     print(f"- Pattern mix: {dict(sorted(pattern_counts.items()))}")
     print()
-    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Lane probes | Probe intersections | Decisions | Target mismatch | Applied mismatch |")
-    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|")
+    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Lane changes | Cash | Wanted | Collision rects | Collision analysis | Active traffic | Lane probes | Probe intersections | Decisions | Target mismatch | Applied mismatch |")
+    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---:|---|---|---|---:|---:|---:|---:|---:|")
     for item in summaries:
         print(
             "| "
@@ -230,6 +234,7 @@ def print_markdown(summaries: list[dict]) -> None:
             f"{fmt_float(item['terminal_time'])} | "
             f"{item['waves']} | "
             f"{item['near_misses']} | "
+            f"{item['lane_changes']} | "
             f"{item['cash']} | "
             f"{item['wanted_level']} | "
             f"{str(item['has_collision_rects']).lower()} |"
