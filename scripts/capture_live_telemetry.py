@@ -77,15 +77,47 @@ def write_preferences(path: Path, preferences: dict) -> None:
         plistlib.dump(preferences, handle)
 
 
-def configure_debug_defaults(container: Path, bundle_id: str, level_id: str, vehicle_id: str, autoplay: bool, wait_for_start_tap: bool) -> None:
+def save_data(preferences: dict) -> dict:
+    raw = preferences.get("TrafficGetaway.SaveData.v2")
+    if isinstance(raw, bytes):
+        return json.loads(raw.decode("utf-8"))
+    if isinstance(raw, str):
+        return json.loads(raw)
+    return {}
+
+
+def encode_save_data(data: dict) -> bytes:
+    return json.dumps(data, separators=(",", ":")).encode("utf-8")
+
+
+def configure_debug_defaults(
+    device: str,
+    container: Path,
+    bundle_id: str,
+    level_id: str,
+    vehicle_id: str,
+    autoplay: bool,
+    wait_for_start_tap: bool,
+    control_preference: str | None,
+) -> None:
     path = preferences_path(container, bundle_id)
+    simctl(device, "spawn", "killall", "cfprefsd", check=False)
     preferences = read_preferences(path)
+    preferences.pop("TrafficGetaway.debug.resultScenario", None)
     preferences["TrafficGetaway.debug.autoStartLevelID"] = level_id
     preferences["TrafficGetaway.debug.autoStartVehicleID"] = vehicle_id
     preferences["TrafficGetaway.debug.autoplay"] = autoplay
     preferences["TrafficGetaway.debug.showOpenLaneAnalysis"] = False
     preferences["TrafficGetaway.debug.waitForStartTap"] = wait_for_start_tap
+    if control_preference:
+        data = save_data(preferences)
+        if not data:
+            raise RuntimeError("Cannot set control preference because TrafficGetaway.SaveData.v2 is missing")
+        data["controlPreference"] = control_preference
+        data["hasCompletedOnboarding"] = True
+        preferences["TrafficGetaway.SaveData.v2"] = encode_save_data(data)
     write_preferences(path, preferences)
+    simctl(device, "spawn", "killall", "cfprefsd", check=False)
 
 
 def clear_debug_defaults(device: str, container: Path, bundle_id: str) -> None:
@@ -133,7 +165,16 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
         run(["xcrun", "simctl", "install", args.device, str(args.app)])
 
     container = app_container(args.device, args.bundle_id)
-    configure_debug_defaults(container, args.bundle_id, args.level, args.vehicle, args.autoplay, args.wait_for_start_tap)
+    configure_debug_defaults(
+        args.device,
+        container,
+        args.bundle_id,
+        args.level,
+        args.vehicle,
+        args.autoplay,
+        args.wait_for_start_tap,
+        args.control_preference,
+    )
     args.output_dir.mkdir(parents=True, exist_ok=True)
     captured: list[Path] = []
     seen = telemetry_files(container)
@@ -196,6 +237,7 @@ def main() -> None:
     parser.add_argument("--manual", dest="autoplay", action="store_false", help="Direct-start the level but leave control to the player instead of debug autoplay")
     parser.add_argument("--autoplay", dest="autoplay", action="store_true", help="Direct-start and drive the run with debug autoplay (default)")
     parser.add_argument("--wait-for-start-tap", action="store_true", help="In debug builds, show the start screen before each run so manual input can begin when ready")
+    parser.add_argument("--control-preference", choices=["swipeAndTap", "swipeOnly", "tapOnly"], help="Set the saved control mode before launching the run")
     parser.add_argument("--leave-app-running", action="store_true", help="Do not terminate the app after capture; useful for result-screen screenshots. Terminate and verify debug defaults after screenshots.")
     parser.add_argument("--keep-defaults", dest="clear_defaults", action="store_false", help="Leave debug defaults enabled")
     parser.set_defaults(clear_defaults=True)
