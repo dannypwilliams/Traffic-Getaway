@@ -61,6 +61,16 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
     ends = [event for event in events if event.get("event") == "run_ended"]
     collisions = [event for event in events if event.get("event") == "collision"]
     waves = [event for event in events if event.get("event") == "traffic_wave"]
+    decisions = [event.get("movementDecision") for event in events if event.get("movementDecision")]
+    move_decisions = [decision for decision in decisions if decision.get("status") == "move"]
+    target_mismatches = [
+        decision for decision in move_decisions
+        if decision.get("targetSlot") != decision.get("simPolicyTargetSlot")
+    ]
+    applied_mismatches = [
+        decision for decision in move_decisions
+        if decision.get("appliedSlot") != decision.get("simPolicyTargetSlot")
+    ]
     terminal = ends[-1] if ends else (collisions[-1] if collisions else (events[-1] if events else {}))
     first = starts[0] if starts else (events[0] if events else {})
     pattern_counts = Counter(event.get("patternID") for event in waves if event.get("patternID"))
@@ -93,6 +103,10 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
             or any(event.get("collisionPlayerRect") for event in collisions)
         ),
         "has_active_traffic": any(event.get("activeTraffic") for event in events),
+        "autoplay_decisions": len(decisions),
+        "autoplay_moves": len(move_decisions),
+        "target_mismatches": len(target_mismatches),
+        "applied_mismatches": len(applied_mismatches),
     }
 
 
@@ -122,11 +136,15 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Avg traffic waves: {fmt_float(average([item['waves'] for item in summaries]))}")
     print(f"- Avg near misses: {fmt_float(average([item['near_misses'] for item in summaries]))}")
     print(f"- Avg cash: {fmt_float(average([item['cash'] for item in summaries]), 0)}")
+    print(f"- Autoplay decisions: {sum(item['autoplay_decisions'] for item in summaries)}")
+    print(f"- Autoplay move decisions: {sum(item['autoplay_moves'] for item in summaries)}")
+    print(f"- Autoplay target mismatches: {sum(item['target_mismatches'] for item in summaries)}")
+    print(f"- Autoplay applied-slot mismatches: {sum(item['applied_mismatches'] for item in summaries)}")
     print(f"- Terminal reasons: {dict(sorted(terminal_counts.items()))}")
     print(f"- Pattern mix: {dict(sorted(pattern_counts.items()))}")
     print()
-    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Active traffic |")
-    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|")
+    print("| File | Level | Vehicle | Seed | Terminal | Completed | Time | Waves | Near misses | Cash | Wanted | Collision rects | Active traffic | Decisions | Target mismatch | Applied mismatch |")
+    print("|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|---|---:|---:|---:|")
     for item in summaries:
         print(
             "| "
@@ -142,7 +160,10 @@ def print_markdown(summaries: list[dict]) -> None:
             f"{item['cash']} | "
             f"{item['wanted_level']} | "
             f"{str(item['has_collision_rects']).lower()} |"
-            f" {str(item['has_active_traffic']).lower()} |"
+            f" {str(item['has_active_traffic']).lower()} | "
+            f"{item['autoplay_decisions']} | "
+            f"{item['target_mismatches']} | "
+            f"{item['applied_mismatches']} |"
         )
 
 

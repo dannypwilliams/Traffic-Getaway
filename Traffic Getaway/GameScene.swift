@@ -1282,7 +1282,8 @@ final class GameScene: SKScene {
         levelCompleted: Bool? = nil,
         collisionVehicle: SKSpriteNode? = nil,
         playerRect: CGRect? = nil,
-        trafficRect: CGRect? = nil
+        trafficRect: CGRect? = nil,
+        movementDecision: RunTelemetryEvent.MovementDecision? = nil
     ) {
         guard RunTelemetryRecorder.shared.isEnabled else { return }
 
@@ -1354,6 +1355,7 @@ final class GameScene: SKScene {
             rejectionReason: plan?.rejectionReason,
             spawns: spawns,
             activeTraffic: activeTraffic,
+            movementDecision: movementDecision,
             collisionPlayerRect: playerRect.map(RunTelemetryEvent.RectValue.init),
             collisionTrafficRect: trafficRect.map(RunTelemetryEvent.RectValue.init),
             collisionVehicleID: vehicleID,
@@ -2543,17 +2545,24 @@ final class GameScene: SKScene {
             safeSlots.formUnion(laneManager.exitSlots(for: activeExitSide, vehicleClass: activeCar.vehicleClass))
         }
 
-        guard !safeSlots.isEmpty else { return }
-
-        let maxStep: Int
+        let liveReach: Int
         if activeCar.vehicleClass == .motorcycle {
-            maxStep = dodgeBoostTimer > 0 ? 3 : 2
+            liveReach = dodgeBoostTimer > 0 ? 3 : 2
         } else {
-            maxStep = dodgeBoostTimer > 0 ? 6 : 4
+            liveReach = dodgeBoostTimer > 0 ? 6 : 4
+        }
+        let simReach = simPolicyReach(boosted: dodgeBoostTimer > 0)
+
+        guard !safeSlots.isEmpty else {
+            recordAutoplayDecision(status: "no_safe_slots", safeSlots: safeSlots, reachableSlots: [], desiredSlot: nil, targetSlot: nil, appliedDelta: nil, appliedSlot: nil, liveReach: liveReach, simReach: simReach)
+            return
         }
 
-        let reachable = safeSlots.filter { abs($0 - playerSlot) <= maxStep }
-        guard !reachable.isEmpty else { return }
+        let reachable = safeSlots.filter { abs($0 - playerSlot) <= liveReach }
+        guard !reachable.isEmpty else {
+            recordAutoplayDecision(status: "no_reachable_slots", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: nil, targetSlot: nil, appliedDelta: nil, appliedSlot: nil, liveReach: liveReach, simReach: simReach)
+            return
+        }
 
         let desiredSlot: Int
         if exitPhase == .active, let activeExitSide {
@@ -2565,10 +2574,16 @@ final class GameScene: SKScene {
 
         guard let targetSlot = reachable.min(by: { lhs, rhs in
             debugRouteScore(slot: lhs, desiredSlot: desiredSlot) < debugRouteScore(slot: rhs, desiredSlot: desiredSlot)
-        }) else { return }
+        }) else {
+            recordAutoplayDecision(status: "no_target", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: nil, appliedDelta: nil, appliedSlot: nil, liveReach: liveReach, simReach: simReach)
+            return
+        }
 
         let delta = targetSlot - playerSlot
-        guard delta != 0 else { return }
+        guard delta != 0 else {
+            recordAutoplayDecision(status: "already_at_target", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: nil, appliedSlot: playerSlot, liveReach: liveReach, simReach: simReach)
+            return
+        }
 
         let moveDelta: Int
         if activeCar.vehicleClass == .car {
@@ -2576,9 +2591,73 @@ final class GameScene: SKScene {
         } else {
             moveDelta = max(-3, min(3, delta))
         }
-        guard moveDelta != 0 else { return }
+        guard moveDelta != 0 else {
+            recordAutoplayDecision(status: "zero_move_delta", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: nil, appliedSlot: playerSlot, liveReach: liveReach, simReach: simReach)
+            return
+        }
 
+        let appliedSlot = laneManager.targetSlot(from: playerSlot, delta: moveDelta, vehicleClass: activeCar.vehicleClass)
+        recordAutoplayDecision(status: "move", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: moveDelta, appliedSlot: appliedSlot, liveReach: liveReach, simReach: simReach)
         movePlayer(by: moveDelta, kind: abs(moveDelta) > 1 ? .fastSwipe : .swipe)
+    }
+
+    private func recordAutoplayDecision(
+        status: String,
+        safeSlots: Set<Int>,
+        reachableSlots: Set<Int>,
+        desiredSlot: Int?,
+        targetSlot: Int?,
+        appliedDelta: Int?,
+        appliedSlot: Int?,
+        liveReach: Int,
+        simReach: Int
+    ) {
+        let simTarget = simPolicyTargetSlot(safeSlots: safeSlots, simReach: simReach)
+        let decision = RunTelemetryEvent.MovementDecision(
+            source: "debug_autoplay",
+            status: status,
+            currentSlot: playerSlot,
+            desiredSlot: desiredSlot,
+            targetSlot: targetSlot,
+            appliedDelta: appliedDelta,
+            appliedSlot: appliedSlot,
+            liveReach: liveReach,
+            simReach: simReach,
+            simPolicyTargetSlot: simTarget,
+            safeSlots: safeSlots.sorted(),
+            reachableSlots: reachableSlots.sorted()
+        )
+        recordTelemetry(event: "autoplay_decision", movementDecision: decision)
+    }
+
+    private func simPolicyReach(boosted: Bool) -> Int {
+        let base = activeCar.vehicleClass == .motorcycle ? 2 : 4
+        let handlingBonus = activeCar.handling > 1.1 ? 1 : 0
+        return base + handlingBonus + (boosted ? 2 : 0)
+    }
+
+    private func simPolicyTargetSlot(safeSlots: Set<Int>, simReach: Int) -> Int? {
+        let candidates = safeSlots
+            .filter { abs($0 - playerSlot) <= simReach }
+            .sorted()
+        guard !candidates.isEmpty else { return nil }
+
+        let desiredSlot: Int
+        if exitPhase == .active, let activeExitSide {
+            let exitSlots = laneManager.exitSlots(for: activeExitSide, vehicleClass: activeCar.vehicleClass)
+            desiredSlot = activeExitSide == .left ? (exitSlots.min() ?? 0) : (exitSlots.max() ?? LaneManager.slotCount - 1)
+        } else {
+            desiredSlot = LaneManager.startSlot
+        }
+
+        return candidates.min { lhs, rhs in
+            let lhsScore = abs(lhs - desiredSlot) + (lhs == playerSlot ? 2 : 0)
+            let rhsScore = abs(rhs - desiredSlot) + (rhs == playerSlot ? 2 : 0)
+            if lhsScore == rhsScore {
+                return lhs < rhs
+            }
+            return lhsScore < rhsScore
+        }
     }
 
     private func debugRouteScore(slot: Int, desiredSlot: Int) -> CGFloat {

@@ -98,7 +98,7 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
         for run_index in range(1, args.runs + 1):
             simctl(args.device, "terminate", args.bundle_id, check=False)
             launch = simctl(args.device, "launch", args.bundle_id)
-            print(launch.stdout.strip())
+            print(launch.stdout.strip(), flush=True)
 
             deadline = time.time() + args.timeout
             completed: Path | None = None
@@ -115,7 +115,7 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
             destination = args.output_dir / f"{run_index:02d}-{completed.name}"
             shutil.copy2(completed, destination)
             captured.append(destination)
-            print(f"captured {destination}")
+            print(f"captured {destination}", flush=True)
     finally:
         simctl(args.device, "terminate", args.bundle_id, check=False)
         if args.clear_defaults:
@@ -131,7 +131,7 @@ def main() -> None:
     parser.add_argument("--level", default="la_01", help="Level ID to auto-start")
     parser.add_argument("--vehicle", default="starter_compact", help="Vehicle ID to select before each run")
     parser.add_argument("--bundle-id", default=DEFAULT_BUNDLE_ID)
-    parser.add_argument("--app", type=Path, default=DEFAULT_APP_PATH, help="Built .app bundle to install; pass '' to skip")
+    parser.add_argument("--app", default=str(DEFAULT_APP_PATH), help="Built .app bundle to install; pass '' to skip")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--timeout", type=float, default=90)
     parser.add_argument("--poll-interval", type=float, default=1)
@@ -141,8 +141,10 @@ def main() -> None:
 
     if args.runs < 1:
         raise SystemExit("--runs must be at least 1")
-    if str(args.app) == "":
+    if args.app == "":
         args.app = None
+    else:
+        args.app = Path(args.app)
 
     captured = capture_runs(args)
     print("")

@@ -16,6 +16,7 @@ Partial.
 - Debug open-path overlay was enabled, visually verified, captured, then disabled again in the simulator.
 - Debug direct-start/autoplay capture produced a five-run iPhone 17e live matrix for `la_01` + `starter_compact`.
 - New-schema collision telemetry includes active traffic snapshots.
+- Debug autoplay decision telemetry produced a six-run iPhone 17e matrix and isolated the main sim/live gap to applied movement: 35 applied-slot mismatches across 36 move decisions.
 
 ## Evidence
 
@@ -26,6 +27,8 @@ Partial.
 - Live telemetry: `PlaytestArtifacts/2026-06-22-production-pass-18-38/telemetry/2026-06-22_18-49-43-la_01-starter_compact-17033032432948192956.jsonl`
 - Autoplay matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/summary.md`
 - Autoplay matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/telemetry/`
+- Autoplay decision matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/summary.md`
+- Autoplay decision matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/telemetry/`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -50,3 +53,4 @@ Partial.
 - Live first-minute JSONL telemetry added and smoke-tested.
 - Debug collision/traffic-plan visualization added and screenshot-verified.
 - Debug direct-start/autoplay telemetry capture added and verified.
+- Debug autoplay movement-decision telemetry added and summarized.

@@ -2,7 +2,7 @@
 
 ## Milestone
 
-First-minute reliability, deterministic-core repair, and live telemetry: partial.
+First-minute reliability, deterministic-core repair, live telemetry, and sim/live movement diagnosis: partial.
 
 ## Verified baseline
 
@@ -33,11 +33,13 @@ First-minute reliability, deterministic-core repair, and live telemetry: partial
 - `Traffic Getaway/TrafficPatternGenerator.swift`: stopped the app-side generator from committing invalid recovery waves.
 - `Traffic Getaway/RunTelemetryRecorder.swift`: added debug JSONL live-run telemetry for run starts, traffic waves, lane changes, exits, collisions, and run endings.
 - `Traffic Getaway/RunTelemetryRecorder.swift`: extended telemetry with active traffic snapshots: spawn ID, lane, slot, lane span, type, speed, y-position, size, spawn time, and roadblock state.
+- `Traffic Getaway/RunTelemetryRecorder.swift`: added debug autoplay movement-decision telemetry with live target, applied slot, reach, reachable slots, and GameSim policy target.
 - `Traffic Getaway/GameScene.swift`: records live first-minute state including seed, player slot/lane, traffic pattern, safe slots, active traffic, exit state, police pressure, collision rectangles, and terminal outcomes; also adds a debug open-path overlay for lane centers, slot centers, safe slots, exit corridors, near-miss bands, hitboxes, wave ID, and seed.
+- `Traffic Getaway/GameScene.swift`: records `autoplay_decision` events and compares debug autoplay choices against a GameSim-style route target.
 - `Traffic Getaway/GameViewController.swift` and `Traffic Getaway/AppConfig.swift`: added debug-only direct level/vehicle auto-start defaults so simulator live telemetry can be captured without hand navigation.
 - `Traffic Getaway.xcodeproj/project.pbxproj`: added the telemetry recorder to the iOS target.
-- `scripts/summarize_run_telemetry.py`: added a repeatable JSONL summarizer for live-run telemetry exports.
-- `scripts/capture_live_telemetry.py`: added a repeatable simulator capture loop for debug autoplay live-run matrices.
+- `scripts/summarize_run_telemetry.py`: added a repeatable JSONL summarizer for live-run telemetry exports, including autoplay decision/mismatch counts.
+- `scripts/capture_live_telemetry.py`: added a repeatable simulator capture loop for debug autoplay live-run matrices, with flushed progress output and a working empty `--app ''` skip-install path.
 
 ## Tests run
 
@@ -58,6 +60,12 @@ First-minute reliability, deterministic-core repair, and live telemetry: partial
 - Re-ran `bash Tools/mac/verify_on_mac.sh` after direct-start/capture changes: passed.
 - Re-ran `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345`: passed; current sim still reports 99.1% completion.
 - Re-ran `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --traffic-stress`: passed; 160,000 waves, 0 impossible committed waves, 0 exit reachability failures.
+- `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"` after movement telemetry: passed, 99 unique IDs.
+- `cd GameCore && swift test` after movement telemetry: passed, 18 tests, 0 failures.
+- `bash Tools/mac/verify_on_mac.sh` after movement telemetry: passed.
+- `python3 scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --runs 5 --level la_01 --vehicle starter_compact --output-dir PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/telemetry --timeout 100`: produced decision telemetry; one buffered attempt was interrupted after producing completed files, then resumed with three more runs.
+- `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/telemetry`: passed.
+- `xcrun simctl spawn 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E defaults read com.danielwilliams.TrafficGetaway TrafficGetaway.debug.autoplay`: confirmed the debug autoplay default was cleared after capture.
 
 ## Simulator/device evidence
 
@@ -71,6 +79,9 @@ First-minute reliability, deterministic-core repair, and live telemetry: partial
 - Autoplay matrix: `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/telemetry/`.
 - Autoplay matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/summary.md`.
 - Autoplay matrix result: 5 iPhone 17e debug-autoplay runs, 0/5 completed, avg terminal time 6.4s, median terminal time 4.4s, avg traffic waves 6.2, avg near misses 2.2, traffic collision in all 5, collision rectangles and active traffic snapshots present in all 5.
+- Autoplay decision matrix: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/telemetry/`.
+- Autoplay decision matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/summary.md`.
+- Autoplay decision matrix result: 6 iPhone 17e debug-autoplay runs, 0/6 completed, avg terminal time 6.5s, median terminal time 6.5s, avg traffic waves 6.8, avg near misses 2.2, traffic collision in all 6, 246 autoplay decisions, 36 move decisions, 4 target mismatches, and 35 applied-slot mismatches.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -87,15 +98,16 @@ First-minute reliability, deterministic-core repair, and live telemetry: partial
 | Level 1 near misses | 32.1/run | 35.3/run |
 | Level 1 avg cash | 909 | 998 |
 | Level 1 avg XP | 359 | 391 |
-| Live telemetry | Not present | 1 manual smoke run plus 5 debug-autoplay runs captured |
+| Live telemetry | Not present | 1 manual smoke run, 5 active-traffic autoplay runs, and 6 decision-matrix autoplay runs captured |
 | Debug visualization | Not present | Open-path overlay screenshot captured |
 | Active traffic telemetry | Not present | Present in new collision samples |
+| Autoplay decision telemetry | Not present | 246 decisions captured; applied slot mismatched GameSim target in 35/36 moves |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
-- P1 milestone blocker: Sim/live reconciliation is still not complete; debug-autoplay live runs now show a major control-policy mismatch against GameSim that must be isolated before balance tuning.
+- P1 milestone blocker: Sim/live reconciliation is still not complete; decision telemetry shows live debug autoplay usually chooses the same target as GameSim but applies movement differently, landing short of the intended slot in 35/36 move decisions.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 
@@ -108,4 +120,4 @@ First-minute reliability, deterministic-core repair, and live telemetry: partial
 
 ## Next highest-priority action
 
-Add lane-change decision telemetry for debug autoplay, compare those decisions against GameSim's safe-slot route policy, then capture a manual matrix before retuning Sunset Merge.
+Align debug autoplay's applied movement with the GameSim route target, or update GameSim to model the app's multi-step movement. Then rerun the decision matrix, capture a manual matrix, and only then retune Sunset Merge.

@@ -37,6 +37,21 @@ struct RunTelemetryEvent: Codable {
         let isRoadblock: Bool
     }
 
+    struct MovementDecision: Codable {
+        let source: String
+        let status: String
+        let currentSlot: Int
+        let desiredSlot: Int?
+        let targetSlot: Int?
+        let appliedDelta: Int?
+        let appliedSlot: Int?
+        let liveReach: Int
+        let simReach: Int
+        let simPolicyTargetSlot: Int?
+        let safeSlots: [Int]
+        let reachableSlots: [Int]
+    }
+
     let event: String
     let build: String
     let tuningVersion: String
@@ -67,6 +82,7 @@ struct RunTelemetryEvent: Codable {
     let rejectionReason: String?
     let spawns: [TrafficSpawn]?
     let activeTraffic: [ActiveTraffic]?
+    let movementDecision: MovementDecision?
     let collisionPlayerRect: RectValue?
     let collisionTrafficRect: RectValue?
     let collisionVehicleID: Int?

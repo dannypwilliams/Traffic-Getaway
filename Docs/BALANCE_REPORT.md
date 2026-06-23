@@ -52,10 +52,25 @@ Live debug-autoplay matrix after telemetry improvements:
 - Terminal reasons: traffic collision in all 5.
 - Collision rectangles and active traffic snapshots were present in all 5 collision samples.
 
+Live debug-autoplay decision matrix:
+
+- Runs: 6.
+- Completed: 0/6.
+- Avg terminal time: 6.5s.
+- Median terminal time: 6.5s.
+- Avg traffic waves before terminal event: 6.8.
+- Avg near misses/cash: 2.2 / 11.
+- Autoplay decisions: 246.
+- Autoplay move decisions: 36.
+- Autoplay target mismatches: 4.
+- Autoplay applied-slot mismatches: 35.
+- Terminal reasons: traffic collision in all 6.
+- Summary: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/summary.md`.
+
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome, but it appears to be a control-policy mismatch rather than proof that traffic should be nerfed. Do not tune rewards or density until lane-change decisions explain why autoplay dies before the exit.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome, and the decision matrix points to movement application rather than target selection: live autoplay chooses nearly the same route target as GameSim, then usually lands on an intermediate slot. Do not tune rewards or density until that control-model mismatch is fixed or intentionally modeled.
 
 ## Next
 
-Add lane-change decision telemetry, compare live autoplay decisions against GameSim's safe-slot policy, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
+Align debug autoplay movement with GameSim or update GameSim to model the app's multi-step slot movement, rerun the decision matrix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
