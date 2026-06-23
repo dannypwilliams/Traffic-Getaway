@@ -42,3 +42,6 @@ Commit: 3c2431d
 - Computer Use tapped `RETRY LEVEL`, tapped `Tap to Start`, and OS-level coordinate taps were attempted during gameplay for existing-save active progression attempt 03
 - xcrun simctl io <iPhone 17e> screenshot for start and result checkpoints in existing-save active progression attempt 03
 - python3 scripts/summarize_run_telemetry.py for existing-save active progression attempt 03; telemetry recorded 0 lane changes and terminal `police_caught` at 9.0s, so the run was rejected from active/progression coverage
+- xcrun simctl io <iPhone 17e> recordVideo for `2026-06-23_iphone17e_existing-save_garage-vehicle-selection_session01.mp4`
+- Computer Use tapped `GARAGE` from the result screen, switched between Cars and Bikes tabs, observed selected `SUNSET CRUISER`, observed locked `STARTER BIKE` with `NEED $107 MORE`, then tapped `BACK` to return to the main menu
+- xcrun simctl io <iPhone 17e> screenshot for Garage current-car, locked-bike, and menu-return checkpoints in vehicle-selection session 01

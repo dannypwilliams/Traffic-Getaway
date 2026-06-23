@@ -4,7 +4,7 @@
 
 PARTIAL.
 
-The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, and City Select / Level Select progression has recorded evidence. The required all-city/all-device recorded active-play matrix is not complete.
+The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, City Select / Level Select progression has recorded evidence, and Garage/vehicle browsing has partial recorded evidence. The required all-city/all-device recorded active-play matrix is not complete.
 
 ## Commit Range
 
@@ -16,10 +16,10 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 - Planned tests: 73
 - Passed: 20
 - Failed: 1
-- Partial: 4
+- Partial: 5
 - Blocked: 0
 - Invalid: 4
-- Not tested: 48
+- Not tested: 47
 - Valid active-input runs: 12
 - Valid complete-evidence runs counted for LA Starter Compact: 5
 - Valid complete-evidence runs counted for LA Starter Bike: 3
@@ -28,7 +28,7 @@ The full recorded playtest has been scoped, the artifact structure has been crea
 
 - Device coverage: iPhone 17e has two completed recorded active-run slices plus one recorded retry functional session; iPhone 17 Pro has one Dynamic Island active sample that failed the safe-area check; no physical hardware.
 - City coverage: Los Angeles has completed Starter Compact and Starter Bike active-run slices for `la_01`; New York and Miami have automated simulation only.
-- Vehicle coverage: Starter Compact and Starter Bike each have one completed iPhone 17e Los Angeles city slice.
+- Vehicle coverage: Starter Compact and Starter Bike each have one completed iPhone 17e Los Angeles city slice. Garage browsing is partially recorded: selected Sunset Cruiser, Cars/Bikes tab switching, and locked Starter Bike messaging are proven, but alternate unlocked-vehicle selection is still unproven.
 - Tutorial result: pass for recorded first-run onboarding completion without skip; launch-frame still capture is partial because the screenshot caught tutorial page 1 rather than the branded launch frame.
 - First-minute result: fail/partial signal; six valid active Starter Compact LA01 runs all crashed before 10 seconds, and three complete-evidence Starter Bike LA01 runs all failed before completion.
 - Control-feel result: partial; tap steering produced lane changes in twelve valid active-input runs, but other control modes are untested and the iPhone 17 Pro vehicle-specific sample is weakened by a vehicle identity mismatch.

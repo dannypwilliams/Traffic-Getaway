@@ -7,10 +7,10 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 - Planned tests: 73
 - Passed: 20
 - Failed: 1
-- Partial: 4
+- Partial: 5
 - Blocked: 0
 - Invalid: 4
-- Not tested: 48
+- Not tested: 47
 - Valid active-input runs in this artifact set: 12
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 - Valid complete-evidence runs counted for LA Starter Bike requirement: 3
@@ -41,7 +41,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | FUNC-02 | Tutorial instructions | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4` | | Tutorial pages 1-5 captured under `screenshots/tutorial/2026-06-23_iphone17e_fresh-install_tutorial-progression_attempt01_*.png`. |
 | FUNC-03 | Tutorial completion without skip | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_fresh-install_tutorial-la-progression_attempt01.mp4` | `telemetry/raw/01-2026-06-23_10-02-16-la_01-starter_compact-fresh-install-progression-17033032432948192956.jsonl` | Onboarding completed without skip and transitioned into Los Angeles gameplay. Gameplay portion is invalid for active-run coverage because telemetry recorded 0 lane changes. |
 | FUNC-04 | City/progression screen | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_existing-save_level-select-la01_active-progression_attempt02.mp4` | | City Select / Level Select captured at `screenshots/progression/2026-06-23_iphone17e_existing-save_level-select-la01_active-progression_attempt02_city-select.png`. |
-| FUNC-05 | Vehicle selection | iPhone 17e | not tested | | | |
+| FUNC-05 | Vehicle selection | iPhone 17e | partial | `videos/progression/2026-06-23_iphone17e_existing-save_garage-vehicle-selection_session01.mp4` | | Garage opened from the result screen and displayed selected `SUNSET CRUISER`, Cars/Bikes tab switching, and locked `STARTER BIKE` messaging. Alternate unlocked-vehicle selection remains unproven because the observed bike was locked with `NEED $107 MORE`. |
 | FUNC-06 | Pause and resume | iPhone 17e | not tested | | | |
 | FUNC-07 | Restart after pause | iPhone 17e | not tested | | | |
 | FUNC-08 | Failure screen and retry | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01.mp4` | `telemetry/raw/01-2026-06-23_09-42-21-la_01-starter_bike-16090129143462938849.jsonl` | Failure screen captured, `RETRY LEVEL` tapped, and retry returned to the Los Angeles Starter Bike start screen. |
