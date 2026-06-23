@@ -2770,6 +2770,12 @@ final class GameScene: SKScene {
             return
         }
 
+        let transitionReachable = reachable.filter { debugAutoplayTransitionIsSafe(toSlot: $0) }
+        guard !transitionReachable.isEmpty else {
+            recordAutoplayDecision(source: safeSlotSnapshot.source, status: "no_transition_safe_slots", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: nil, targetSlot: nil, appliedDelta: nil, appliedSlot: nil, liveReach: liveReach, simReach: simReach)
+            return
+        }
+
         let desiredSlot: Int
         if exitPhase == .active, let activeExitSide {
             let exitSlots = laneManager.exitSlots(for: activeExitSide, vehicleClass: activeCar.vehicleClass)
@@ -2778,16 +2784,16 @@ final class GameScene: SKScene {
             desiredSlot = LaneManager.startSlot
         }
 
-        guard let targetSlot = reachable.min(by: { lhs, rhs in
+        guard let targetSlot = transitionReachable.min(by: { lhs, rhs in
             debugRouteScore(slot: lhs, desiredSlot: desiredSlot) < debugRouteScore(slot: rhs, desiredSlot: desiredSlot)
         }) else {
-            recordAutoplayDecision(source: safeSlotSnapshot.source, status: "no_target", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: nil, appliedDelta: nil, appliedSlot: nil, liveReach: liveReach, simReach: simReach)
+            recordAutoplayDecision(source: safeSlotSnapshot.source, status: "no_target", safeSlots: safeSlots, reachableSlots: transitionReachable, desiredSlot: desiredSlot, targetSlot: nil, appliedDelta: nil, appliedSlot: nil, liveReach: liveReach, simReach: simReach)
             return
         }
 
         let delta = targetSlot - playerSlot
         guard delta != 0 else {
-            recordAutoplayDecision(source: safeSlotSnapshot.source, status: "already_at_target", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: nil, appliedSlot: playerSlot, liveReach: liveReach, simReach: simReach)
+            recordAutoplayDecision(source: safeSlotSnapshot.source, status: "already_at_target", safeSlots: safeSlots, reachableSlots: transitionReachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: nil, appliedSlot: playerSlot, liveReach: liveReach, simReach: simReach)
             return
         }
 
@@ -2798,14 +2804,76 @@ final class GameScene: SKScene {
             moveDelta = max(-3, min(3, delta))
         }
         guard moveDelta != 0 else {
-            recordAutoplayDecision(source: safeSlotSnapshot.source, status: "zero_move_delta", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: nil, appliedSlot: playerSlot, liveReach: liveReach, simReach: simReach)
+            recordAutoplayDecision(source: safeSlotSnapshot.source, status: "zero_move_delta", safeSlots: safeSlots, reachableSlots: transitionReachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: nil, appliedSlot: playerSlot, liveReach: liveReach, simReach: simReach)
             return
         }
 
         let appliedSlotDelta = moveDelta * (activeCar.vehicleClass == .car ? 2 : 1)
         let appliedSlot = laneManager.targetSlot(from: playerSlot, delta: appliedSlotDelta, vehicleClass: activeCar.vehicleClass)
-        recordAutoplayDecision(source: safeSlotSnapshot.source, status: "move", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: moveDelta, appliedSlot: appliedSlot, liveReach: liveReach, simReach: simReach)
+        recordAutoplayDecision(source: safeSlotSnapshot.source, status: "move", safeSlots: safeSlots, reachableSlots: transitionReachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: moveDelta, appliedSlot: appliedSlot, liveReach: liveReach, simReach: simReach)
         movePlayer(by: moveDelta, kind: abs(moveDelta) > 1 ? .fastSwipe : .swipe)
+    }
+
+    private func debugAutoplayTransitionIsSafe(toSlot targetSlot: Int) -> Bool {
+        let delta = targetSlot - playerSlot
+        guard delta != 0 else {
+            return debugAutoplayTargetHorizonIsSafe(slot: targetSlot, horizon: 0.18)
+        }
+
+        let moveDelta: Int
+        if activeCar.vehicleClass == .car {
+            moveDelta = max(-3, min(3, delta / 2))
+        } else {
+            moveDelta = max(-3, min(3, delta))
+        }
+        guard moveDelta != 0 else { return false }
+
+        let appliedSlotDelta = moveDelta * (activeCar.vehicleClass == .car ? 2 : 1)
+        let appliedSlot = laneManager.targetSlot(from: playerSlot, delta: appliedSlotDelta, vehicleClass: activeCar.vehicleClass)
+        guard appliedSlot == targetSlot else { return false }
+
+        let kind: LaneMoveKind = abs(moveDelta) > 1 ? .fastSwipe : .swipe
+        let duration = laneChangeDuration(laneDelta: appliedSlot - playerSlot, kind: kind)
+        return debugAutoplayPathIsClear(fromSlot: playerSlot, toSlot: appliedSlot, duration: duration, horizon: 0.18)
+    }
+
+    private func debugAutoplayTargetHorizonIsSafe(slot: Int, horizon: TimeInterval) -> Bool {
+        guard let playerCar, slotCenters.indices.contains(slot) else { return true }
+        let playerRect = playerHitboxRect(atX: slotCenters[slot], size: playerCar.size)
+        for vehicle in trafficNode.children.compactMap({ $0 as? SKSpriteNode }) {
+            if predictedTrafficHitboxRect(for: vehicle, after: horizon).intersects(playerRect) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private func debugAutoplayPathIsClear(fromSlot startSlot: Int, toSlot targetSlot: Int, duration: TimeInterval, horizon: TimeInterval) -> Bool {
+        guard let playerCar,
+              slotCenters.indices.contains(startSlot),
+              slotCenters.indices.contains(targetSlot) else {
+            return true
+        }
+
+        let startX = playerCar.position.x
+        let targetX = slotCenters[targetSlot]
+        let totalTime = max(duration + horizon, 0.016)
+        let sampleCount = max(4, Int(ceil(totalTime / 0.025)))
+
+        for sample in 0...sampleCount {
+            let elapsed = totalTime * TimeInterval(sample) / TimeInterval(sampleCount)
+            let progress = duration > 0 ? min(1, max(0, elapsed / duration)) : 1
+            let easedProgress = 1 - pow(1 - progress, 2)
+            let x = startX + (targetX - startX) * CGFloat(easedProgress)
+            let playerRect = playerHitboxRect(atX: x, size: playerCar.size)
+
+            for vehicle in trafficNode.children.compactMap({ $0 as? SKSpriteNode }) {
+                if predictedTrafficHitboxRect(for: vehicle, after: elapsed).intersects(playerRect) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 
     private func debugAutoplaySafeSlots(validSlots: Set<Int>) -> (slots: Set<Int>, source: String) {
@@ -4737,10 +4805,15 @@ final class GameScene: SKScene {
 
     private func playerHitboxRect() -> CGRect {
         guard let playerCar else { return .null }
-        let width = playerCar.size.width * activeCar.collisionWidthMultiplier
-        let height = playerCar.size.height * (activeCar.vehicleClass == .motorcycle ? 0.82 : 0.9)
+        return playerHitboxRect(atX: playerCar.position.x, size: playerCar.size)
+    }
+
+    private func playerHitboxRect(atX x: CGFloat, size: CGSize) -> CGRect {
+        guard let playerCar else { return .null }
+        let width = size.width * activeCar.collisionWidthMultiplier
+        let height = size.height * (activeCar.vehicleClass == .motorcycle ? 0.82 : 0.9)
         return CGRect(
-            x: playerCar.position.x - width / 2,
+            x: x - width / 2,
             y: playerCar.position.y - height / 2,
             width: width,
             height: height
@@ -4771,6 +4844,11 @@ final class GameScene: SKScene {
             width: width,
             height: height
         )
+    }
+
+    private func predictedTrafficHitboxRect(for vehicle: SKSpriteNode, after elapsed: TimeInterval) -> CGRect {
+        let speed = vehicle.userData?["speed"] as? CGFloat ?? trafficSpeed
+        return trafficHitboxRect(for: vehicle).offsetBy(dx: 0, dy: -speed * CGFloat(elapsed))
     }
 
     // MARK: - Vehicles

@@ -23,6 +23,8 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - Crash-frame read: the next sim/live gap is lane-change transition timing/path occupancy. Live state can mark the target slot while SpriteKit collision still checks the animated car along the movement path.
 - A lane-change parity debug-autoplay matrix was captured after installing the new verified build. It showed 163 lane-change probes across 26 transitions, 3 transition probes already intersecting traffic, 1 unsafe-path probe, and 3/5 last pre-crash probes intersecting traffic.
 - Parity read: add transition-clearance checks before moving and a short target-slot danger horizon after moving, then rerun the matrix before touching balance.
+- A transition-clearance debug-autoplay matrix was captured after installing the new verified build. It showed 1/5 escapes, 26.7s average terminal time, 30.0s median terminal time, 23.4 traffic waves/run, 6.4 near misses/run, and only 2 lane-change intersection probes across 121 transitions.
+- Transition-clearance read: this is the first live autoplay matrix to produce an escape and it moves first-minute feel toward target, but it still needs a tighter horizon/padding model before GameSim or balance changes.
 - No full clean-install tutorial matrix or human-controlled terminal outcome matrix was performed in this pass.
 
 ## Evidence
@@ -44,6 +46,9 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/summary.md`
 - `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/telemetry/`
 - `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/notes.md`
+- `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/summary.md`
+- `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/telemetry/`
+- `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/notes.md`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`

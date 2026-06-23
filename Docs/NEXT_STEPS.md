@@ -2,12 +2,12 @@
 
 ## Highest Priority
 
-Fix the remaining transition-clearance/GameSim model mismatch before tuning Sunset Merge.
+Tighten the transition-clearance/GameSim model mismatch before tuning Sunset Merge.
 
 ## Immediate Task List
 
-1. Add transition-clearance checks to debug autoplay: the current-to-target path must stay clear for the lane-change duration, and the target slot needs a short post-move danger horizon.
-2. Rerun `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/` after the parity fix and confirm lane-change intersections fall and live terminal time moves toward GameSim.
+1. Tighten transition-clearance debug autoplay: longer target-slot danger horizon, small vertical padding on predicted traffic hitboxes, and clearer rejection reason telemetry if needed.
+2. Rerun `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/` and confirm completion/terminal time improve while lane-change intersections stay low.
 3. Decide whether the successful transition model belongs in GameSim, the live safety adapter, or both.
 4. Capture one human-controlled iPhone 17e matrix and one Dynamic Island-class run.
 5. Retune Level 1 completion, near misses, and rewards only after sim/live state agrees.

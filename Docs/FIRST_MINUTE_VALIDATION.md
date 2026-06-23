@@ -20,6 +20,7 @@ Partial.
 - Live-hazard debug autoplay produced another five-run iPhone 17e matrix. Average terminal time improved to 8.6s, including one 24.9s run, but 5/5 runs still ended in traffic collisions before the exit.
 - Collision-analysis debug autoplay produced a five-run iPhone 17e matrix. Collision analysis was present in 5/5 terminal crashes, and every sampled crash followed a move decision, pointing to lane-change transition timing/path occupancy as the next sim/live mismatch.
 - Lane-change parity debug autoplay produced a five-run iPhone 17e matrix. It recorded 163 lane-change probes across 26 transitions; 3/5 last pre-crash probes were already intersecting traffic, narrowing the next fix to transition clearance plus target-slot danger horizon.
+- Transition-clearance debug autoplay produced a five-run iPhone 17e matrix. Completion improved to 1/5, average terminal time improved to 26.7s, and average near misses reached 6.4, but 4/5 runs still ended in traffic collisions.
 
 ## Evidence
 
@@ -40,6 +41,9 @@ Partial.
 - Lane-change parity autoplay matrix summary: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/summary.md`
 - Lane-change parity autoplay matrix telemetry: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/telemetry/`
 - Lane-change parity autoplay matrix notes: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/notes.md`
+- Transition-clearance autoplay matrix summary: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/summary.md`
+- Transition-clearance autoplay matrix telemetry: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/telemetry/`
+- Transition-clearance autoplay matrix notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/notes.md`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -68,3 +72,4 @@ Partial.
 - Debug autoplay now switches to live on-screen hazard safety when immediate traffic is near, with the source recorded in telemetry.
 - Collision-frame telemetry now records the colliding vehicle, active traffic roster, player slot/lane, live safe and unsafe slots, overlap geometry, and last movement decision.
 - Lane-change parity telemetry now records logical slot, target slot, sprite nearest slot, sprite x-position, path danger, active traffic intersection, and completion state while the lane-change animation is active.
+- Debug autoplay now rejects predicted unsafe transition paths before moving.

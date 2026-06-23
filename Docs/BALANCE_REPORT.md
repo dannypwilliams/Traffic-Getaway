@@ -114,10 +114,26 @@ Live lane-change parity debug-autoplay matrix:
 - Summary: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/summary.md`.
 - Notes: `PlaytestArtifacts/2026-06-23-live-lane-change-parity-matrix/notes.md`.
 
+Live transition-clearance debug-autoplay matrix:
+
+- Runs: 5.
+- Completed: 1/5.
+- Avg terminal time: 26.7s.
+- Median terminal time: 30.0s.
+- Avg traffic waves before terminal event: 23.4.
+- Avg near misses/cash: 6.4 / 58.
+- `no_transition_safe_slots`: 6.
+- Lane-change probes: 742.
+- Lane-change transitions: 121.
+- Lane-change intersection probes: 2.
+- Last pre-crash probe intersected traffic: 2/5.
+- Summary: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/summary.md`.
+- Notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/notes.md`.
+
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome. Corrected decision telemetry shows actual live moves mostly land on the GameSim-style target. Live-hazard steering improved average terminal time, but all runs still crashed before the exit. Collision-analysis and lane-change parity telemetry narrow the gap: most sampled terminal crashes involve physical sprite collision during or immediately after an animated lane change. Do not tune rewards or density until transition-clearance, target-slot danger horizon, and active traffic lifetime are reconciled or intentionally modeled.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome, though transition clearance moved it substantially closer: one escape, 26.7s average terminal time, and near misses back inside the target range. Do not tune rewards or density yet; the live result is still only 20% completion and remains sensitive to transition-clearance and target-slot horizon details.
 
 ## Next
 
-Add transition-clearance checks to debug autoplay first, rerun the lane-change parity matrix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
+Tighten transition-clearance debug autoplay with a longer target-slot horizon and small vertical padding, rerun the transition-clearance matrix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
