@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
+Six valid active-input LA01 Starter Compact manual runs are available, five with complete video/screenshot/telemetry evidence and one supplemental active run missing the result screenshot. Three complete-evidence active-input LA01 Starter Bike runs are also available, plus one supplemental failure/retry Bike session. No global balance conclusion should be drawn until the required city/vehicle matrix is captured, but the opening LA01 slices now show strong first-level completion concerns.
 
 ## Manual LA01 Starter Compact Slice
 
@@ -35,6 +35,13 @@ Six valid active-input LA01 Starter Compact manual runs are available, five with
 - Near misses/cash: average 5.3 near misses and 51 cash.
 - Fairness signal: collision analysis present in 3/3, 0 lane-change intersection probes, 0 unsafe-path probes in the counted set.
 - Read: Starter Bike survives longer than Starter Compact and can reach exit countdown, but this slice still failed to complete LA01 in 3/3 complete-evidence samples.
+
+## Supplemental Failure/Retry Session
+
+- Level/vehicle: `la_01` / Starter Bike.
+- Result: traffic collision at 26.2s, 8 near misses, 4 lane changes, 0 autoplay decisions.
+- Functional read: `RETRY LEVEL` returned to the Los Angeles Starter Bike start screen.
+- Balance use: supplemental only; this validates retry flow and adds one active bike sample, but it is not part of the three-run LA Starter Bike requirement.
 
 ## Simulation Comparison
 

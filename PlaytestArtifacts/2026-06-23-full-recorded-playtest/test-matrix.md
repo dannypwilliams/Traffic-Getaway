@@ -5,13 +5,13 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 ## Summary Counts
 
 - Planned tests: 73
-- Passed: 16
+- Passed: 17
 - Failed: 0
-- Partial: 2
+- Partial: 1
 - Blocked: 0
 - Invalid: 1
 - Not tested: 55
-- Valid active-input runs in this artifact set: 9
+- Valid active-input runs in this artifact set: 10
 - Valid complete-evidence runs counted for LA Starter Compact requirement: 5
 - Valid complete-evidence runs counted for LA Starter Bike requirement: 3
 
@@ -27,7 +27,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | AUTO-03 | `git diff --check` | pass | `build-validation/git-diff-check.log` | Empty log with zero exit means whitespace check passed. |
 | AUTO-04 | GameCore tests | pass | `build-validation/gamecore-swift-test.log` | 22 tests, 0 failures. |
 | AUTO-05 | Mac/iOS Simulator build verification | pass | `build-validation/verify-on-mac.log` | Build succeeded. |
-| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md` | Summaries generated from raw telemetry. |
+| AUTO-06 | Telemetry summary regeneration | pass | `telemetry/summaries/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_runs01-06-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_runs03-05-summary.md`, `telemetry/summaries/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01-summary.md` | Summaries generated from raw telemetry. |
 | AUTO-07 | Representative GameSim runs for all levels with starter vehicle | pass | `build-validation/gamesim-all-levels-starter-compact.log` | 15 levels x 1,000 runs. |
 | AUTO-08 | Representative GameSim runs for all levels with Starter Bike | pass | `build-validation/gamesim-all-levels-starter-bike.log` | 15 levels x 1,000 runs. |
 | AUTO-09 | Traffic stress/procedural fairness validation | pass | `build-validation/gamecore-swift-test.log`, `build-validation/gamesim-all-levels-starter-compact.log`, `build-validation/gamesim-all-levels-starter-bike.log` | Automated stress/fairness signals exist; manual fairness remains unproven. |
@@ -44,7 +44,7 @@ Statuses: `pass`, `fail`, `partial`, `blocked`, `not tested`, `invalid`.
 | FUNC-05 | Vehicle selection | iPhone 17e | not tested | | | |
 | FUNC-06 | Pause and resume | iPhone 17e | not tested | | | |
 | FUNC-07 | Restart after pause | iPhone 17e | not tested | | | |
-| FUNC-08 | Failure screen and retry | iPhone 17e | partial | `videos/city-1/2026-06-23_iphone17e_la01_starter-compact_swipe-tap_run05.mp4` | `telemetry/raw/01-2026-06-23_09-21-03-la_01-starter_compact-17033032432948287984.jsonl` | Failure screen captured; retry action not exercised. |
+| FUNC-08 | Failure screen and retry | iPhone 17e | pass | `videos/progression/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01.mp4` | `telemetry/raw/01-2026-06-23_09-42-21-la_01-starter_bike-16090129143462938849.jsonl` | Failure screen captured, `RETRY LEVEL` tapped, and retry returned to the Los Angeles Starter Bike start screen. |
 | FUNC-09 | Completion screen and reward screen | iPhone 17e | not tested | | | |
 | FUNC-10 | Background and relaunch restoration | iPhone 17e | not tested | | | |
 | FUNC-11 | Existing-save progression restoration | iPhone 17e | not tested | | | |

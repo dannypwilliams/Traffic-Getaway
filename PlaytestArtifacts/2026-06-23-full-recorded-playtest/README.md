@@ -38,6 +38,7 @@ Current status: partial. The iPhone 17e Los Angeles Starter Compact five-run sli
 - Post-run cleanup was verified after the LA Starter Compact capture set; `build-validation/post-run-debug-defaults-check.log` shows iPhone 17e debug defaults cleared to `[]`.
 - Six valid active-input LA01 Starter Compact runs are recorded; five have complete screenshot evidence and one supplemental run is missing the result screenshot.
 - Three complete-evidence active-input LA01 Starter Bike runs are recorded in Runs 03, 04, and 05. A prior Bike Run 02 has telemetry/result evidence but is rejected from the complete-evidence count because the start screenshot and video are missing.
+- Failure-and-retry functional coverage is recorded in `videos/progression/2026-06-23_iphone17e_la01_starter-bike_swipe-tap_failure-retry_session01.mp4`.
 
 ## Artifact Structure
 

@@ -17,6 +17,8 @@ Commit: 3c2431d
 - python3 -u scripts/capture_live_telemetry.py --manual --wait-for-start-tap for runs 01-03
 - python3 -u scripts/capture_live_telemetry.py --manual --wait-for-start-tap --leave-app-running for runs 04-06
 - python3 -u scripts/capture_live_telemetry.py --manual --wait-for-start-tap --leave-app-running --vehicle starter_bike for Bike runs 03-05
+- python3 -u scripts/capture_live_telemetry.py --manual --wait-for-start-tap --leave-app-running for failure/retry session 01
 - xcrun simctl io <device> screenshot for start and result checkpoints
+- xcrun simctl io <device> screenshot for failure/retry session start, result, and retry-return checkpoints
 - Post-run cleanup after `--leave-app-running`: terminate app, clear debug defaults, then verify iPhone 17e preferences; output saved to `build-validation/post-run-debug-defaults-check.log` and confirmed `[]`
-- python3 scripts/summarize_run_telemetry.py for Starter Compact runs 01-06 and counted Starter Bike runs 03-05
+- python3 scripts/summarize_run_telemetry.py for Starter Compact runs 01-06, counted Starter Bike runs 03-05, and failure/retry session 01

@@ -4,11 +4,11 @@
 
 Status: `partial`.
 
-The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, and the Los Angeles Starter Bike slice has three complete-evidence active-input runs. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
+The full recorded playtest has been scoped and scaffolded. Automated validation passed, the iPhone 17e Los Angeles Starter Compact slice has five complete-evidence active-input runs plus one supplemental active run, the Los Angeles Starter Bike slice has three complete-evidence active-input runs, and failure/retry now has a recorded functional session. All six Starter Compact active runs ended in traffic collisions before 10 seconds. All three counted Starter Bike runs also failed before completion, although one reached the exit countdown at 50.2s. The required all-city, all-level, multi-device recorded manual matrix is still mostly incomplete, so no release-readiness conclusion is possible yet.
 
 ## Control Feel
 
-Partial. Tap steering produced lane changes in nine counted active runs, with 28 lane-change events total across the counted Starter Compact and Starter Bike slices. This proves the default `SWIPE + TAP` path can accept tap input for both car and motorcycle handling, but it does not validate precision, consistency, frame-rate behavior, or every materially different control mode.
+Partial. Tap steering produced lane changes in ten valid active-input runs, with 32 lane-change events across the counted Starter Compact/Starter Bike slices and the retry functional session. This proves the default `SWIPE + TAP` path can accept tap input for both car and motorcycle handling, but it does not validate precision, consistency, frame-rate behavior, or every materially different control mode.
 
 ## First-Minute Experience
 
@@ -20,7 +20,7 @@ Partial. Automated all-level simulations were captured for Starter Compact and S
 
 ## Procedural Fairness
 
-Partial. The counted LA01 runs captured collision analysis, active traffic context, lane-change probes, and terminal reasons. Starter Compact aggregate telemetry shows 6/6 collision analyses, 27 lane-change probes, and 4 unsafe-path probes. Starter Bike counted telemetry shows 3/3 collision analyses, 43 lane-change probes, 0 lane-change intersection probes, and terminal reasons `traffic` twice and `roadblock` once. Broader fairness is still unproven.
+Partial. The counted LA01 runs captured collision analysis, active traffic context, lane-change probes, and terminal reasons. Starter Compact aggregate telemetry shows 6/6 collision analyses, 27 lane-change probes, and 4 unsafe-path probes. Starter Bike counted telemetry shows 3/3 collision analyses, 43 lane-change probes, 0 lane-change intersection probes, and terminal reasons `traffic` twice and `roadblock` once. The failure/retry functional session adds one more active collision-analysis sample. Broader fairness is still unproven.
 
 ## City Differentiation
 
@@ -28,11 +28,11 @@ Not tested through recorded active play. The content inventory confirms three ci
 
 ## Progression And Rewards
 
-Partial result-screen evidence only. Starter Bike Runs 04 and 05 showed XP/progress advancement on failure screens, including Level 5 to 6 progress, but no full city progression attempt has been recorded. Previous reference evidence shows first Sunset Merge escape can unlock Starter Bike and `USE BIKE` can start 405 Afterburn, but the full progression pass remains open.
+Partial result-screen evidence only. Starter Bike Runs 04 and 05 showed XP/progress advancement on failure screens, including Level 5 to 6 progress. The failure/retry session proved `RETRY LEVEL` returns to the ready start state after failure. No full city progression attempt has been recorded. Previous reference evidence shows first Sunset Merge escape can unlock Starter Bike and `USE BIKE` can start 405 Afterburn, but the full progression pass remains open.
 
 ## Performance
 
-Partial. The Mac/iOS Simulator build passed and nine counted active runs succeeded while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet.
+Partial. The Mac/iOS Simulator build passed and ten valid active-input recordings succeeded while telemetry and video capture were active. No frame pacing or latency instrumentation has been reviewed yet.
 
 ## Release Readiness
 
