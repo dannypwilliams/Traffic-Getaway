@@ -2817,7 +2817,7 @@ final class GameScene: SKScene {
     private func debugAutoplayTransitionIsSafe(toSlot targetSlot: Int) -> Bool {
         let delta = targetSlot - playerSlot
         guard delta != 0 else {
-            return debugAutoplayTargetHorizonIsSafe(slot: targetSlot, horizon: 0.18)
+            return debugAutoplayTargetHorizonIsSafe(slot: targetSlot, horizon: debugAutoplayTransitionHorizon)
         }
 
         let moveDelta: Int
@@ -2834,14 +2834,22 @@ final class GameScene: SKScene {
 
         let kind: LaneMoveKind = abs(moveDelta) > 1 ? .fastSwipe : .swipe
         let duration = laneChangeDuration(laneDelta: appliedSlot - playerSlot, kind: kind)
-        return debugAutoplayPathIsClear(fromSlot: playerSlot, toSlot: appliedSlot, duration: duration, horizon: 0.18)
+        return debugAutoplayPathIsClear(fromSlot: playerSlot, toSlot: appliedSlot, duration: duration, horizon: debugAutoplayTransitionHorizon)
+    }
+
+    private var debugAutoplayTransitionHorizon: TimeInterval {
+        0.3
+    }
+
+    private var debugAutoplayPredictionPadding: CGFloat {
+        max(10, laneWidth * 0.16)
     }
 
     private func debugAutoplayTargetHorizonIsSafe(slot: Int, horizon: TimeInterval) -> Bool {
         guard let playerCar, slotCenters.indices.contains(slot) else { return true }
         let playerRect = playerHitboxRect(atX: slotCenters[slot], size: playerCar.size)
         for vehicle in trafficNode.children.compactMap({ $0 as? SKSpriteNode }) {
-            if predictedTrafficHitboxRect(for: vehicle, after: horizon).intersects(playerRect) {
+            if predictedTrafficHitboxRect(for: vehicle, after: horizon, verticalPadding: debugAutoplayPredictionPadding).intersects(playerRect) {
                 return false
             }
         }
@@ -2868,7 +2876,7 @@ final class GameScene: SKScene {
             let playerRect = playerHitboxRect(atX: x, size: playerCar.size)
 
             for vehicle in trafficNode.children.compactMap({ $0 as? SKSpriteNode }) {
-                if predictedTrafficHitboxRect(for: vehicle, after: elapsed).intersects(playerRect) {
+                if predictedTrafficHitboxRect(for: vehicle, after: elapsed, verticalPadding: debugAutoplayPredictionPadding).intersects(playerRect) {
                     return false
                 }
             }
@@ -4846,9 +4854,11 @@ final class GameScene: SKScene {
         )
     }
 
-    private func predictedTrafficHitboxRect(for vehicle: SKSpriteNode, after elapsed: TimeInterval) -> CGRect {
+    private func predictedTrafficHitboxRect(for vehicle: SKSpriteNode, after elapsed: TimeInterval, verticalPadding: CGFloat = 0) -> CGRect {
         let speed = vehicle.userData?["speed"] as? CGFloat ?? trafficSpeed
-        return trafficHitboxRect(for: vehicle).offsetBy(dx: 0, dy: -speed * CGFloat(elapsed))
+        let rect = trafficHitboxRect(for: vehicle).offsetBy(dx: 0, dy: -speed * CGFloat(elapsed))
+        guard verticalPadding > 0 else { return rect }
+        return rect.insetBy(dx: 0, dy: -verticalPadding)
     }
 
     // MARK: - Vehicles

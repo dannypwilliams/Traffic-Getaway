@@ -130,10 +130,27 @@ Live transition-clearance debug-autoplay matrix:
 - Summary: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/summary.md`.
 - Notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/notes.md`.
 
+Live tightened transition-clearance debug-autoplay matrix:
+
+- Runs: 5.
+- Completed: 5/5.
+- Avg terminal time: 42.8s.
+- Median terminal time: 42.7s.
+- Avg traffic waves before terminal event: 36.2.
+- Avg near misses/cash: 14.0 / 115.
+- `no_transition_safe_slots`: 18.
+- Lane-change probes: 1079.
+- Lane-change transitions: 183.
+- Lane-change intersection probes: 0.
+- Lane-change unsafe-path probes: 2.
+- Terminal reasons: escaped in all 5.
+- Summary: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/summary.md`.
+- Notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/notes.md`.
+
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome, though transition clearance moved it substantially closer: one escape, 26.7s average terminal time, and near misses back inside the target range. Do not tune rewards or density yet; the live result is still only 20% completion and remains sensitive to transition-clearance and target-slot horizon details.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Tightened live debug autoplay now also over-completes the first minute at 5/5 escapes, with terminal time aligned to the exit window but near misses still above target. Do not tune rewards or density from autoplay alone; this pass validates the transition safety model, not human difficulty.
 
 ## Next
 
-Tighten transition-clearance debug autoplay with a longer target-slot horizon and small vertical padding, rerun the transition-clearance matrix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
+Capture manual human runs with the tightened transition-clearance build, decide whether the horizon/padding model belongs in `GameCore`/`GameSim`, then tune rewards, near-miss rates, and completion after sim/live state agrees.

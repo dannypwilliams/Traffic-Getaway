@@ -2,7 +2,7 @@
 
 ## Milestone
 
-First-minute reliability, deterministic-core repair, live telemetry, and live lane-change transition diagnosis: partial.
+First-minute reliability, deterministic-core repair, live telemetry, and live lane-change transition diagnosis: partial. Tightened debug autoplay now clears the sampled live first minute, but human-controlled validation and GameSim model ownership remain open.
 
 ## Verified baseline
 
@@ -39,7 +39,7 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - `Traffic Getaway/GameScene.swift`: debug autoplay now uses live on-screen hazard safety while immediate traffic is near and records whether each decision came from live hazards or the latest traffic-wave plan.
 - `Traffic Getaway/GameScene.swift`: collision telemetry now records a structured crash-frame analysis with colliding vehicle, active traffic roster, player slot/lane, live safe and unsafe slots, overlap geometry, and the last movement decision.
 - `Traffic Getaway/GameScene.swift`: lane-change parity telemetry now records logical slot, target slot, sprite x-position, sprite nearest slot, path danger, active traffic intersection, and completion state while the lane-change animation is active.
-- `Traffic Getaway/GameScene.swift`: debug autoplay now rejects moves whose predicted lane-change path or short post-move target horizon intersects active traffic.
+- `Traffic Getaway/GameScene.swift`: debug autoplay now rejects moves whose predicted lane-change path or post-move target horizon intersects active traffic, using a lane-change-duration horizon and small vertical padding on predicted traffic hitboxes.
 - `Traffic Getaway/GameViewController.swift` and `Traffic Getaway/AppConfig.swift`: added debug-only direct level/vehicle auto-start defaults so simulator live telemetry can be captured without hand navigation.
 - `Traffic Getaway.xcodeproj/project.pbxproj`: added the telemetry recorder to the iOS target.
 - `scripts/summarize_run_telemetry.py`: added a repeatable JSONL summarizer for live-run telemetry exports, including autoplay target, move-target, applied-slot mismatch, decision-source, decision-status, collision-analysis counts, and lane-change probe counts.
@@ -92,6 +92,12 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --runs 5 --level la_01 --vehicle starter_compact --app '' --output-dir PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/telemetry --timeout 120`: passed after explicitly installing the verified build.
 - `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/telemetry`: passed.
 - Direct plist verification confirmed the debug auto-start/autoplay keys were missing after the transition-clearance capture.
+- `python3 -m py_compile scripts/summarize_run_telemetry.py scripts/capture_live_telemetry.py`: passed after tightened transition-clearance autoplay changes.
+- `python3 scripts/validate_pbxproj_ids.py "Traffic Getaway.xcodeproj/project.pbxproj"` after tightened transition-clearance autoplay: passed, 99 unique IDs.
+- `bash Tools/mac/verify_on_mac.sh` after tightened transition-clearance autoplay: passed.
+- `python3 -u scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --runs 5 --level la_01 --vehicle starter_compact --app '' --output-dir PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/telemetry --timeout 120`: passed after explicitly installing the verified build.
+- `python3 scripts/summarize_run_telemetry.py PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/telemetry`: passed.
+- Direct plist verification confirmed the debug auto-start/autoplay keys were missing after the tightened transition-clearance capture.
 
 ## Simulator/device evidence
 
@@ -126,6 +132,11 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 - Transition-clearance matrix notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-matrix/notes.md`.
 - Transition-clearance matrix result: 5 iPhone 17e debug-autoplay runs, 1/5 completed, avg terminal time 26.7s, median terminal time 30.0s, avg traffic waves 23.4, avg near misses 6.4, 742 lane-change probes across 121 transitions, 2 lane-change intersection probes, 1 unsafe-path probe, and 6 `no_transition_safe_slots` decisions.
 - Transition-clearance read: this is the first live autoplay matrix to produce an escape and it moves first-minute telemetry toward target, but 4/5 runs still crash and the next pass should tighten the target-slot horizon/padding before retuning or moving the model into GameSim.
+- Tightened transition-clearance matrix: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/telemetry/`.
+- Tightened transition-clearance matrix summary: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/summary.md`.
+- Tightened transition-clearance matrix notes: `PlaytestArtifacts/2026-06-23-live-transition-clearance-tightened-matrix/notes.md`.
+- Tightened transition-clearance matrix result: 5 iPhone 17e debug-autoplay runs, 5/5 completed, avg terminal time 42.8s, median terminal time 42.7s, avg traffic waves 36.2, avg near misses 14.0, 1079 lane-change probes across 183 transitions, 0 lane-change intersection probes, 2 unsafe-path probes, and 18 `no_transition_safe_slots` decisions.
+- Tightened transition-clearance read: the longer transition horizon plus padded predicted traffic hitboxes closed the sampled live autoplay failure, but it is still debug-autoplay evidence rather than human difficulty evidence.
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -142,20 +153,20 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 | Level 1 near misses | 32.1/run | 35.3/run |
 | Level 1 avg cash | 909 | 998 |
 | Level 1 avg XP | 359 | 391 |
-| Live telemetry | Not present | 1 manual smoke run, 5 active-traffic autoplay runs, 5 corrected decision-matrix autoplay runs, and 5 live-hazard autoplay runs captured |
+| Live telemetry | Not present | 1 manual smoke run, 5 active-traffic autoplay runs, 5 corrected decision-matrix autoplay runs, 5 live-hazard autoplay runs, 5 lane-change parity runs, 5 transition-clearance runs, and 5 tightened transition-clearance runs captured |
 | Debug visualization | Not present | Open-path overlay screenshot captured |
 | Active traffic telemetry | Not present | Present in new collision samples |
 | Autoplay decision telemetry | Not present | 207 decisions captured; 36 target-policy mismatches, 2 move-target mismatches, 2 applied-slot mismatches |
 | Live-hazard autoplay | Not present | 269 decisions captured; 176 live-hazard decisions; avg terminal time 8.6s but still 0/5 complete |
 | Collision-analysis telemetry | Not present | 5/5 sampled terminal crashes include colliding vehicle, active roster, safe slots, overlap, and last movement decision |
 | Lane-change parity telemetry | Not present | 163 lane-change probes captured; 3/5 last pre-crash probes intersected traffic |
-| Transition-clearance autoplay | Not present | 1/5 completed; avg terminal time 26.7s; near misses 6.4/run |
+| Transition-clearance autoplay | Not present | Baseline transition clearance: 1/5 completed, avg terminal time 26.7s. Tightened transition clearance: 5/5 completed, avg terminal time 42.8s, 0 lane-change intersection probes |
 
 ## Remaining defects
 
 - P0 ship blocker: Sunset Merge balance is far too easy and over-rewarding versus target; completion is about 99%, near misses around 35/run, cash around 998/run.
 - P1 milestone blocker: Full clean-install tutorial completion matrix has not been manually or automatically exercised.
-- P1 milestone blocker: Sim/live reconciliation is still not complete; transition-clearance autoplay improved live runs to 1/5 completion, but the horizon/padding model still does not match GameSim closely enough.
+- P1 milestone blocker: Sim/live reconciliation is still not complete; tightened transition-clearance autoplay completed 5/5 live runs, but human-controlled validation and GameSim model ownership are still unresolved.
 - P2 important polish: Remaining duplicate app-local rules need incremental migration/parity against `GameCore`.
 - P2 important polish: Reward/monetization code remains present behind disabled flags and needs a real integration or removal before release.
 
@@ -168,4 +179,4 @@ First-minute reliability, deterministic-core repair, live telemetry, and live la
 
 ## Next highest-priority action
 
-Tighten transition-clearance debug autoplay with a longer target-slot horizon and small vertical padding on predicted traffic hitboxes. Then rerun the transition-clearance matrix, decide whether the successful model belongs in GameSim, the live safety adapter, or both, capture a manual matrix, and only then retune Sunset Merge.
+Capture one human-controlled iPhone 17e matrix and one Dynamic Island-class layout/input run with the tightened transition-clearance build. Then decide whether the successful horizon/padding model belongs in `GameCore`/`GameSim`, the live safety adapter, or both before retuning Sunset Merge.

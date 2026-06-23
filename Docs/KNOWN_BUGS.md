@@ -3,13 +3,13 @@
 ## P0 Ship Blockers
 
 - Sunset Merge balance is far outside target: about 99% sim completion, about 35 near misses/run, and about 998 cash/run.
-- Sim/live behavior is not reconciled; transition-clearance autoplay improved live runs to 1/5 completion, but live still crashes earlier than GameSim.
+- Sim/live behavior is not fully reconciled; tightened transition-clearance autoplay completed 5/5 live runs, but human-controlled validation and GameSim model ownership are still unresolved.
 
 ## P1 Milestone Blockers
 
 - Full tutorial and first-minute terminal-outcome matrix has not been completed.
 - App-local rules duplicate `GameCore`, creating drift risk.
-- Live lane-change duration/path occupancy, target-slot danger horizon, and active traffic lifetime are not modeled by GameSim closely enough to explain early live crashes.
+- Live lane-change duration/path occupancy, target-slot danger horizon, and active traffic lifetime are guarded in the live debug-autoplay adapter but are not modeled by GameSim closely enough for final balance tuning.
 
 ## P2 Important Polish
 
@@ -24,4 +24,4 @@
 - White launch frame was fixed in iPhone 17e simulator capture.
 - Live collision-frame telemetry now reports colliding vehicle, active traffic roster, player slot, live safe slots, overlap, and last movement decision.
 - Live lane-change parity telemetry now reports current slot, target slot, sprite x-position, path danger, active traffic intersection, and completion state during animated moves.
-- Debug autoplay now rejects predicted unsafe transition paths and produced the first live autoplay escape, but needs a tighter horizon/padding model.
+- Debug autoplay now rejects predicted unsafe transition paths with a lane-change-duration horizon and padded predicted traffic hitboxes; the tightened matrix completed 5/5 sampled live runs.
