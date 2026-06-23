@@ -14,6 +14,8 @@ Partial.
 - Skip path succeeded from onboarding into a live chase.
 - Debug live telemetry produced one first-minute terminal sample: traffic crash at 22.946s.
 - Debug open-path overlay was enabled, visually verified, captured, then disabled again in the simulator.
+- Debug direct-start/autoplay capture produced a five-run iPhone 17e live matrix for `la_01` + `starter_compact`.
+- New-schema collision telemetry includes active traffic snapshots.
 
 ## Evidence
 
@@ -22,6 +24,8 @@ Partial.
 - Telemetry screenshot: `PlaytestArtifacts/2026-06-22-production-pass-18-38/screenshots/04-live-telemetry-run.png`
 - Debug overlay screenshot: `PlaytestArtifacts/2026-06-22-production-pass-18-38/screenshots/05-debug-diagnostics-overlay.png`
 - Live telemetry: `PlaytestArtifacts/2026-06-22-production-pass-18-38/telemetry/2026-06-22_18-49-43-la_01-starter_compact-17033032432948192956.jsonl`
+- Autoplay matrix summary: `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/summary.md`
+- Autoplay matrix telemetry: `PlaytestArtifacts/2026-06-22-live-autoplay-matrix-active-traffic/telemetry/`
 - Logs:
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
   - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
@@ -34,6 +38,7 @@ Partial.
 - Slow taps, rapid taps, repeated right movement, extra movement after target.
 - Crash, capture, missed-exit, retry, return to menu.
 - First escape to Starter Bike unlock to `USE BIKE` to 405 Afterburn.
+- Human-controlled live matrix; debug autoplay is useful for repeatability but is not a proxy for player input yet.
 
 ## Current First-Minute Fixes
 
@@ -44,3 +49,4 @@ Partial.
 - Launch white frame fixed in simulator capture.
 - Live first-minute JSONL telemetry added and smoke-tested.
 - Debug collision/traffic-plan visualization added and screenshot-verified.
+- Debug direct-start/autoplay telemetry capture added and verified.

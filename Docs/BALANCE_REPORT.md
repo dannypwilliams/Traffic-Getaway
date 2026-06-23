@@ -41,10 +41,21 @@ After core fixes:
 - Avg cash/XP: 998 / 391.
 - Unfair collision estimate: 0.0%.
 
+Live debug-autoplay matrix after telemetry improvements:
+
+- Runs: 5.
+- Completed: 0/5.
+- Avg terminal time: 6.4s.
+- Median terminal time: 4.4s.
+- Avg traffic waves before terminal event: 6.2.
+- Avg near misses/cash: 2.2 / 16.
+- Terminal reasons: traffic collision in all 5.
+- Collision rectangles and active traffic snapshots were present in all 5 collision samples.
+
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. Do not tune from live feel until sim/live telemetry explains whether the app is using materially different traffic, collision, pursuit, or reward rules.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome, but it appears to be a control-policy mismatch rather than proof that traffic should be nerfed. Do not tune rewards or density until lane-change decisions explain why autoplay dies before the exit.
 
 ## Next
 
-Add live run telemetry, compare one or more iOS runs against GameSim, then tune rewards, near-miss rates, and completion after the models are reconciled.
+Add lane-change decision telemetry, compare live autoplay decisions against GameSim's safe-slot policy, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
