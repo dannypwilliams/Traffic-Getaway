@@ -164,15 +164,15 @@ The iOS app still owns local presentation/gameplay definitions (`LevelData`, `La
 - Command: `swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`
 - Runs: 10,000.
 - Completed: 0.0%.
-- Avg survival: 5.1s.
-- Median survival: 4.8s.
-- First crash distribution: p10 2.8s / p50 4.8s / p90 7.8s.
+- Avg survival: 7.3s.
+- Median survival: 6.5s.
+- First crash distribution: p10 4.8s / p50 6.5s / p90 11.5s.
 - Exit appeared/reached/completed: 0.0% / 0.0% / 0.0%.
-- Near misses: 1.5/run.
-- Avg cash/XP: 45 / 28.
-- Unfair collision estimate: 53.9%.
-- Top failure: `traffic_collision:4607`.
-- Interpretation: the opt-in diagnostic proves GameSim can now exercise active traffic lifetime and transition-horizon checks deterministically, but the geometry/timing calibration is not credible enough for balance. It currently overcorrects relative to the tightened live autoplay matrix, which escaped 5/5 runs.
+- Near misses: 2.1/run.
+- Avg cash/XP: 58 / 33.
+- Unfair collision estimate: 33.3%.
+- Top failure: `traffic_collision:6668`.
+- Interpretation: the opt-in diagnostic proves GameSim can now exercise active traffic lifetime and transition-horizon checks deterministically. Sampling the moving lane-change path and narrowing recent-spawn hazards improved it from 5.1s to 7.3s average survival, but the geometry/timing calibration is still not credible enough for balance. It still overcorrects relative to the tightened live autoplay matrix, which escaped 5/5 runs.
 
 ## Summarizer
 

@@ -345,7 +345,7 @@ public enum ChaseSimulator {
                     protectedSlots: protectedSlots,
                     recentBlockedLanes: recentBlockedLanes,
                     recentHazards: options.modelsActiveTrafficLifetime ? activeHazards
-                        .filter { $0.y > 260 }
+                        .filter { $0.y > 500 }
                         .map(\.snapshot) : [],
                     exitActive: exitActive,
                     exitSide: exitActive ? activeExitSide : nil,

@@ -209,10 +209,10 @@ public enum TrafficSafetyAnalyzer {
         guard !candidateSlots.isEmpty, !hazards.isEmpty else { return candidateSlots }
 
         return candidateSlots.filter { targetSlot in
-            let pathSlots = pathSlots(from: currentSlot, to: targetSlot, vehicleClass: vehicleClass)
             let duration = targetSlot == currentSlot ? 0 : configuration.laneChangeDuration
 
-            if pathIntersectsHazard(pathSlots: pathSlots, hazards: hazards, after: duration, configuration: configuration) {
+            if targetSlot != currentSlot,
+               movingPathIntersectsHazard(from: currentSlot, to: targetSlot, vehicleClass: vehicleClass, hazards: hazards, duration: duration, configuration: configuration) {
                 return false
             }
 
@@ -315,23 +315,28 @@ public enum TrafficSafetyAnalyzer {
         return slots
     }
 
-    private static func pathSlots(from currentSlot: Int, to targetSlot: Int, vehicleClass: VehicleClass) -> [Int] {
-        let start = LaneModel.clampSlot(currentSlot, for: vehicleClass)
-        let target = LaneModel.clampSlot(targetSlot, for: vehicleClass)
-        let lower = min(start, target)
-        let upper = max(start, target)
-        return Array(lower...upper)
-    }
-
-    private static func pathIntersectsHazard(
-        pathSlots: [Int],
+    private static func movingPathIntersectsHazard(
+        from currentSlot: Int,
+        to targetSlot: Int,
+        vehicleClass: VehicleClass,
         hazards: [TrafficHazardSnapshot],
-        after elapsed: Double,
+        duration: Double,
         configuration: TrafficTransitionSafetyConfiguration
     ) -> Bool {
-        pathSlots.contains { slot in
-            slotIntersectsHazard(slot: slot, vehicleClass: .motorcycle, hazards: hazards, after: elapsed, configuration: configuration)
+        let start = LaneModel.clampSlot(currentSlot, for: vehicleClass)
+        let target = LaneModel.clampSlot(targetSlot, for: vehicleClass)
+        let samples = 6
+
+        for step in 0...samples {
+            let progress = Double(step) / Double(samples)
+            let elapsed = duration * progress
+            let interpolated = Double(start) + (Double(target - start) * progress)
+            let sampledSlot = LaneModel.clampRawSlot(Int(interpolated.rounded()))
+            if slotIntersectsHazard(slot: sampledSlot, vehicleClass: .motorcycle, hazards: hazards, after: elapsed, configuration: configuration) {
+                return true
+            }
         }
+        return false
     }
 
     private static func slotIntersectsHazard(

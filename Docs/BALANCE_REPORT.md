@@ -44,16 +44,16 @@ After core fixes:
 Active-traffic lifetime diagnostic:
 
 - Command: `cd GameSim && swift run GameSim --level la_01 --vehicle starter_compact --runs 10000 --seed 12345 --active-traffic-lifetime`.
-- Avg survival: 5.1s.
-- Median survival: 4.8s.
-- First crash p10/p50/p90: 2.8s / 4.8s / 7.8s.
+- Avg survival: 7.3s.
+- Median survival: 6.5s.
+- First crash p10/p50/p90: 4.8s / 6.5s / 11.5s.
 - Exit appeared/reached/completed: 0.0% / 0.0% / 0.0%.
-- Near misses: 1.5/run.
-- Avg max combo: 1.4.
-- Avg cash/XP: 45 / 28.
-- Unfair collision estimate: 53.9%.
-- Top failure: `traffic_collision:4607`.
-- Read: this opt-in mode is a diagnostic bound, not a balance source. It models active on-screen traffic lifetime and transition checks deterministically, but currently overcorrects versus the tightened live autoplay matrix.
+- Near misses: 2.1/run.
+- Avg max combo: 1.9.
+- Avg cash/XP: 58 / 33.
+- Unfair collision estimate: 33.3%.
+- Top failure: `traffic_collision:6668`.
+- Read: this opt-in mode is a diagnostic bound, not a balance source. It models active on-screen traffic lifetime and transition checks deterministically, and this calibration pass improved average survival from 5.1s to 7.3s. It still overcorrects versus the tightened live autoplay matrix.
 
 Live debug-autoplay matrix after telemetry improvements:
 
