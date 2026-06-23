@@ -278,12 +278,6 @@ public enum ChaseSimulator {
             densitySamples += 1
             activeHazards = activeHazards.filter { $0.y > -180 }
 
-            if options.modelsActiveTrafficLifetime && slotIntersectsActiveTraffic(playerSlot, vehicle: vehicle, activeHazards: activeHazards.map(\.snapshot)) {
-                failure = "traffic_collision"
-                firstCrashTime = time
-                break
-            }
-
             applyPassiveRewards(
                 snapshot: snapshot,
                 vehicle: vehicle,
@@ -326,6 +320,12 @@ public enum ChaseSimulator {
                     playerSlot = target
                     movedThisTick = true
                 }
+            }
+
+            if options.modelsActiveTrafficLifetime && slotIntersectsActiveTraffic(playerSlot, vehicle: vehicle, activeHazards: activeHazards.map(\.snapshot)) {
+                failure = "traffic_collision"
+                firstCrashTime = time
+                break
             }
 
             spawnTimer += dt
