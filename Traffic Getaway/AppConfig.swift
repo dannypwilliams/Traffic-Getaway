@@ -99,6 +99,7 @@ enum AppConfig {
         static let showPerformanceOverlay = "TrafficGetaway.debug.performanceOverlay"
         static let autoStartLevelID = "TrafficGetaway.debug.autoStartLevelID"
         static let autoStartVehicleID = "TrafficGetaway.debug.autoStartVehicleID"
+        static let resultScenario = "TrafficGetaway.debug.resultScenario"
     }
 
     static var forcedCity: DebugCityOverride {
@@ -164,6 +165,11 @@ enum AppConfig {
     static var debugAutoStartVehicleID: String {
         guard debugMode else { return "" }
         return UserDefaults.standard.string(forKey: DefaultsKey.autoStartVehicleID) ?? ""
+    }
+
+    static var debugResultScenario: String {
+        guard debugMode else { return "" }
+        return UserDefaults.standard.string(forKey: DefaultsKey.resultScenario) ?? ""
     }
 
     static func cycleForcedLevel() {

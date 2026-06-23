@@ -1,0 +1,6 @@
+scenario=first_escape_starter_bike
+device=8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E
+bundle_id=com.danielwilliams.TrafficGetaway
+app=/tmp/TrafficGetawayVerifyDerivedData/Build/Products/Debug-iphonesimulator/Traffic Getaway.app
+launch=com.danielwilliams.TrafficGetaway: 9789
+screenshot=PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/starter-bike-use-bike-results.png

@@ -38,7 +38,8 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - A passive police-capture threshold was added and rerun on iPhone 17e and iPhone 17 Pro. Both no-input manual matrices ended 5/5 as `police_caught` at 9.0s average terminal time with 0 autoplay decisions.
 - Passive read after fix: the passive-driver outcome now reads as police capture pressure before traffic or roadblocks can become the terminal failure on the sampled devices.
 - The final tutorial exit-ramp page had an impossible sign-rendering gate from an older six-page flow. The current build now renders `EXIT RIGHT` on the five-step final page and can auto-advance after the exit-side practice predicate and read gate are satisfied.
-- No full clean-install tutorial matrix or human-controlled terminal outcome matrix was performed in this pass.
+- A debug first-escape payoff capture on iPhone 17e showed `ESCAPED`, `Starter Bike unlocked: split lanes`, and primary `USE BIKE`; save-state verification showed `selectedCarID=starter_bike`, unlocked `[starter_compact, starter_bike]`, completed `[la_01]`, `totalRuns=1`, and no remaining debug defaults.
+- No full clean-install tutorial matrix, human-controlled terminal outcome matrix, or tap-through from `USE BIKE` into 405 Afterburn was performed in this pass.
 
 ## Evidence
 
@@ -85,6 +86,9 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/summary.md`
 - `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/telemetry/`
 - `PlaytestArtifacts/2026-06-23-passive-police-capture-17pro-matrix/notes.md`
+- `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/starter-bike-use-bike-results.png`
+- `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/metadata.txt`
+- `PlaytestArtifacts/2026-06-23-progression-payoff-starter-bike/notes.md`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-launch-after-fix.log`
 - `PlaytestArtifacts/2026-06-22-production-pass-18-38/logs/simulator-telemetry-run.log`

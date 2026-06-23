@@ -41,6 +41,9 @@ final class GameViewController: UIViewController {
         let sceneSize = skView.bounds.size
         let scene: SKScene
         if AppConfig.debugMode,
+           AppConfig.debugResultScenario == "first_escape_starter_bike" {
+            scene = makeDebugFirstEscapeResultsScene(size: sceneSize)
+        } else if AppConfig.debugMode,
            let level = LevelCatalog.level(id: AppConfig.debugAutoStartLevelID) {
             applyDebugAutoStartVehicleSelection()
             SaveManager.shared.setOnboardingCompleted(true)
@@ -51,6 +54,40 @@ final class GameViewController: UIViewController {
         }
         scene.scaleMode = .resizeFill
         skView.presentScene(scene)
+    }
+
+    private func makeDebugFirstEscapeResultsScene(size: CGSize) -> SKScene {
+        SaveManager.shared.resetSaveData()
+        SaveManager.shared.setOnboardingCompleted(true)
+        SaveManager.shared.selectCar(CarCatalog.starterCarID)
+
+        let run = RunStats(
+            score: 3_200,
+            distance: 1_420,
+            survivalTime: 42.4,
+            cashEarned: 44,
+            xpEarned: 0,
+            nearMisses: 5,
+            clutchSaves: 1,
+            highestCombo: 4,
+            wantedLevelReached: 3,
+            cityReached: .losAngeles,
+            dodgeBoostsUsed: 1,
+            crashes: 0,
+            selectedCarID: CarCatalog.starterCarID,
+            selectedVehicleClass: .car,
+            laneSplits: 0,
+            motorcycleRunCompleted: false,
+            completedOnMotorcycle: false,
+            crashesOnMotorcycle: 0,
+            gameMode: .storyChase,
+            levelID: "la_01",
+            levelCompleted: true,
+            failureReason: nil,
+            usedRevive: false
+        )
+        let result = ProgressionManager.shared.processRun(run)
+        return ResultsScene(size: size, result: result)
     }
 
     private func applyDebugAutoStartVehicleSelection() {

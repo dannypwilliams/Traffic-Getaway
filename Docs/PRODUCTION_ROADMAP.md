@@ -13,6 +13,7 @@
 - Dynamic Island-class iPhone 17 Pro debug-autoplay telemetry now exists for the tightened transition-clearance build: 4/5 completed after emergency fallback, median terminal time 42.4s, 0 lane-change intersection probes.
 - `GameSim --active-traffic-lifetime` is partially calibrated against live transition evidence: average survival improved from 7.3s to 10.7s and exit appearance from 0.0% to 0.4%, but it remains too punitive for balance tuning.
 - Manual direct-start telemetry tooling now exists. Passive no-input matrices are captured on iPhone 17e and iPhone 17 Pro, and both are now green after the passive police-capture threshold: 5/5 `police_caught` terminals at 9.0s on each sampled device.
+- First Sunset Merge escape payoff has result-screen evidence: the debug first-escape capture shows `ESCAPED`, `Starter Bike unlocked: split lanes`, primary `USE BIKE`, selected `starter_bike`, completed `la_01`, and cleared debug defaults afterward.
 
 ## Issue Matrix
 
@@ -23,6 +24,7 @@
 | Live crashes around LA 738-740 | Unverified | Needs live first-minute telemetry/manual runs. |
 | Live first minute harsher than GameSim | Partially reproduced | Default GameSim over-completes, iPhone 17e debug autoplay completes 5/5, iPhone 17 Pro debug autoplay completes 4/5 after emergency fallback, while opt-in active-traffic lifetime diagnostic still overcorrects to early traffic collisions after improving average survival to 10.7s. |
 | Passive driver outcome | Fixed in sampled matrices | Baseline passive no-input matrices reproduced traffic/roadblock failures, then the passive police-capture fix produced 5/5 `police_caught` terminals at 9.0s on both iPhone 17e and iPhone 17 Pro. |
+| First escape to Starter Bike payoff | Partially fixed | Result-screen unlock copy, primary `USE BIKE`, selected `starter_bike`, completed `la_01`, and debug cleanup are verified; tap-through into 405 Afterburn is still open. |
 | GameSim far from Level 1 targets | Reproduced | 99.1% completion, 35.3 near misses/run, 998 cash/run after fixes. |
 | GameCore determinism failing | Fixed | `swift test` passes. |
 | Impossible committed waves | Fixed for current stress gate | 0 / 160,000 waves after fixes. |
@@ -38,7 +40,7 @@
 1. Continue active-traffic lifetime calibration and capture the first-minute manual matrix.
 2. Retune Sunset Merge against verified sim/live metrics.
 3. Incrementally adopt `GameCore` models in the app with parity tests.
-4. Lock tutorial/results/progression first-session flow.
+4. Lock tutorial/results/progression first-session flow, including tap-through from `USE BIKE` into 405 Afterburn.
 5. Build art/UI cohesion only after first-minute reliability and balance are green.
 6. Add Infinite Chase, records, replay proof, and release checklist depth.
 
