@@ -45,3 +45,5 @@ Partial. The Mac/iOS Simulator build passed and twelve valid active-input record
 ## Release Readiness
 
 Not release-ready. Required human-play evidence, all-city active coverage, complete progression coverage, and final matrix documentation are incomplete. Tutorial completion, completion/reward UI, and configured start gates for the remaining Starter Compact levels now have recorded evidence, but the current LA01 Starter Compact and Starter Bike evidence raises P1 first-level completion and first-minute concerns, the iPhone 17 Pro Dynamic Island sample adds a P2 top-HUD safe-area defect, and the iPhone 17e pause probe adds a P2 missing active pause/restart-after-pause defect.
+
+The latest continuation attempt could not add New York active-play evidence because the Mac host session was locked. The app reached the manual start gate, but no host-level click or steering input path was available, so no active run was captured and no matrix count changed.

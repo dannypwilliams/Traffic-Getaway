@@ -1,0 +1,16 @@
+$ screencapture -x /tmp/traffic-getaway-probe/host.png
+host_screenshot_result=available_but_not_committed_due_personal_lock_screen_content
+
+$ osascript -e 'tell application "System Events" to click at {585, 1390}'
+36:56: execution error: System Events got an error: An error of type -25208 has occurred. (-25208)
+
+$ osascript -e 'tell application "Simulator" to activate' -e 'delay 1' -e 'tell application "System Events" to tell process "Simulator" to get {frontmost, visible, name of windows}'
+true, true,
+
+$ command -v cliclick || true; command -v xdotool || true
+
+$ xcrun simctl list devices booted
+== Devices ==
+-- iOS 26.5 --
+    iPhone 17e (8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E) (Booted)
+    RiggedShoe-SE-Layout-Test (6590A5F4-E23F-4F58-A86D-21346721F429) (Booted)

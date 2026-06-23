@@ -6,6 +6,8 @@ PARTIAL.
 
 The full recorded playtest has been scoped, the artifact structure has been created, automated validation passed, the iPhone 17e Los Angeles Starter Compact and Starter Bike slices have complete recorded evidence, failure/retry has recorded functional evidence, one iPhone 17 Pro Dynamic Island active sample has been captured, fresh-install tutorial completion has recorded evidence, City Select / Level Select progression has recorded evidence, Garage/vehicle browsing has partial recorded evidence, relaunch/save restoration has partial recorded evidence, pause/restart-after-pause has recorded negative evidence, completion/reward UI has debug-assisted result evidence, and all non-`la_01` Starter Compact levels now have configured start-gate-only evidence. The required all-city/all-device recorded active-play matrix is not complete.
 
+Latest continuation note: a manual start-gated New York probe launched successfully but timed out because the Mac host was locked and no click/steering input path was available. See `logs/manual-input-blocker/2026-06-23_manual-input-blocker-observations.md`. Counts are unchanged because no valid run was captured.
+
 ## Commit Range
 
 - Starting commit: `3c2431d`
@@ -61,4 +63,4 @@ Capture a real active-input completion to replace the debug-assisted `FUNC-09` p
 
 ## Remote Alignment
 
-Current setup began from `main` aligned with `origin/main` at `3c2431d`. Production `main` has been pushed through `aab6198`.
+Current setup began from `main` aligned with `origin/main` at `3c2431d`. Production `main` has been pushed through the manual-input blocker documentation update; exact pushed hash is reported in the final response because embedding a commit's own hash inside itself is not stable.

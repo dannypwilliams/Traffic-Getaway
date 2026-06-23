@@ -1,0 +1,6 @@
+$ python3 scripts/capture_live_telemetry.py --device 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E --manual --wait-for-start-tap --runs 1 --level ny_01 --vehicle starter_compact --app "" --output-dir PlaytestArtifacts/2026-06-23-full-recorded-playtest/telemetry/raw/manual-input-blocker-probe --timeout 15
+com.danielwilliams.TrafficGetaway: 30307
+manual mode: play run 1/1 on the simulator; waiting up to 15s for run_ended telemetry
+manual mode: tap the start screen when ready
+Timed out waiting for run 1 to finish after 15s
+exit_code=1

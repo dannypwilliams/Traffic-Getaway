@@ -115,3 +115,5 @@ Existing-Save LA01 Active Progression Attempt 03 is rejected from active-input a
 LA01 Active Gameplay Background/Foreground Session 01 is rejected from active-input and balance coverage because telemetry recorded 0 lane changes, 0 active-input runs, and terminal `police_caught` at 9.0s. It remains valid functional lifecycle evidence for active-gameplay Home/foreground behavior.
 
 LA01 Pause/Settings Probe Session 01 is rejected from active-input and balance coverage because telemetry recorded 0 lane changes, 0 active-input runs, and terminal `police_caught` at 9.0s. It remains valid functional evidence that pre-game Settings exists and active gameplay exposes no app-level pause/resume/restart control.
+
+Manual Input Blocker Probe is retained under `logs/manual-input-blocker/` and `telemetry/raw/manual-input-blocker-probe/`. It launched `ny_01` / `starter_compact` with `--manual --wait-for-start-tap` and timed out before any run began because the Mac host was locked and no Simulator click/steering path was available. It does not count as invalid gameplay, active-run evidence, or completion of any matrix row.

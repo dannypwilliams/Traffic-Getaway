@@ -5,7 +5,19 @@
   "test_date": "2026-06-23",
   "branch": "main",
   "starting_commit": "3c2431d",
-  "current_production_commit": "aab6198791b5e302153ba9447c3c8b05ab40563a",
+  "current_production_commit": "reported_in_final_response_after_push",
+  "latest_continuation_blocker": {
+    "date": "2026-06-23",
+    "type": "manual_input_unavailable",
+    "summary": "Manual start-gated ny_01 starter_compact probe launched, but the Mac host session was locked and no Simulator click/steering path was available; no valid run was captured.",
+    "evidence": [
+      "logs/manual-input-blocker/2026-06-23_manual-start-gate-no-host-input_probe.log",
+      "logs/manual-input-blocker/2026-06-23_host-input-unavailable_probe.log",
+      "logs/manual-input-blocker/2026-06-23_manual-input-blocker-debug-defaults-check.log",
+      "logs/manual-input-blocker/2026-06-23_manual-input-blocker-observations.md"
+    ],
+    "counts_changed": false
+  },
   "physical_hardware_available": false,
   "build_configuration": "Debug iOS Simulator playtest build",
   "manual_capture_command": "python3 -u scripts/capture_live_telemetry.py --manual --wait-for-start-tap",

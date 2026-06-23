@@ -1,0 +1,1 @@
+$ xcrun simctl spawn 8EEF99A1-91E9-4DAA-97E8-5BFA68F2641E defaults read com.danielwilliams.TrafficGetaway | rg "TrafficGetaway.debug" || true
