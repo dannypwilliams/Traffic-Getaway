@@ -17,7 +17,7 @@ Build: Debug simulator build from `Tools/mac/verify_on_mac.sh`.
 - `scripts/summarize_run_telemetry.py` summarized the sample as 0/1 completed, 4 near misses, 44 cash, wanted level 3, with collision rectangles present.
 - The debug open-path overlay was screenshot-verified, then disabled again in the simulator.
 - A five-run debug-autoplay matrix was captured with active traffic snapshots in all collision samples.
-- A six-run debug-autoplay decision matrix was captured. It showed 246 autoplay decisions, 36 move decisions, 4 target mismatches, and 35 applied-slot mismatches versus the GameSim policy target.
+- A corrected five-run debug-autoplay decision matrix was captured. It showed 207 autoplay decisions, 18 move decisions, 36 target-policy mismatches, 2 move-target mismatches, and 2 applied-slot mismatches versus the GameSim policy target.
 - No full clean-install tutorial matrix or human-controlled terminal outcome matrix was performed in this pass.
 
 ## Evidence

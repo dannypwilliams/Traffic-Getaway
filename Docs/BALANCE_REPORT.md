@@ -54,23 +54,24 @@ Live debug-autoplay matrix after telemetry improvements:
 
 Live debug-autoplay decision matrix:
 
-- Runs: 6.
-- Completed: 0/6.
-- Avg terminal time: 6.5s.
-- Median terminal time: 6.5s.
-- Avg traffic waves before terminal event: 6.8.
-- Avg near misses/cash: 2.2 / 11.
-- Autoplay decisions: 246.
-- Autoplay move decisions: 36.
-- Autoplay target mismatches: 4.
-- Autoplay applied-slot mismatches: 35.
-- Terminal reasons: traffic collision in all 6.
+- Runs: 5.
+- Completed: 0/5.
+- Avg terminal time: 6.3s.
+- Median terminal time: 5.2s.
+- Avg traffic waves before terminal event: 6.2.
+- Avg near misses/cash: 0.6 / 8.
+- Autoplay decisions: 207.
+- Autoplay move decisions: 18.
+- Autoplay target mismatches: 36.
+- Autoplay move-target mismatches: 2.
+- Autoplay applied-slot mismatches: 2.
+- Terminal reasons: traffic collision in all 5.
 - Summary: `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/summary.md`.
 
 ## Interpretation
 
-The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome, and the decision matrix points to movement application rather than target selection: live autoplay chooses nearly the same route target as GameSim, then usually lands on an intermediate slot. Do not tune rewards or density until that control-model mismatch is fixed or intentionally modeled.
+The sim is now deterministic and traffic-stress clean, but Level 1 is still far outside the intended balance range. The live debug-autoplay matrix is also far outside the sim outcome. Corrected decision telemetry shows actual live moves mostly land on the GameSim-style target, so the remaining mismatch is not lane movement conversion; it is live decision/state modeling, especially stay-vs-move decisions and early no-reachable-safe-slot frames. Do not tune rewards or density until that model mismatch is fixed or intentionally modeled.
 
 ## Next
 
-Align debug autoplay movement with GameSim or update GameSim to model the app's multi-step slot movement, rerun the decision matrix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.
+Compare live no-reachable-safe-slot and collision frames against GameSim per-wave state for the same seeds, decide whether GameSim or live safety selection needs the next parity fix, capture manual human runs, then tune rewards, near-miss rates, and completion after the models are reconciled.

@@ -2,15 +2,15 @@
 
 ## Highest Priority
 
-Fix the debug-autoplay/GameSim movement-policy mismatch before tuning Sunset Merge.
+Fix the remaining debug-autoplay/GameSim decision-state mismatch before tuning Sunset Merge.
 
 ## Immediate Task List
 
-1. Align debug autoplay's applied slot movement with GameSim's route target, or update GameSim to model the app's multi-step movement.
-2. Rerun `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/` capture and confirm applied-slot mismatches drop from 35/36.
-3. Capture one human-controlled iPhone 17e matrix and one Dynamic Island-class run.
-4. Retune Level 1 completion, near misses, and rewards only after sim/live movement agrees.
-5. Keep active-traffic collision snapshots in the evidence loop while tuning.
+1. Compare live no-reachable-safe-slot and collision frames against GameSim per-wave state for the same seeds.
+2. Decide whether GameSim should model live movement cadence and active traffic lifetime, or whether live safety selection needs a longer route horizon.
+3. Rerun `PlaytestArtifacts/2026-06-22-live-autoplay-decision-matrix/` after the parity fix and confirm live terminal time moves toward GameSim.
+4. Capture one human-controlled iPhone 17e matrix and one Dynamic Island-class run.
+5. Retune Level 1 completion, near misses, and rewards only after sim/live state agrees.
 
 ## Do Not Start Yet
 

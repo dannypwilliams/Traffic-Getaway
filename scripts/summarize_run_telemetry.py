@@ -64,6 +64,12 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
     decisions = [event.get("movementDecision") for event in events if event.get("movementDecision")]
     move_decisions = [decision for decision in decisions if decision.get("status") == "move"]
     target_mismatches = [
+        decision for decision in decisions
+        if decision.get("targetSlot") is not None
+        and decision.get("simPolicyTargetSlot") is not None
+        and decision.get("targetSlot") != decision.get("simPolicyTargetSlot")
+    ]
+    move_target_mismatches = [
         decision for decision in move_decisions
         if decision.get("targetSlot") != decision.get("simPolicyTargetSlot")
     ]
@@ -106,6 +112,7 @@ def summarize_run(path: Path, events: list[dict]) -> dict:
         "autoplay_decisions": len(decisions),
         "autoplay_moves": len(move_decisions),
         "target_mismatches": len(target_mismatches),
+        "move_target_mismatches": len(move_target_mismatches),
         "applied_mismatches": len(applied_mismatches),
     }
 
@@ -139,6 +146,7 @@ def print_markdown(summaries: list[dict]) -> None:
     print(f"- Autoplay decisions: {sum(item['autoplay_decisions'] for item in summaries)}")
     print(f"- Autoplay move decisions: {sum(item['autoplay_moves'] for item in summaries)}")
     print(f"- Autoplay target mismatches: {sum(item['target_mismatches'] for item in summaries)}")
+    print(f"- Autoplay move-target mismatches: {sum(item['move_target_mismatches'] for item in summaries)}")
     print(f"- Autoplay applied-slot mismatches: {sum(item['applied_mismatches'] for item in summaries)}")
     print(f"- Terminal reasons: {dict(sorted(terminal_counts.items()))}")
     print(f"- Pattern mix: {dict(sorted(pattern_counts.items()))}")

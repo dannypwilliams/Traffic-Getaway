@@ -2596,7 +2596,8 @@ final class GameScene: SKScene {
             return
         }
 
-        let appliedSlot = laneManager.targetSlot(from: playerSlot, delta: moveDelta, vehicleClass: activeCar.vehicleClass)
+        let appliedSlotDelta = moveDelta * (activeCar.vehicleClass == .car ? 2 : 1)
+        let appliedSlot = laneManager.targetSlot(from: playerSlot, delta: appliedSlotDelta, vehicleClass: activeCar.vehicleClass)
         recordAutoplayDecision(status: "move", safeSlots: safeSlots, reachableSlots: reachable, desiredSlot: desiredSlot, targetSlot: targetSlot, appliedDelta: moveDelta, appliedSlot: appliedSlot, liveReach: liveReach, simReach: simReach)
         movePlayer(by: moveDelta, kind: abs(moveDelta) > 1 ? .fastSwipe : .swipe)
     }

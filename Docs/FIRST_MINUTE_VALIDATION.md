@@ -16,7 +16,7 @@ Partial.
 - Debug open-path overlay was enabled, visually verified, captured, then disabled again in the simulator.
 - Debug direct-start/autoplay capture produced a five-run iPhone 17e live matrix for `la_01` + `starter_compact`.
 - New-schema collision telemetry includes active traffic snapshots.
-- Debug autoplay decision telemetry produced a six-run iPhone 17e matrix and isolated the main sim/live gap to applied movement: 35 applied-slot mismatches across 36 move decisions.
+- Debug autoplay decision telemetry produced a five-run iPhone 17e matrix. Corrected instrumentation shows only 2 applied-slot mismatches across 18 move decisions, with the remaining sim/live gap concentrated in target-policy and no-reachable-state differences.
 
 ## Evidence
 

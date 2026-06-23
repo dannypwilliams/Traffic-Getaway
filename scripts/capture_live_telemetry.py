@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import plistlib
 import shutil
 import subprocess
 import sys
@@ -59,26 +60,45 @@ def newest_completed_run(container: Path, seen: set[Path]) -> Path | None:
     return None
 
 
-def write_default(device: str, bundle_id: str, key: str, value: str, value_type: str = "-string") -> None:
-    simctl(device, "spawn", "defaults", "write", bundle_id, key, value_type, value)
+def preferences_path(container: Path, bundle_id: str) -> Path:
+    return container / "Library" / "Preferences" / f"{bundle_id}.plist"
 
 
-def configure_debug_defaults(device: str, bundle_id: str, level_id: str, vehicle_id: str) -> None:
-    write_default(device, bundle_id, "TrafficGetaway.debug.autoStartLevelID", level_id)
-    write_default(device, bundle_id, "TrafficGetaway.debug.autoStartVehicleID", vehicle_id)
-    write_default(device, bundle_id, "TrafficGetaway.debug.autoplay", "YES", "-bool")
-    write_default(device, bundle_id, "TrafficGetaway.debug.showOpenLaneAnalysis", "NO", "-bool")
+def read_preferences(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    with path.open("rb") as handle:
+        return plistlib.load(handle)
 
 
-def clear_debug_defaults(device: str, bundle_id: str) -> None:
+def write_preferences(path: Path, preferences: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("wb") as handle:
+        plistlib.dump(preferences, handle)
+
+
+def configure_debug_defaults(container: Path, bundle_id: str, level_id: str, vehicle_id: str) -> None:
+    path = preferences_path(container, bundle_id)
+    preferences = read_preferences(path)
+    preferences["TrafficGetaway.debug.autoStartLevelID"] = level_id
+    preferences["TrafficGetaway.debug.autoStartVehicleID"] = vehicle_id
+    preferences["TrafficGetaway.debug.autoplay"] = True
+    preferences["TrafficGetaway.debug.showOpenLaneAnalysis"] = False
+    write_preferences(path, preferences)
+
+
+def clear_debug_defaults(container: Path, bundle_id: str) -> None:
     keys = [
         "TrafficGetaway.debug.autoStartLevelID",
         "TrafficGetaway.debug.autoStartVehicleID",
         "TrafficGetaway.debug.autoplay",
         "TrafficGetaway.debug.showOpenLaneAnalysis",
     ]
+    path = preferences_path(container, bundle_id)
+    preferences = read_preferences(path)
     for key in keys:
-        simctl(device, "spawn", "defaults", "delete", bundle_id, key, check=False)
+        preferences.pop(key, None)
+    write_preferences(path, preferences)
 
 
 def capture_runs(args: argparse.Namespace) -> list[Path]:
@@ -88,8 +108,8 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
     if args.app:
         run(["xcrun", "simctl", "install", args.device, str(args.app)])
 
-    configure_debug_defaults(args.device, args.bundle_id, args.level, args.vehicle)
     container = app_container(args.device, args.bundle_id)
+    configure_debug_defaults(container, args.bundle_id, args.level, args.vehicle)
     args.output_dir.mkdir(parents=True, exist_ok=True)
     captured: list[Path] = []
     seen = telemetry_files(container)
@@ -119,7 +139,8 @@ def capture_runs(args: argparse.Namespace) -> list[Path]:
     finally:
         simctl(args.device, "terminate", args.bundle_id, check=False)
         if args.clear_defaults:
-            clear_debug_defaults(args.device, args.bundle_id)
+            time.sleep(0.5)
+            clear_debug_defaults(container, args.bundle_id)
 
     return captured
 
